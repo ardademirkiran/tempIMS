@@ -30,4 +30,9 @@ public class MainScreen {
     protected void tabchanged(){
         System.out.println("b");
     }
+    @FXML
+    protected void cancelButtonClicked(){
+        System.out.println("c");
+    }
 }
+
