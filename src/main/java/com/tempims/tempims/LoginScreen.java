@@ -39,8 +39,12 @@ public class LoginScreen {
         while ((line = reader.readLine()) != null){
             String[] splittedLine = line.split("\t");
             if (usernameField.getText().equals(splittedLine[0]) &&  passwordField.getText().equals(splittedLine[1])){
-                System.out.println("Giriş başarılı");
-                break;
+                FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("MainScreen.fxml"));
+                Scene scene = new Scene(fxmlLoader.load());
+                Main.globalStage.setMaximized(true);
+                Main.globalStage.setMinHeight(Main.globalStage.getHeight());
+                Main.globalStage.setMinWidth(Main.globalStage.getWidth());
+                Main.globalStage.setScene(scene);
             }
         }
         System.out.println("Giriş başarısız");
