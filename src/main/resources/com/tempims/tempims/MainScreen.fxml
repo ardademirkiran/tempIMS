@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="854.0" prefWidth="1365.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tempims.tempims.MainScreen">
+   <children>
+      <HBox alignment="TOP_CENTER">
+         <children>
+            <Label text="Şirket : Hacettepe Üniversitesi">
+               <HBox.margin>
+                  <Insets right="100.0" />
+               </HBox.margin>
+            </Label>
+            <Label text="Kullanıcı : Enes Yaman (Admin)" />
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </HBox>
+      <TabPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="494.0" prefWidth="581.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab fx:id="sellScreenTab" onSelectionChanged="#tabchanged" text="Satış Ekranı">
+            <content>
+              <AnchorPane prefHeight="535.0" prefWidth="1365.0">
+                     <children>
+                        <VBox layoutX="10.0" layoutY="10.0" spacing="20.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                           <children>
+                              <HBox alignment="TOP_CENTER" spacing="20.0">
+                                 <children>
+                                    <ComboBox promptText="Müşteri (Genel Müşteri)" HBox.hgrow="ALWAYS" />
+                                    <TextField fx:id="barcodeField" text="151515561561212" HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="sellButton" mnemonicParsing="false" onMouseClicked="#sellbuttonclicked" text="Sat" HBox.hgrow="ALWAYS" />
+                                    <Button alignment="CENTER" mnemonicParsing="false" text="İptal" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                              <TableView fx:id="sellScreenTable" prefHeight="248.0" prefWidth="739.0">
+                                <columns>
+                                  <TableColumn fx:id="barcodeCollumn" prefWidth="75.0" text="Barkod" />
+                                  <TableColumn fx:id="nameCollumn" prefWidth="75.0" text="Ad" />
+                                    <TableColumn fx:id="amountCollumn" prefWidth="75.0" text="Miktar" />
+                                    <TableColumn fx:id="priceCollumn" prefWidth="75.0" text="Fiyat" />
+                                    <TableColumn fx:id="kdvCollumn" prefWidth="75.0" text="Kdv Oranı" />
+                                    <TableColumn fx:id="percentageDiscountCollumn" prefWidth="75.0" text="İskonto %" />
+                                    <TableColumn fx:id="discountCollumn" prefWidth="75.0" text="İskonto TL" />
+                                    <TableColumn fx:id="lastPriceCollumn" prefWidth="75.0" text="Son Ücret" />
+                                </columns>
+                                 <columnResizePolicy>
+                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                 </columnResizePolicy>
+                              </TableView>
+                           </children>
+                        </VBox>
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+          <Tab fx:id="buyScreenTab" text="Ürün Giriş Ekranı">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+          </Tab>
+            <Tab fx:id="returnTab" text="İade Ekranı">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+               </content>
+            </Tab>
+            <Tab fx:id="stockControlTab" text="Stok Kontrol Ekranı">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</VBox>
