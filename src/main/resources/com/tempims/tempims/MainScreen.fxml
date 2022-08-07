@@ -32,7 +32,7 @@
                                     <ComboBox promptText="Müşteri (Genel Müşteri)" HBox.hgrow="ALWAYS" />
                                     <TextField fx:id="barcodeField" text="151515561561212" HBox.hgrow="ALWAYS" />
                                     <Button fx:id="sellButton" mnemonicParsing="false" onMouseClicked="#sellbuttonclicked" text="Sat" HBox.hgrow="ALWAYS" />
-                                    <Button alignment="CENTER" mnemonicParsing="false" text="İptal" HBox.hgrow="ALWAYS" />
+                                    <Button alignment="CENTER" mnemonicParsing="false" onAction="#cancelButtonClicked" text="İptal" HBox.hgrow="ALWAYS" />
                                  </children>
                               </HBox>
                               <TableView fx:id="sellScreenTable" prefHeight="248.0" prefWidth="739.0">
