@@ -29,10 +29,6 @@ public class Main extends Application {
         LinearGradient lg1 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
         scene.setFill(lg1);
         stage.setScene(scene);
-        stage.setMinWidth(480);
-        stage.setMaxWidth(480);
-        stage.setMinHeight(360);
-        stage.setMaxHeight(360);
         stage.show();
     }
 
