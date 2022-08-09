@@ -13,6 +13,10 @@ public class Session {
         String hashedPasswordDB = DBAccess.fetchPassword(usernameInput);  // This part will be accessed from sql database by using "username"
         String hashedPasswordInput = hashPassword(passwordInput);
 
+        if(hashedPasswordDB == null){
+            return -1;
+        }
+
         if (hashedPasswordDB.equals(hashedPasswordInput)){
             username = usernameInput; // This line assigns username of the current user to static "username" variable for action recording.
             return 1;
@@ -21,7 +25,7 @@ public class Session {
         }
     }
 
-    public int checkSignUp(String usernameInput, String passwordInput1, String passwordInput2){
+    public static int checkSignUp(String usernameInput, String passwordInput1, String passwordInput2){
 
         if(DBAccess.checkUsername(usernameInput) > 0){
             return -2;//sql part to check username and  return -2 if username already exists

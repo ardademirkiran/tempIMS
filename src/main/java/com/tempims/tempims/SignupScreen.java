@@ -31,15 +31,15 @@ public class SignupScreen {
     }
 
     public void signupButtonAction(ActionEvent actionEvent) throws IOException {
-        String username = usernameField.getText();
-        String password = passwordField.getText();
-        String password1 = passwordField1.getText();
-        BufferedWriter writer = new BufferedWriter(new FileWriter("datas.txt", true));
-        if (password1.equals(password)){
-            writer.write(username + "\t" + password + "\n");
-            writer.close();
-            loginButtonAction(new ActionEvent());
+        int flag = Session.checkSignUp(usernameField.getText(), passwordField.getText(), passwordField1.getText());
+        if (flag == -2){
+            System.out.println("Bu kullanıcı adı zaten kullanılıyor.");
+        } else if (flag == -1){
+            System.out.println("Kullanıcı adı ya da şifre boş olamaz.");
+        } else if (flag == 0){
+            System.out.println("Şifre ve şifre onayı birbiriyle eşleşmiyor.");
+        } else {
+            System.out.println("Yeni kullanıcı oluşturuldu.");
         }
-
     }
 }

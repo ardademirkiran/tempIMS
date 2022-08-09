@@ -34,20 +34,19 @@ public class LoginScreen {
 
 
     public void loginButtonAction(ActionEvent actionEvent) throws IOException {
-        String line;
-        BufferedReader reader = new BufferedReader(new FileReader("datas.txt"));
-        while ((line = reader.readLine()) != null){
-            String[] splittedLine = line.split("\t");
-            if (usernameField.getText().equals(splittedLine[0]) &&  passwordField.getText().equals(splittedLine[1])){
-                FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("MainScreen.fxml"));
-                Scene scene = new Scene(fxmlLoader.load());
-                Main.globalStage.setMaximized(true);
-                Main.globalStage.setMinHeight(Main.globalStage.getHeight());
-                Main.globalStage.setMinWidth(Main.globalStage.getWidth());
-                Main.globalStage.setScene(scene);
-            }
+        int flag = Session.checkLogin(usernameField.getText(), passwordField.getText());
+        if (flag == -1){
+            System.out.println("Böyle bir kullanıcı adı yok.");
+        } else if (flag == 0){
+            System.out.println("Kullanıcı adı veya şifre yanlış.");
+        } else{
+            FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("MainScreen.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+            Main.globalStage.setMaximized(true);
+            Main.globalStage.setMinHeight(Main.globalStage.getHeight());
+            Main.globalStage.setMinWidth(Main.globalStage.getWidth());
+            Main.globalStage.setScene(scene);
         }
-        System.out.println("Giriş başarısız");
     }
 
     public void signupButtonAction(ActionEvent actionEvent) throws IOException {
