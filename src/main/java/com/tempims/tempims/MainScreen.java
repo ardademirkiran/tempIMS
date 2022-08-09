@@ -55,6 +55,7 @@ public class MainScreen {
     }
 
 
+    @FXML
     protected void productEntryLabelBarcodeKeyPressed(KeyEvent event) {
         barcodeeverwritten += event.getCharacter();
         matchedbarcodes(); // eğer bi taneyse diğer bilgileri direkt dbden doldur
@@ -64,6 +65,7 @@ public class MainScreen {
         String[] barcodes = {}; // dbden bak o ana kadar yazılan kısmı eşleşenleri returle
         return barcodes;
     }
+    @FXML
     protected void productEntryLabelButtonOnClicked(){
         // eğer barkod bulunamadıysa yeni ürün kaydı, bulunduysa stoğa ekle
     }
