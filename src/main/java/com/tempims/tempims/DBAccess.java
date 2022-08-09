@@ -12,7 +12,7 @@ public class DBAccess {
         Connection conn = null;
         try{
             String url = "jdbc:sqlite:tempims.db";
-            conn = DriverManager.getConnection(url); // Connects to database, creates one if it doesn't exist
+            conn = DriverManager.getConnection(url); // Connects to database or creates one in the relative directory if it doesn't exist
             System.out.println("Connected successfully !");
             createUserTable(conn);
             return conn;
@@ -20,7 +20,6 @@ public class DBAccess {
         catch(SQLException e){
             e.printStackTrace(System.out);
         }
-        System.out.println("Couldn't conn, returned null"); // delete later
         return conn;
     }
     protected static void createUserTable(Connection conn){
@@ -31,8 +30,6 @@ public class DBAccess {
                     +");";
             Statement stmt = conn.createStatement();
             stmt.execute(sql);
-            System.out.println("Process finished, connection closing");
-            conn.close();
         }
         catch(SQLException e){
             e.printStackTrace(System.out);
@@ -41,13 +38,11 @@ public class DBAccess {
     protected static void insertUser(String userName, String password){
         try{
             Connection conn = connect();
-            String sql = "INSERT INTO USERS (USERNAME, PASSWORD) VALUES (?,?)";
+            String sql = "INSERT INTO USERS (USERNAME, PASSWORD) VALUES (?, ?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, userName);
             pstmt.setString(2, password);
             pstmt.executeUpdate();
-            System.out.println("Process finished, connection closing");
-            conn.close();
         }
         catch(SQLException e){
             e.printStackTrace(System.out);
@@ -60,8 +55,6 @@ public class DBAccess {
             String sql = String.format("SELECT PASSWORD FROM USERS WHERE USERNAME = '%s'", userName);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
-            System.out.println("Process finished, connection closing");
-            conn.close();
             return rs.getString("PASSWORD");
         }
         catch(SQLException e){
@@ -79,8 +72,6 @@ public class DBAccess {
             if(rs != null){
                 rs.last();
                 size = rs.getRow();
-                System.out.println("Process finished, connection closing");
-                conn.close();
                 return size;
             }
         }
