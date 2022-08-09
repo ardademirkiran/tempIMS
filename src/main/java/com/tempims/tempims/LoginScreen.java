@@ -46,8 +46,6 @@ public class LoginScreen {
             FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("MainScreen.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
             Main.globalStage.setMaximized(true);
-            Main.globalStage.setMinHeight(Main.globalStage.getHeight());
-            Main.globalStage.setMinWidth(Main.globalStage.getWidth());
             Main.globalStage.setScene(scene);
         }
         
