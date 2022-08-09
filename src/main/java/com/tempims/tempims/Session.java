@@ -10,7 +10,7 @@ public class Session {
 
     public static int checkLogin(String usernameInput, String passwordInput){
 
-        String hashedPasswordDB = "";  // This part will be accessed from sql database by using "username"
+        String hashedPasswordDB = DBAccess.fetchPassword(usernameInput);  // This part will be accessed from sql database by using "username"
         String hashedPasswordInput = hashPassword(passwordInput);
 
         if (hashedPasswordDB.equals(hashedPasswordInput)){
@@ -23,7 +23,9 @@ public class Session {
 
     public int checkSignUp(String usernameInput, String passwordInput1, String passwordInput2){
 
-        //sql part to check username and  return -2 if username already exists
+        if(DBAccess.checkUsername(usernameInput) > 0){
+            return -2;//sql part to check username and  return -2 if username already exists
+        }
 
 
         if (passwordInput1.equals("") || passwordInput2.equals("") || usernameInput.equals("")){ // these parts can not be empty if so returns -1
@@ -36,7 +38,7 @@ public class Session {
         }
 
 
-        // sql part to put new user to database and returns 1
+        DBAccess.insertUser(usernameInput,hashPassword(passwordInput1));// sql part to put new user to database and returns 1
 
         return 1;
 
