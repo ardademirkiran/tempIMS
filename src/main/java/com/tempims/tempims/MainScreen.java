@@ -1,10 +1,15 @@
 package com.tempims.tempims;
 
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
+
+import java.security.Key;
 
 public class MainScreen {
 
+    public Label username;
     public TableView<Products> sellScreenTable;
     public TableColumn<Products,Long> barcodeCollumn;
     public TableColumn<Products, String> nameCollumn;
@@ -22,6 +27,20 @@ public class MainScreen {
     public Tab stockControlTab;
 
 
+    public TextField productEntryLabelBarcode;
+    public TextField productEntryLabelName;
+    public TextField productEntryLabelExplanation;
+    public TextField productEntryLabelTax;
+    public TextField productEntryLabelDiscount;
+    public TextField productEntryLabelBuyPrice;
+    public TextField productEntryLabelSellPrice;
+    public TextField productEntryLabelPiece;
+    public Button productEntryLabelButton;
+    public TextField productEntryLabelBrand;
+    public TextField productEntryLabelPrice;
+    String barcodeeverwritten = "";
+
+
     @FXML
     protected void sellbuttonclicked(){
         System.out.println("a");
@@ -33,6 +52,20 @@ public class MainScreen {
     @FXML
     protected void cancelButtonClicked(){
         System.out.println("c");
+    }
+
+
+    protected void productEntryLabelBarcodeKeyPressed(KeyEvent event) {
+        barcodeeverwritten += event.getCharacter();
+        matchedbarcodes(); // eğer bi taneyse diğer bilgileri direkt dbden doldur
+
+    }
+    protected String[] matchedbarcodes(){
+        String[] barcodes = {}; // dbden bak o ana kadar yazılan kısmı eşleşenleri returle
+        return barcodes;
+    }
+    protected void productEntryLabelButtonOnClicked(){
+        // eğer barkod bulunamadıysa yeni ürün kaydı, bulunduysa stoğa ekle
     }
 }
 
