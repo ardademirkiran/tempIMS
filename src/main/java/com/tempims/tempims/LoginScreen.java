@@ -31,7 +31,8 @@ public class LoginScreen {
     private TextField usernameField;
     @FXML
     private PasswordField passwordField;
-
+    String errorStyle = String.format("-fx-border-color: BLACK; -fx-border-width: 2; -fx-border-radius: 5;");
+    String successStyle = String.format("-fx-border-color: #A9A9A9; -fx-border-width: 2; -fx-border-radius: 5;");
 
     public void loginButtonAction(ActionEvent actionEvent) throws IOException {
         int flag = Session.checkLogin(usernameField.getText(), passwordField.getText());
@@ -47,6 +48,12 @@ public class LoginScreen {
             Main.globalStage.setMinWidth(Main.globalStage.getWidth());
             Main.globalStage.setScene(scene);
         }
+        
+        //eğer yanlışsa hangisi yanlışsa içine yolla
+        if (true){
+            TextField[] textFields = {usernameField,passwordField};
+            unvalidinfo(textFields);
+        }
     }
 
     public void signupButtonAction(ActionEvent actionEvent) throws IOException {
@@ -57,5 +64,23 @@ public class LoginScreen {
         scene.setFill(lg1);
         Main.globalStage.setScene(scene);
 
+    }
+    public void forgatPass(){
+        //şifremi unuttum kısmı
+    }
+    public void unvalidinfo(TextField[] textFields){
+        passwordField.setStyle(successStyle);
+        usernameField.setStyle(successStyle);
+        warningLabel.setVisible(true);
+        for (TextField t: textFields) {
+            t.setStyle(errorStyle);
+        }
+        if (textFields.length > 1 ||  textFields[0] == usernameField){
+            warningLabel.setText("Kullanıcı adı hatalı");
+        }else{
+            warningLabel.setText("Şifre hatalı");
+        }
+        passwordField.setText("");
+        usernameField.setText("");
     }
 }
