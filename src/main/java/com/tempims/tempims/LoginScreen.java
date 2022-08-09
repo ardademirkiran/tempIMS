@@ -31,6 +31,8 @@ public class LoginScreen {
     private TextField usernameField;
     @FXML
     private PasswordField passwordField;
+    @FXML
+    private Label warningLabel;
     String errorStyle = String.format("-fx-border-color: BLACK; -fx-border-width: 2; -fx-border-radius: 5;");
     String successStyle = String.format("-fx-border-color: #A9A9A9; -fx-border-width: 2; -fx-border-radius: 5;");
 
