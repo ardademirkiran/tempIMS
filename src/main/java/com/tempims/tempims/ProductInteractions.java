@@ -11,13 +11,9 @@ public class ProductInteractions {
         }
 
     }
-    public static int sellProduct(String barcode, int amountInput){
+    public static void sellProduct(String barcode, int amountInput){
         int amountFromDB = 0; //sql part to get real amount of the product
-        if (amountInput > amountFromDB){
-            return 0;
-        } else {
-            //sql part to put remaining amount to DB
-            return 1;
-        }
+        //sql part to put remaining amount to DB
+
     }
 }
