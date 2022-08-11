@@ -90,7 +90,8 @@ public class MainScreen {
     }
     @FXML
     protected void productEntryLabelButtonOnClicked(){
-        // eğer barkod bulunamadıysa yeni ürün kaydı, bulunduysa stoğa ekle
+        ProductInteractions.productEntry(productEntryLabelBarcode.getText(),productEntryLabelBrand.getText(),productEntryLabelName.getText(),productEntryLabelPiece.getText(),productEntryLabelTax.getText(),productEntryLabelBuyPrice.getText(),String.valueOf(Integer.parseInt(productEntryLabelBuyPrice.getText())/Integer.parseInt(productEntryLabelPiece.getText())),productEntryLabelSellPrice.getText());
+
     }
     protected void changeactiveuser(Label label){
         label.setText("Kullanıcı: " + Session.username);
