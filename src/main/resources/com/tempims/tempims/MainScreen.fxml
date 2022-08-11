@@ -30,17 +30,16 @@
                               <HBox alignment="TOP_CENTER" spacing="20.0">
                                  <children>
                                     <ComboBox promptText="Müşteri (Genel Müşteri)" HBox.hgrow="ALWAYS" />
-                                    <TextField fx:id="barcodeField" text="151515561561212" HBox.hgrow="ALWAYS" />
+                                    <TextField fx:id="barcodeField" onKeyPressed="#enterpressed" text="151515561561212" HBox.hgrow="ALWAYS" />
                                     <Button fx:id="sellButton" mnemonicParsing="false" onMouseClicked="#sellbuttonclicked" text="Sat" HBox.hgrow="ALWAYS" />
                                     <Button alignment="CENTER" mnemonicParsing="false" onAction="#cancelButtonClicked" text="İptal" HBox.hgrow="ALWAYS" />
                                  </children>
                               </HBox>
-                              <TableView fx:id="sellScreenTable" prefHeight="248.0" prefWidth="739.0">
+                              <TableView fx:id="sellScreenTable" editable="true" prefHeight="248.0" prefWidth="739.0">
                                 <columns>
                                   <TableColumn fx:id="barcodeCollumn" prefWidth="75.0" text="Barkod" />
                                   <TableColumn fx:id="nameCollumn" prefWidth="75.0" text="Ad" />
                                     <TableColumn fx:id="amountCollumn" prefWidth="75.0" text="Miktar" />
-                                    <TableColumn fx:id="priceCollumn" prefWidth="75.0" text="Fiyat" />
                                     <TableColumn fx:id="kdvCollumn" prefWidth="75.0" text="Kdv Oranı" />
                                     <TableColumn fx:id="percentageDiscountCollumn" prefWidth="75.0" text="İskonto %" />
                                     <TableColumn fx:id="discountCollumn" prefWidth="75.0" text="İskonto TL" />
@@ -55,28 +54,21 @@
                      </children></AnchorPane>
             </content>
           </Tab>
-          <Tab fx:id="buyScreenTab" text="Ürün Giriş Ekranı">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <TextField fx:id="productEntryLabelBarcode" layoutX="23.0" layoutY="27.0" onKeyPressed="#productEntryLabelBarcodeKeyPressed" text="barkod" />
-                        <TextField fx:id="productEntryLabelName" layoutX="23.0" layoutY="90.0" text="isim" />
-                        <TextField fx:id="productEntryLabelExplanation" layoutX="23.0" layoutY="121.0" text="açıklama" />
-                        <TextField fx:id="productEntryLabelTax" layoutX="23.0" layoutY="232.0" text="vergi" />
-                        <TextField fx:id="productEntryLabelDiscount" layoutX="23.0" layoutY="266.0" text="iskonto" />
-                        <TextField fx:id="productEntryLabelBuyPrice" layoutX="23.0" layoutY="163.0" text="alış fiyatı" />
-                        <TextField fx:id="productEntryLabelSellPrice" layoutX="23.0" layoutY="301.0" text="satış fiyatı" />
-                        <TextField fx:id="productEntryLabelPiece" layoutX="23.0" layoutY="333.0" text="gelen ürün adedi" />
-                        <Button fx:id="productEntryLabelButton" layoutX="78.0" layoutY="365.0" mnemonicParsing="false" onMouseClicked="#productEntryLabelButtonOnClicked" text="onayla" />
-                        <TextField fx:id="productEntryLabelBrand" layoutX="23.0" layoutY="58.0" text="marka" />
-                        <TextField fx:id="productEntryLabelPrice" layoutX="23.0" layoutY="199.0" text="birim fiyat" />
-                     </children></AnchorPane>
-            </content>
-          </Tab>
+            <Tab fx:id="buyScreenTab" text="Ürün Giriş Ekranı">
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                    <TextField fx:id="productEntryLabelBarcode" layoutX="23.0" layoutY="27.0" onKeyPressed="#productEntryLabelBarcodeKeyPressed" text="barkod" />
+                    <TextField fx:id="productEntryLabelName" layoutX="23.0" layoutY="90.0" text="isim" />
+                    <TextField fx:id="productEntryLabelTax" layoutX="23.0" layoutY="232.0" text="vergi" />
+                    <TextField fx:id="productEntryLabelBuyPrice" layoutX="23.0" layoutY="163.0" text="alış fiyatı" />
+                    <TextField fx:id="productEntryLabelSellPrice" layoutX="23.0" layoutY="301.0" text="satış fiyatı" />
+                    <TextField fx:id="productEntryLabelPiece" layoutX="23.0" layoutY="333.0" text="gelen ürün adedi" />
+                    <Button fx:id="productEntryLabelButton" layoutX="78.0" layoutY="365.0" mnemonicParsing="false" onMouseClicked="#productEntryLabelButtonOnClicked" text="onayla" />
+                    <TextField fx:id="productEntryLabelBrand" layoutX="23.0" layoutY="58.0" text="marka" />
+                    <TextField fx:id="productEntryLabelPrice" layoutX="23.0" layoutY="199.0" text="birim fiyat" />
+                </AnchorPane>
+            </Tab>
             <Tab fx:id="returnTab" text="İade Ekranı">
-               <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-               </content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
             </Tab>
             <Tab fx:id="stockControlTab" text="Stok Kontrol Ekranı">
                <content>
