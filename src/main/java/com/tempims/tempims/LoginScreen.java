@@ -52,8 +52,6 @@ public class LoginScreen {
             Main.globalStage.setMaximized(true);
             Main.globalStage.setScene(scene);
         }
-        
-        //eğer yanlışsa hangisi yanlışsa içine yolla
 
     }
 
@@ -66,7 +64,7 @@ public class LoginScreen {
         Main.globalStage.setScene(scene);
 
     }
-    public void forgatPass(){
+    public void forgetPassword(){
         //şifremi unuttum kısmı
     }
     public void invalidInputAction(TextField[] textFields){
