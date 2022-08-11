@@ -1,6 +1,7 @@
 package com.tempims.tempims;
 
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -46,7 +47,10 @@ public class MainScreen {
 
     @FXML
     protected void sellbuttonclicked(){
-        System.out.println("a");
+        ObservableList<Products> productslist = sellScreenTable.getItems();
+        for (Products product: productslist) {
+            ProductInteractions.sellProduct(String.valueOf(product.barcode),product.amount);
+        }
     }
     @FXML
     protected void tabchanged(){
@@ -54,7 +58,7 @@ public class MainScreen {
     }
     @FXML
     protected void cancelButtonClicked(){
-        System.out.println("c");
+        sellScreenTable.getItems().removeAll(sellScreenTable.getItems());
     }
     @FXML
     protected void enterpressed(KeyEvent keyEvent) throws IOException {
@@ -72,12 +76,6 @@ public class MainScreen {
     }
 
 
-
-
-
-
-
-
     @FXML
     protected void productEntryLabelBarcodeKeyPressed(KeyEvent event) {
         barcodeeverwritten += event.getCharacter();
@@ -90,8 +88,7 @@ public class MainScreen {
     }
     @FXML
     protected void productEntryLabelButtonOnClicked(){
-        ProductInteractions.productEntry(productEntryLabelBarcode.getText(),productEntryLabelBrand.getText(),productEntryLabelName.getText(),productEntryLabelPiece.getText(),productEntryLabelTax.getText(),productEntryLabelBuyPrice.getText(),String.valueOf(Integer.parseInt(productEntryLabelBuyPrice.getText())/Integer.parseInt(productEntryLabelPiece.getText())),productEntryLabelSellPrice.getText());
-
+       ProductInteractions.productEntry(productEntryLabelBarcode.getText(),productEntryLabelBrand.getText(),productEntryLabelName.getText(),productEntryLabelPiece.getText(),productEntryLabelTax.getText(),productEntryLabelBuyPrice.getText(),String.valueOf(Integer.parseInt(productEntryLabelBuyPrice.getText())/Integer.parseInt(productEntryLabelPiece.getText())),productEntryLabelSellPrice.getText());
     }
     protected void changeactiveuser(Label label){
         label.setText("Kullanıcı: " + Session.username);
