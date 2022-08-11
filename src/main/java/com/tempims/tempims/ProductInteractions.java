@@ -16,4 +16,12 @@ public class ProductInteractions {
         //sql part to put remaining amount to DB
 
     }
+    public static Products getProduct(String barcode){
+        String name = ""; //sql part to get name
+        int tax = 0; //sql part to get tax
+        int sellprice = 0;//sql part to get sellprice
+
+        return new Products(barcode, name, tax, sellprice );
+    }
+
 }
