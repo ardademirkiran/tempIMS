@@ -15,9 +15,9 @@ public class Products {
     TextField discountper = new TextField("0");
     TextField discount = new TextField("0");
     Label calsellprice = new Label("");
-    int barcode,tax,sellprice,amount;
-    String name;
-    Products(int barcode, String name, int tax, int sellprice){
+    int tax,sellprice,amount;
+    String name, barcode;
+    Products(String barcode, String name, int tax, int sellprice){
         this.name = name;
         this.barcode = barcode;
         this.sellprice = sellprice;
@@ -122,8 +122,8 @@ public class Products {
         };
     }
 
-    public ObservableValue<Integer> getbarcode(){
-        return new SimpleIntegerProperty(barcode).asObject();
+    public ObservableValue<String> getbarcode(){
+        return new SimpleStringProperty(barcode);
     }public StringProperty getname(){
         return new SimpleStringProperty(name);
     }public ObservableValue<Integer> gettax(){
