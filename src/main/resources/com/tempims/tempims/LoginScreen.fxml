@@ -22,7 +22,7 @@
          <VBox.margin>
             <Insets />
          </VBox.margin></PasswordField>
-      <Label onMouseClicked="#forgatPass" text="Şifremi Unuttum">
+      <Label onMouseClicked="#forgetPassword" text="Şifremi Unuttum">
          <VBox.margin>
             <Insets left="90.0" />
          </VBox.margin></Label>
