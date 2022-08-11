@@ -39,9 +39,13 @@ public class LoginScreen {
     public void loginButtonAction(ActionEvent actionEvent) throws IOException {
         int flag = Session.checkLogin(usernameField.getText(), passwordField.getText());
         if (flag == -1){
-            System.out.println("Böyle bir kullanıcı adı yok.");
+           warningLabel.setText("Böyle bir kullanıcı yok.");
+            TextField[] textFields = {usernameField};
+            invalidInputAction(textFields);
         } else if (flag == 0){
-            System.out.println("Kullanıcı adı veya şifre yanlış.");
+            warningLabel.setText("Bu kullanıcı adı için şifre yanlış.");
+            TextField[] textFields = {passwordField};
+            invalidInputAction(textFields);
         } else{
             FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("MainScreen.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
@@ -50,10 +54,7 @@ public class LoginScreen {
         }
         
         //eğer yanlışsa hangisi yanlışsa içine yolla
-        if (true){
-            TextField[] textFields = {usernameField,passwordField};
-            unvalidinfo(textFields);
-        }
+
     }
 
     public void signupButtonAction(ActionEvent actionEvent) throws IOException {
@@ -68,17 +69,12 @@ public class LoginScreen {
     public void forgatPass(){
         //şifremi unuttum kısmı
     }
-    public void unvalidinfo(TextField[] textFields){
+    public void invalidInputAction(TextField[] textFields){
         passwordField.setStyle(successStyle);
         usernameField.setStyle(successStyle);
         warningLabel.setVisible(true);
         for (TextField t: textFields) {
             t.setStyle(errorStyle);
-        }
-        if (textFields.length > 1 ||  textFields[0] == usernameField){
-            warningLabel.setText("Kullanıcı adı hatalı");
-        }else{
-            warningLabel.setText("Şifre hatalı");
         }
         passwordField.setText("");
         usernameField.setText("");
