@@ -56,15 +56,22 @@
           </Tab>
             <Tab fx:id="buyScreenTab" text="Ürün Giriş Ekranı">
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                    <TextField fx:id="productEntryLabelBarcode" layoutX="23.0" layoutY="27.0" onKeyPressed="#productEntryLabelBarcodeKeyPressed" text="barkod" />
-                    <TextField fx:id="productEntryLabelName" layoutX="23.0" layoutY="90.0" text="isim" />
-                    <TextField fx:id="productEntryLabelTax" layoutX="23.0" layoutY="232.0" text="vergi" />
-                    <TextField fx:id="productEntryLabelBuyPrice" layoutX="23.0" layoutY="163.0" text="alış fiyatı" />
-                    <TextField fx:id="productEntryLabelSellPrice" layoutX="23.0" layoutY="301.0" text="satış fiyatı" />
-                    <TextField fx:id="productEntryLabelPiece" layoutX="23.0" layoutY="333.0" text="gelen ürün adedi" />
-                    <Button fx:id="productEntryLabelButton" layoutX="78.0" layoutY="365.0" mnemonicParsing="false" onMouseClicked="#productEntryLabelButtonOnClicked" text="onayla" />
-                    <TextField fx:id="productEntryLabelBrand" layoutX="23.0" layoutY="58.0" text="marka" />
-                    <TextField fx:id="productEntryLabelPrice" layoutX="23.0" layoutY="199.0" text="birim fiyat" />
+                    <TextField fx:id="productEntryLabelBarcode" layoutX="24.0" layoutY="26.0" onKeyPressed="#productEntryLabelBarcodeKeyPressed" promptText="barkod" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0" />
+                    <TextField fx:id="productEntryLabelName" layoutX="23.0" layoutY="90.0" promptText="isim" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="80.0" />
+                    <TextField fx:id="productEntryLabelTax" layoutX="23.0" layoutY="232.0" promptText="vergi (%)" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="140.0" />
+                    <TextField fx:id="productEntryLabelBuyPrice" layoutX="20.0" layoutY="130.0" promptText="alış fiyatı" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="200.0" />
+                    <TextField fx:id="productEntryLabelSellPrice" layoutX="23.0" layoutY="301.0" promptText="satış fiyatı" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="230.0" />
+                    <TextField fx:id="productEntryLabelPiece" layoutX="23.0" layoutY="333.0" promptText="gelen ürün adedi" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="110.0" />
+                  <VBox alignment="TOP_CENTER" layoutX="150.0" layoutY="280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="270.0">
+                     <children>
+                          <Button fx:id="productEntryLabelButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#productEntryLabelButtonOnClicked" text="onayla" VBox.vgrow="NEVER" />
+                     </children>
+                  </VBox>
+                    <TextField fx:id="productEntryLabelBrand" layoutX="232.0" layoutY="66.0" promptText="marka" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="50.0" />
+                    <TextField fx:id="productEntryLabelPrice" editable="false" layoutX="23.0" layoutY="199.0" promptText="birim fiyat" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="170.0">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets></TextField>
                 </AnchorPane>
             </Tab>
             <Tab fx:id="returnTab" text="İade Ekranı">
