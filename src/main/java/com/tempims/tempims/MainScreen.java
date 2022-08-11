@@ -18,7 +18,7 @@ public class MainScreen {
 
     public Label username;
     public TableView<Products> sellScreenTable;
-    public TableColumn<Products, Integer> barcodeCollumn;
+    public TableColumn<Products, String> barcodeCollumn;
     public TableColumn<Products, String> nameCollumn;
     public TableColumn<Products, Integer> amountCollumn;
     public TableColumn<Products, Integer> kdvCollumn;
@@ -49,7 +49,7 @@ public class MainScreen {
     protected void sellbuttonclicked(){
         ObservableList<Products> productslist = sellScreenTable.getItems();
         for (Products product: productslist) {
-            ProductInteractions.sellProduct(String.valueOf(product.barcode),product.amount);
+            ProductInteractions.sellProduct(product.barcode,product.amount);
         }
     }
     @FXML
@@ -63,7 +63,7 @@ public class MainScreen {
     @FXML
     protected void enterpressed(KeyEvent keyEvent) throws IOException {
         if (keyEvent.getCode() == KeyCode.ENTER){
-            Products product = new Products(11,"kahve",8,50);
+            Products product = new Products("11","kahve",8,50);
             amountCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().getamount()));
             discountCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().observableValuedis()));
             percentageDiscountCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().observableValuedisper()));
