@@ -13,6 +13,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.security.Key;
+import java.util.Objects;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class MainScreen {
 
@@ -45,6 +48,8 @@ public class MainScreen {
     String barcodeeverwritten = "";
 
 
+    public boolean tabholding;
+
     @FXML
     protected void sellbuttonclicked(){
         ObservableList<Products> productslist = sellScreenTable.getItems();
@@ -62,8 +67,24 @@ public class MainScreen {
     }
     @FXML
     protected void enterpressed(KeyEvent keyEvent) throws IOException {
-        if (keyEvent.getCode() == KeyCode.ENTER){
-            Products product = new Products("11","kahve",8,50);
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            boolean add = false;
+            boolean find = false;
+            Products productdb = null;
+            if (sellScreenTable.getItems().size()>0) {
+                for (Products pro : sellScreenTable.getItems()) {
+                    if (Objects.equals(pro.barcode, barcodeField.getText())) {
+                        pro.amount++;
+                        pro.calsellprice.setText(String.valueOf((pro.unitsellprice-Integer.parseInt(pro.discount.getText()))*pro.amount));
+                        find = true;
+                    }
+                }
+            }
+            if (!find){
+                productdb = ProductInteractions.getProduct(barcodeField.getText());
+                add = true;
+            }
+
             amountCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().getamount()));
             discountCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().observableValuedis()));
             percentageDiscountCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().observableValuedisper()));
@@ -71,7 +92,8 @@ public class MainScreen {
             nameCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().getname()));
             kdvCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().gettax()));
             lastPriceCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().observableValueprice()));
-            sellScreenTable.getItems().addAll(product);
+            if (add){sellScreenTable.getItems().addAll(productdb);}
+            sellScreenTable.refresh();
         }
     }
 
