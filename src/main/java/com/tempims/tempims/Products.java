@@ -15,27 +15,30 @@ public class Products {
     TextField discountper = new TextField("0");
     TextField discount = new TextField("0");
     Label calsellprice = new Label("");
-    int tax,sellprice,amount;
+    int tax, unitsellprice,amount, calculatedunitsellprice;
     String name, barcode;
-    Products(String barcode, String name, int tax, int sellprice){
+    Products(String barcode, String name, int tax, int sellpricedb){
         this.name = name;
         this.barcode = barcode;
-        this.sellprice = sellprice;
+        this.unitsellprice = sellpricedb;
+        this.calculatedunitsellprice = sellpricedb;
         this.tax= tax;
         this.amount = 1;
-        this.calsellprice.setText(String.valueOf(sellprice));
+        this.calsellprice.setText(String.valueOf(sellpricedb));
         discountper.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                calsellprice.setText(String.valueOf(sellprice-calculatedis()));
+                calculatedunitsellprice = (sellpricedb-calculatedis());
                 discount.setText(String.valueOf(calculatedis()));
+                calsellprice.setText(String.valueOf((unitsellprice-Integer.parseInt(discount.getText()))*amount));
             }
         });
         discount.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                calsellprice.setText(String.valueOf(sellprice-Integer.parseInt(discount.getText())));
+                calculatedunitsellprice = (sellpricedb-Integer.parseInt(discount.getText()));
                 discountper.setText(String.valueOf(calculateperdis()));
+                calsellprice.setText(String.valueOf((unitsellprice-Integer.parseInt(discount.getText()))*amount));
             }
         });
     }
@@ -132,8 +135,8 @@ public class Products {
         return new SimpleIntegerProperty(amount).asObject();
     }
     private Integer calculateperdis(){
-        return ((Integer.parseInt(this.discount.getText())*100) / this.sellprice);
+        return ((Integer.parseInt(this.discount.getText())*100) / this.unitsellprice);
     }private Integer calculatedis(){
-        return (Integer.parseInt(this.discountper.getText())*this.sellprice)/100;
+        return (Integer.parseInt(this.discountper.getText())*this.unitsellprice)/100;
     }
 }
