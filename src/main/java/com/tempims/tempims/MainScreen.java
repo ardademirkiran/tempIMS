@@ -1,21 +1,13 @@
 package com.tempims.tempims;
 
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.security.Key;
 import java.util.Objects;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 public class MainScreen {
 
@@ -45,42 +37,43 @@ public class MainScreen {
     public Button productEntryLabelButton;
     public TextField productEntryLabelBrand;
     public TextField productEntryLabelPrice;
+    public boolean tabholding;
     String barcodeeverwritten = "";
 
-
-    public boolean tabholding;
-
     @FXML
-    protected void sellbuttonclicked(){
+    protected void sellbuttonclicked() {
         ObservableList<Products> productslist = sellScreenTable.getItems();
-        for (Products product: productslist) {
-            ProductInteractions.sellProduct(product.barcode,product.amount);
+        for (Products product : productslist) {
+            ProductInteractions.sellProduct(product.barcode, product.amount);
         }
     }
+
     @FXML
-    protected void tabchanged(){
+    protected void tabchanged() {
         changeactiveuser(username);
     }
+
     @FXML
-    protected void cancelButtonClicked(){
+    protected void cancelButtonClicked() {
         sellScreenTable.getItems().removeAll(sellScreenTable.getItems());
     }
+
     @FXML
     protected void enterpressed(KeyEvent keyEvent) throws IOException {
         if (keyEvent.getCode() == KeyCode.ENTER) {
             boolean add = false;
             boolean find = false;
             Products productdb = null;
-            if (sellScreenTable.getItems().size()>0) {
+            if (sellScreenTable.getItems().size() > 0) {
                 for (Products pro : sellScreenTable.getItems()) {
                     if (Objects.equals(pro.barcode, barcodeField.getText())) {
                         pro.amount++;
-                        pro.calsellprice.setText(String.valueOf((pro.unitsellprice-Integer.parseInt(pro.discount.getText()))*pro.amount));
+                        pro.calsellprice.setText(String.valueOf((pro.unitsellprice - Integer.parseInt(pro.discount.getText())) * pro.amount));
                         find = true;
                     }
                 }
             }
-            if (!find){
+            if (!find) {
                 productdb = ProductInteractions.getProduct(barcodeField.getText());
                 add = true;
             }
@@ -92,7 +85,9 @@ public class MainScreen {
             nameCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().getname()));
             kdvCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().gettax()));
             lastPriceCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().observableValueprice()));
-            if (add){sellScreenTable.getItems().addAll(productdb);}
+            if (add) {
+                sellScreenTable.getItems().addAll(productdb);
+            }
             sellScreenTable.refresh();
         }
     }
@@ -104,15 +99,18 @@ public class MainScreen {
         matchedbarcodes(); // eğer bi taneyse diğer bilgileri direkt dbden doldur
 
     }
-    protected String[] matchedbarcodes(){
+
+    protected String[] matchedbarcodes() {
         String[] barcodes = {}; // dbden bak o ana kadar yazılan kısmı eşleşenleri returle
         return barcodes;
     }
+
     @FXML
-    protected void productEntryLabelButtonOnClicked(){
-       ProductInteractions.productEntry(productEntryLabelBarcode.getText(),productEntryLabelBrand.getText(),productEntryLabelName.getText(),productEntryLabelPiece.getText(),productEntryLabelTax.getText(),productEntryLabelBuyPrice.getText(),String.valueOf(Integer.parseInt(productEntryLabelBuyPrice.getText())/Integer.parseInt(productEntryLabelPiece.getText())),productEntryLabelSellPrice.getText());
+    protected void productEntryLabelButtonOnClicked() {
+        ProductInteractions.productEntry(productEntryLabelBarcode.getText(), productEntryLabelBrand.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText(), productEntryLabelTax.getText(), productEntryLabelBuyPrice.getText(), String.valueOf(Integer.parseInt(productEntryLabelBuyPrice.getText()) / Integer.parseInt(productEntryLabelPiece.getText())), productEntryLabelSellPrice.getText());
     }
-    protected void changeactiveuser(Label label){
+
+    protected void changeactiveuser(Label label) {
         label.setText("Kullanıcı: " + Session.username);
     }
 }

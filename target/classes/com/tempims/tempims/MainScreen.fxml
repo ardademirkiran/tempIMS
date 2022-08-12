@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="532.0" prefWidth="734.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tempims.tempims.MainScreen">
+   <children>
+      <HBox alignment="TOP_CENTER">
+         <children>
+            <Label text="Şirket : Hacettepe Üniversitesi">
+               <HBox.margin>
+                  <Insets right="100.0" />
+               </HBox.margin>
+            </Label>
+            <Label fx:id="username" text="Kullanıcı : Enes Yaman (Admin)" />
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </HBox>
+      <TabPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="494.0" prefWidth="581.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab fx:id="sellScreenTab" onSelectionChanged="#tabchanged" text="Satış Ekranı">
+            <content>
+              <AnchorPane prefHeight="535.0" prefWidth="1365.0">
+                     <children>
+                        <VBox layoutX="10.0" layoutY="10.0" spacing="20.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                           <children>
+                              <HBox alignment="TOP_CENTER" spacing="20.0">
+                                 <children>
+                                    <ComboBox promptText="Müşteri (Genel Müşteri)" HBox.hgrow="ALWAYS" />
+                                    <TextField fx:id="barcodeField" onKeyPressed="#enterpressed" text="151515561561212" HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="sellButton" mnemonicParsing="false" onMouseClicked="#sellbuttonclicked" text="Sat" HBox.hgrow="ALWAYS" />
+                                    <Button alignment="CENTER" mnemonicParsing="false" onAction="#cancelButtonClicked" text="İptal" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                              <TableView fx:id="sellScreenTable" editable="true" prefHeight="248.0" prefWidth="739.0">
+                                <columns>
+                                  <TableColumn fx:id="barcodeCollumn" prefWidth="75.0" text="Barkod" />
+                                  <TableColumn fx:id="nameCollumn" prefWidth="75.0" text="Ad" />
+                                    <TableColumn fx:id="amountCollumn" prefWidth="75.0" text="Miktar" />
+                                    <TableColumn fx:id="kdvCollumn" prefWidth="75.0" text="Kdv Oranı" />
+                                    <TableColumn fx:id="percentageDiscountCollumn" prefWidth="75.0" text="İskonto %" />
+                                    <TableColumn fx:id="discountCollumn" prefWidth="75.0" text="İskonto TL" />
+                                    <TableColumn fx:id="lastPriceCollumn" prefWidth="75.0" text="Son Ücret" />
+                                </columns>
+                                 <columnResizePolicy>
+                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                 </columnResizePolicy>
+                              </TableView>
+                           </children>
+                        </VBox>
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+            <Tab fx:id="buyScreenTab" text="Ürün Giriş Ekranı">
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                    <TextField fx:id="productEntryLabelBarcode" layoutX="24.0" layoutY="26.0" onKeyPressed="#productEntryLabelBarcodeKeyPressed" promptText="barkod" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0" />
+                    <TextField fx:id="productEntryLabelName" layoutX="23.0" layoutY="90.0" promptText="isim" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="80.0" />
+                    <TextField fx:id="productEntryLabelTax" layoutX="23.0" layoutY="232.0" promptText="vergi (%)" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="140.0" />
+                    <TextField fx:id="productEntryLabelBuyPrice" layoutX="20.0" layoutY="130.0" promptText="alış fiyatı" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="200.0" />
+                    <TextField fx:id="productEntryLabelSellPrice" layoutX="23.0" layoutY="301.0" promptText="satış fiyatı" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="230.0" />
+                    <TextField fx:id="productEntryLabelPiece" layoutX="23.0" layoutY="333.0" promptText="gelen ürün adedi" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="110.0" />
+                  <VBox alignment="TOP_CENTER" layoutX="150.0" layoutY="280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="270.0">
+                     <children>
+                          <Button fx:id="productEntryLabelButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onMouseClicked="#productEntryLabelButtonOnClicked" text="onayla" VBox.vgrow="NEVER" />
+                     </children>
+                  </VBox>
+                    <TextField fx:id="productEntryLabelBrand" layoutX="232.0" layoutY="66.0" promptText="marka" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="50.0" />
+                    <TextField fx:id="productEntryLabelPrice" editable="false" layoutX="23.0" layoutY="199.0" promptText="birim fiyat" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="170.0">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets></TextField>
+                </AnchorPane>
+            </Tab>
+            <Tab fx:id="returnTab" text="İade Ekranı">
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </Tab>
+            <Tab fx:id="stockControlTab" text="Stok Kontrol Ekranı">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</VBox>
