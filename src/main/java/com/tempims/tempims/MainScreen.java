@@ -110,6 +110,10 @@ public class MainScreen {
         ProductInteractions.productEntry(productEntryLabelBarcode.getText(), productEntryLabelBrand.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText(), productEntryLabelTax.getText(), productEntryLabelBuyPrice.getText(), String.valueOf(Integer.parseInt(productEntryLabelBuyPrice.getText()) / Integer.parseInt(productEntryLabelPiece.getText())), productEntryLabelSellPrice.getText());
     }
 
+    @FXML
+    protected void buypricekeypressed(){
+        productEntryLabelPrice.setText(String.valueOf(Integer.parseInt(productEntryLabelBuyPrice.getText())/Integer.parseInt(productEntryLabelPiece.getText())));
+    }
     protected void changeactiveuser(Label label) {
         label.setText("Kullanıcı: " + Session.username);
     }
