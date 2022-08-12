@@ -67,7 +67,7 @@
                                 <Insets />
                             </opaqueInsets>
                         </TextField>
-                        <TextField fx:id="productEntryLabelBuyPrice" layoutX="20.0" layoutY="130.0" promptText="alış fiyatı" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="200.0" />
+                        <TextField fx:id="productEntryLabelBuyPrice" layoutX="20.0" layoutY="130.0" onKeyReleased="#buypricekeypressed" promptText="alış fiyatı" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="200.0" />
                         <TextField fx:id="productEntryLabelSellPrice" layoutX="23.0" layoutY="301.0" promptText="satış fiyatı" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="230.0" />
                         <VBox alignment="TOP_CENTER" layoutX="150.0" layoutY="280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="270.0">
                             <children>
