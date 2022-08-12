@@ -41,7 +41,7 @@ public class MainScreen {
     String barcodeeverwritten = "";
 
     @FXML
-    protected void sellbuttonclicked() {
+    protected void sellButtonClicked() {
         ObservableList<Products> productslist = sellScreenTable.getItems();
         for (Products product : productslist) {
             ProductInteractions.sellProduct(product.barcode, product.amount);
@@ -49,8 +49,8 @@ public class MainScreen {
     }
 
     @FXML
-    protected void tabchanged() {
-        changeactiveuser(username);
+    protected void tabChanged() {
+        changeActiveUser(username);
     }
 
     @FXML
@@ -59,7 +59,7 @@ public class MainScreen {
     }
 
     @FXML
-    protected void enterpressed(KeyEvent keyEvent) throws IOException {
+    protected void enterPressed(KeyEvent keyEvent) throws IOException {
         if (keyEvent.getCode() == KeyCode.ENTER) {
             boolean add = false;
             boolean find = false;
@@ -111,10 +111,10 @@ public class MainScreen {
     }
 
     @FXML
-    protected void buypricekeypressed(){
+    protected void buyPriceKeyPressed(){
         productEntryLabelPrice.setText(String.valueOf(Integer.parseInt(productEntryLabelBuyPrice.getText())/Integer.parseInt(productEntryLabelPiece.getText())));
     }
-    protected void changeactiveuser(Label label) {
+    protected void changeActiveUser(Label label) {
         label.setText("Kullanıcı: " + Session.username);
     }
 }
