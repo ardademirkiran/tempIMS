@@ -136,6 +136,9 @@ public class MainScreen {
         int totalprice = 0;
         int totaldiscount = 0;
         double totaltax = 0.0;
+        totalPriceLabelstatic.setText(String.valueOf(0));
+        totalDiscountLabelstatic.setText(String.valueOf(0));
+        totalTaxLabelstatic.setText(String.valueOf(0));
         for (Products item : sellScreenTablestatic.getItems()) {
             totalprice += Integer.parseInt(lastPriceCollumnstatic.getCellObservableValue(item).getValue().getText());
             totaldiscount += Integer.parseInt(discountCollumnstatic.getCellObservableValue(item).getValue().getText())* item.amount;
@@ -170,18 +173,25 @@ public class MainScreen {
         azalt.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                sellScreenTable.getSelectionModel().getSelectedItem().amount--;
-                sellScreenTable.getSelectionModel().getSelectedItem().init();
+                if (sellScreenTable.getSelectionModel().getSelectedItem().amount == 1){
+                    sellScreenTable.getItems().remove(sellScreenTable.getSelectionModel().getSelectedItem());
+                }else{
+                    sellScreenTable.getSelectionModel().getSelectedItem().amount--;
+                }
+
                 refreshtabledata();
                 init();
                 changetotaldata();
+
             }
         });MenuItem sil = new MenuItem("Sil");
         sil.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 sellScreenTable.getItems().remove(sellScreenTable.getSelectionModel().getSelectedItem());
-                sellScreenTable.getSelectionModel().getSelectedItem().init();
+                if (sellScreenTable.getSelectionModel().getSelectedItem()!=null){
+                    sellScreenTable.getSelectionModel().getSelectedItem().init();
+                }
                 refreshtabledata();
                 init();
                 changetotaldata();
