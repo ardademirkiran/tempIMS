@@ -6,42 +6,32 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class Products {
     TextField discountper = new TextField("0");
     TextField discount = new TextField("0");
     Label calsellprice = new Label("");
-    int tax, unitsellprice, amount, calculatedunitsellprice;
+    int tax, unitsellprice, amount, calculatedunitsellprice, sellpricedb;
     String name, barcode;
 
     Products(String barcode, String name, int tax, int sellpricedb) {
+        discount.setPromptText("0");
+        discountper.setPromptText("0");
         this.name = name;
         this.barcode = barcode;
         this.unitsellprice = sellpricedb;
+        this.sellpricedb = sellpricedb;
         this.calculatedunitsellprice = sellpricedb;
         this.tax = tax;
         this.amount = 1;
         this.calsellprice.setText(String.valueOf(sellpricedb));
-        discountper.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                calculatedunitsellprice = (sellpricedb - calculatedis());
-                discount.setText(String.valueOf(calculatedis()));
-                calsellprice.setText(String.valueOf((unitsellprice - Integer.parseInt(discount.getText())) * amount));
-            }
-        });
-        discount.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                calculatedunitsellprice = (sellpricedb - Integer.parseInt(discount.getText()));
-                discountper.setText(String.valueOf(calculateperdis()));
-                calsellprice.setText(String.valueOf((unitsellprice - Integer.parseInt(discount.getText())) * amount));
-            }
-        });
+
+
     }
 
     public ObservableValue<TextField> observableValuedisper() {
@@ -147,10 +137,54 @@ public class Products {
     }
 
     private Integer calculateperdis() {
+        if (this.discount.getText().isEmpty()){
+            return 0;
+        }
         return ((Integer.parseInt(this.discount.getText()) * 100) / this.unitsellprice);
     }
 
     private Integer calculatedis() {
+        if (this.discountper.getText().isEmpty()){
+            return 0;
+        }
         return (Integer.parseInt(this.discountper.getText()) * this.unitsellprice) / 100;
+    }
+    public void init(){
+        discountper.setOnKeyTyped(keyEvent -> {
+            try {
+                calculatedunitsellprice = (sellpricedb - calculatedis());
+                discount.setText(String.valueOf(calculatedis()));
+                calsellprice.setText(String.valueOf((unitsellprice - Integer.parseInt(discount.getText())) * amount));
+                MainScreen.changetotaldata();
+            }catch (NumberFormatException e){
+                discount.setText("");
+                calsellprice.setText(String.valueOf(sellpricedb));
+            }
+
+        });
+        discount.setOnKeyTyped(keyEvent -> {
+            try {
+                String[] strings = new String[]{"8"};
+                if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(strings)) && discount.getText().isEmpty()){
+                    System.out.println("back");
+                    if (discount.getText().isEmpty()){
+                        discountper.setText("0");
+                        calsellprice.setText(String.valueOf(sellpricedb));
+                    }
+                }
+                else {
+                    calculatedunitsellprice = (sellpricedb - Integer.parseInt(discount.getText()));
+                    discountper.setText(String.valueOf(calculateperdis()));
+                    calsellprice.setText(String.valueOf((unitsellprice - Integer.parseInt(discount.getText())) * amount));}
+                MainScreen.changetotaldata();
+            }
+
+
+            catch (NumberFormatException e){
+                discount.setText("");
+                calsellprice.setText(String.valueOf(sellpricedb));
+            }
+        });
+        calsellprice.setText(String.valueOf((unitsellprice - Integer.parseInt(discount.getText())) * amount));
     }
 }
