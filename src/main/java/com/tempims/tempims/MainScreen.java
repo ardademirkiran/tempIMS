@@ -6,6 +6,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.AccessibleRole;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.stage.WindowEvent;
@@ -55,7 +56,22 @@ public class MainScreen {
     public Label totalDiscountLabel;
     public Label totalPriceLabel;
     public Label totalTaxLabel;
+    public TabPane tabpane;
     String barcodeeverwritten = "";
+
+
+    public TableView<AllProducts> stockTable;
+    public TableColumn<AllProducts,String> stockCollumnBarcode;
+    public TableColumn<AllProducts,String> stockCollumnBrand;
+    public TableColumn<AllProducts,String> stockCollumnName;
+    public TableColumn<AllProducts,Integer> stockCollumnAmont;
+    public TableColumn<AllProducts,Integer> stockCollumnTax;
+    public TableColumn<AllProducts,Integer> stockCollumnUnitBuy;
+    public TableColumn<AllProducts,Integer> stockCollumnUnitSell;
+    public TableColumn<AllProducts,Integer> stockCollumnExpectedProfit;
+
+
+
 
     @FXML
     protected void sellButtonClicked() {
@@ -70,6 +86,35 @@ public class MainScreen {
         changeActiveUser(username);
         init();
         setcontextmenu();
+
+        ContextMenu contextMenu = setcontextmenu();
+        sellScreenTable.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+            @Override
+            public void handle(ContextMenuEvent contextMenuEvent) {
+                final int[] i = {0};
+                Node source = contextMenuEvent.getPickResult().getIntersectedNode();
+
+                while (source != null && !(source instanceof TableRow)) {
+                    source = source.getParent();
+                }
+
+                if (source == null || ((TableRow<?>) source).isEmpty()) {
+                    sellScreenTable.getSelectionModel().clearSelection();
+
+                }
+                if (sellScreenTable.getSelectionModel().getSelectedItem()!=null & !(source == null || ((TableRow<?>) source).isEmpty())){
+                    contextMenu.show(sellScreenTable,contextMenuEvent.getScreenX(),contextMenuEvent.getScreenY());
+                }sellScreenTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        if (i[0] >0)
+                            contextMenu.hide();else{
+                                i[0]++;
+                            }
+                        }
+                    });
+                }
+            });
     }
 
     @FXML
@@ -127,7 +172,11 @@ public class MainScreen {
 
     @FXML
     protected void buyPriceKeyPressed(){
-        productEntryLabelPrice.setText(String.valueOf(Integer.parseInt(productEntryLabelBuyPrice.getText())/Integer.parseInt(productEntryLabelPiece.getText())));
+        try {
+            productEntryLabelPrice.setText(String.valueOf(Integer.parseInt(productEntryLabelBuyPrice.getText())/Integer.parseInt(productEntryLabelPiece.getText())));
+        }catch (NumberFormatException e){
+            productEntryLabelPrice.setText("0");
+        }
     }
     protected void changeActiveUser(Label label) {
         label.setText("Kullanıcı: " + Session.username);
@@ -158,6 +207,9 @@ public class MainScreen {
         totalTaxLabelstatic = totalTaxLabel;
     }
     public void refreshtabledata(){
+        for (Products pro:sellScreenTable.getItems()) {
+            pro.init();
+        }
         amountCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().getamount()));
         discountCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().observableValuedis()));
         percentageDiscountCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().observableValuedisper()));
@@ -167,7 +219,7 @@ public class MainScreen {
         lastPriceCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().observableValueprice()));
         sellScreenTable.refresh();
     }
-    public void setcontextmenu(){
+    public ContextMenu setcontextmenu(){
         ContextMenu contextMenu = new ContextMenu();
         MenuItem azalt = new MenuItem("Azalt");
         azalt.setOnAction(new EventHandler<ActionEvent>() {
@@ -178,7 +230,6 @@ public class MainScreen {
                 }else{
                     sellScreenTable.getSelectionModel().getSelectedItem().amount--;
                 }
-
                 refreshtabledata();
                 init();
                 changetotaldata();
@@ -199,23 +250,36 @@ public class MainScreen {
         });
         contextMenu.getItems().add(azalt);
         contextMenu.getItems().add(sil);
-        sellScreenTable.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
-            @Override
-            public void handle(ContextMenuEvent contextMenuEvent) {
-                final int[] i = {0};
-                if (sellScreenTable.getSelectionModel().getSelectedItem()!=null){
-                    contextMenu.show(sellScreenTable,contextMenuEvent.getScreenX(),contextMenuEvent.getScreenY());
-                }sellScreenTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        if (i[0] >0)
-                        contextMenu.hide();else{
-                            i[0]++;
-                        }
-                    }
-                });
-            }
-        });
+        return contextMenu;
+    }
+    @FXML
+    public void onstockcontrolopened(){
+        System.out.println("aaaa");
+        ProductInteractions.createAllProducts();
+        stockCollumnBarcode.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getbarcode());
+        stockCollumnAmont.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getamont());
+        stockCollumnBrand.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getbrand());
+        stockCollumnName.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getname());
+        stockCollumnTax.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().gettax());
+        stockCollumnUnitBuy.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getunitbuy());
+        stockCollumnUnitSell.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getunitsell());
+        stockCollumnExpectedProfit.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getprofit());
+        stockTable.getItems().add(new AllProducts("a","b","c","2","3","10","20"));
+    }
+    @FXML
+    public void stockControlClicked(MouseEvent mouseEvent){
+        if (mouseEvent.getClickCount()==2 & stockTable.getSelectionModel().getSelectedItem()!=null){
+            tabpane.getSelectionModel().select(buyScreenTab);
+            AllProducts selectedproduct = stockTable.getSelectionModel().getSelectedItem();
+            productEntryLabelBarcode.setText(selectedproduct.getbarcode().getValue());
+            productEntryLabelPrice.setText(String.valueOf(selectedproduct.getunitbuy().getValue()));
+            productEntryLabelPiece.setText(String.valueOf(selectedproduct.getamont().getValue()));
+            productEntryLabelBuyPrice.setText(String.valueOf(selectedproduct.getunitbuy().getValue()*selectedproduct.getamont().getValue()));
+            productEntryLabelBrand.setText(selectedproduct.getbrand().getValue());
+            productEntryLabelName.setText(selectedproduct.getname().getValue());
+            productEntryLabelTax.setText(String.valueOf(selectedproduct.gettax().getValue()));
+            productEntryLabelSellPrice.setText(String.valueOf(selectedproduct.getunitsell().getValue()));
+        }
     }
 }
 

@@ -6,42 +6,46 @@
 <?import javafx.scene.text.*?>
 
 <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="347.0" prefWidth="447.0" style="-fx-background-color: url('index.jpeg')" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tempims.tempims.LoginScreen">
-   <children>
-      <Label prefHeight="49.0" prefWidth="197.0" text="   TempIMS" textOverrun="CLIP" underline="true">
-         <VBox.margin>
-            <Insets bottom="30.0" top="-50.0" />
-         </VBox.margin>
-         <font>
-            <Font name="System Bold Italic" size="25.0" />
-         </font></Label>
-      <TextField fx:id="usernameField" alignment="CENTER" focusTraversable="false" maxWidth="200.0" promptText="Kullanıcı Adı" style="-fx-background-radius: 5;">
-         <VBox.margin>
-            <Insets bottom="30.0" />
-         </VBox.margin></TextField>
-      <PasswordField fx:id="passwordField" alignment="CENTER" focusTraversable="false" maxWidth="200.0" prefWidth="180.0" promptText="Şifre" style="-fx-background-radius: 5;">
-         <VBox.margin>
-            <Insets />
-         </VBox.margin></PasswordField>
-      <Label onMouseClicked="#forgetPassword" text="Şifremi Unuttum">
-         <VBox.margin>
-            <Insets left="90.0" />
-         </VBox.margin></Label>
-      <Label fx:id="warningLabel" text="Label" textAlignment="CENTER" visible="false" />
-      <HBox alignment="BOTTOM_CENTER" prefHeight="60.0" prefWidth="590.0">
-         <children>
-            <Button fx:id="loginButton" mnemonicParsing="false" onAction="#loginButtonAction" style="-fx-background-radius: 8;" text="Giriş Yap">
-               <HBox.margin>
-                  <Insets right="70.0" />
-               </HBox.margin>
-            </Button>
-            <Button fx:id="signupButton" focusTraversable="false" mnemonicParsing="false" onAction="#signupButtonAction" style="-fx-background-radius: 8;" text="Kaydol" />
-         </children>
-         <VBox.margin>
-            <Insets left="10.0" />
-         </VBox.margin>
-      </HBox>
-   </children>
-   <opaqueInsets>
-      <Insets />
-   </opaqueInsets>
+    <children>
+        <Label focusTraversable="false" prefHeight="49.0" prefWidth="197.0" text="   TempIMS" textOverrun="CLIP" underline="true">
+            <VBox.margin>
+                <Insets bottom="30.0" top="-50.0" />
+            </VBox.margin>
+            <font>
+                <Font name="System Bold Italic" size="25.0" />
+            </font>
+        </Label>
+        <TextField fx:id="usernameField" alignment="CENTER" maxWidth="200.0" promptText="Kullanıcı Adı" style="-fx-background-radius: 5;">
+            <VBox.margin>
+                <Insets bottom="30.0" />
+            </VBox.margin>
+        </TextField>
+        <PasswordField fx:id="passwordField" alignment="CENTER" maxWidth="200.0" prefWidth="180.0" promptText="Şifre" style="-fx-background-radius: 5;">
+            <VBox.margin>
+                <Insets />
+            </VBox.margin>
+        </PasswordField>
+        <Label focusTraversable="false" onMouseClicked="#forgetPassword" text="Şifremi Unuttum">
+            <VBox.margin>
+                <Insets left="90.0" />
+            </VBox.margin>
+        </Label>
+        <Label fx:id="warningLabel" text="Label" textAlignment="CENTER" visible="false" />
+        <HBox alignment="BOTTOM_CENTER" prefHeight="60.0" prefWidth="590.0">
+            <children>
+                <Button fx:id="loginButton" mnemonicParsing="false" onAction="#loginButtonAction" style="-fx-background-radius: 8;" text="Giriş Yap">
+                    <HBox.margin>
+                        <Insets right="70.0" />
+                    </HBox.margin>
+                </Button>
+                <Button fx:id="signupButton" mnemonicParsing="false" onAction="#signupButtonAction" style="-fx-background-radius: 8;" text="Kaydol" />
+            </children>
+            <VBox.margin>
+                <Insets left="10.0" />
+            </VBox.margin>
+        </HBox>
+    </children>
+    <opaqueInsets>
+        <Insets />
+    </opaqueInsets>
 </VBox>

@@ -28,5 +28,9 @@ public class ProductInteractions {
 
         return new Products(barcode, name, tax, sellprice);
     }
+    public static void createAllProducts(){
+        //new AllProducts(barcodeInput, brandInput, nameInput, numberInput, taxInput, totalBuyPriceInput, unitBuyPriceInput, sellPriceInput)
+        // bu kadar
+    }
 
 }
