@@ -1,5 +1,6 @@
 package com.tempims.tempims;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -8,7 +9,7 @@ import java.util.Base64;
 public class Session {
     public static String username;
 
-    public static int checkLogin(String usernameInput, String passwordInput) {
+    public static int checkLogin(String usernameInput, String passwordInput) throws IOException {
 
         String hashedPasswordDB = DBAccess.fetchPassword(usernameInput);  // This part will be accessed from sql database by using "username"
         String hashedPasswordInput = hashPassword(passwordInput);
@@ -19,13 +20,14 @@ public class Session {
 
         if (hashedPasswordDB.equals(hashedPasswordInput)) {
             username = usernameInput; // This line assigns username of the current user to static "username" variable for action recording.
+            ProcessLogs.recordUserProcess(1, username);
             return 1;
         } else {
             return 0;
         }
     }
 
-    public static int checkSignUp(String usernameInput, String passwordInput1, String passwordInput2) {
+    public static int checkSignUp(String usernameInput, String passwordInput1, String passwordInput2) throws IOException {
 
         if (DBAccess.checkUsername(usernameInput) > 0) {
             return -2;//sql part to check username and  return -2 if username already exists
@@ -41,7 +43,7 @@ public class Session {
             return 0;
         }
 
-
+        ProcessLogs.recordUserProcess(0, usernameInput);
         DBAccess.insertUser(usernameInput, hashPassword(passwordInput1));// sql part to put new user to database and returns 1
 
         return 1;

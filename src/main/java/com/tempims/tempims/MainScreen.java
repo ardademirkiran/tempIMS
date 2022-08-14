@@ -74,8 +74,9 @@ public class MainScreen {
 
 
     @FXML
-    protected void sellButtonClicked() {
+    protected void sellButtonClicked() throws IOException {
         ObservableList<Products> productslist = sellScreenTable.getItems();
+        ProcessLogs.recordSalesProcess(productslist, Double.parseDouble(totalPriceLabel.getText()));
         for (Products product : productslist) {
             ProductInteractions.sellProduct(product.barcode, product.amount);
         }
@@ -166,7 +167,8 @@ public class MainScreen {
     }
 
     @FXML
-    protected void productEntryLabelButtonOnClicked() {
+    protected void productEntryLabelButtonOnClicked() throws IOException {
+        ProcessLogs.recordStockEntryProcess(productEntryLabelBarcode.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText());
         ProductInteractions.productEntry(productEntryLabelBarcode.getText(), productEntryLabelBrand.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText(), productEntryLabelTax.getText(), productEntryLabelBuyPrice.getText(), String.valueOf(Integer.parseInt(productEntryLabelBuyPrice.getText()) / Integer.parseInt(productEntryLabelPiece.getText())), productEntryLabelSellPrice.getText());
     }
 
