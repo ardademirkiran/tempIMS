@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.AccessibleRole;
 import javafx.scene.Node;
@@ -12,6 +13,8 @@ import javafx.scene.input.*;
 import javafx.stage.WindowEvent;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class MainScreen {
@@ -25,8 +28,8 @@ public class MainScreen {
     public static Label totalTaxLabelstatic;
     public static Label subTotalLabelstatic;
 
-
-
+    boolean eventhandleradded = false;
+    public Tab openedtab;
 
     public Label username;
     public TableView<Products> sellScreenTable;
@@ -85,6 +88,16 @@ public class MainScreen {
 
     @FXML
     protected void tabChanged() {
+        if (!eventhandleradded){
+        Main.globalStage.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                sellScreenKeyTyped(keyEvent);
+            }
+        });
+        eventhandleradded = true;
+        }
+        openedtab = tabpane.getSelectionModel().getSelectedItem();
         changeActiveUser(username);
         init();
         setcontextmenu();
@@ -123,37 +136,6 @@ public class MainScreen {
     protected void cancelButtonClicked() {
         sellScreenTable.getItems().removeAll(sellScreenTable.getItems());
     }
-
-    @FXML
-    protected void enterPressed(KeyEvent keyEvent) throws IOException {
-        if (keyEvent.getCode() == KeyCode.ENTER) {
-            boolean add = false;
-            boolean find = false;
-            Products productdb = null;
-            if (sellScreenTable.getItems().size() > 0) {
-                for (Products pro : sellScreenTable.getItems()) {
-                    if (Objects.equals(pro.barcode, barcodeField.getText())) {
-                        pro.amount++;
-                        pro.calsellprice.setText(String.valueOf((pro.unitsellprice - Integer.parseInt(pro.discount.getText())) * pro.amount));
-                        find = true;
-                    }
-                }
-            }
-            if (!find) {
-                productdb = ProductInteractions.getProduct(barcodeField.getText());
-                add = true;
-            }
-            refreshtabledata();
-            if (add) {
-                sellScreenTable.getItems().addAll(productdb);
-            }
-            sellScreenTable.refresh();
-            init();
-            changetotaldata();
-        }
-    }
-
-
 
     @FXML
     protected void productEntryLabelBarcodeKeyPressed(KeyEvent event) {
@@ -261,7 +243,6 @@ public class MainScreen {
     }
     @FXML
     public void onstockcontrolopened(){
-        System.out.println("aaaa");
         ProductInteractions.createAllProducts();
         stockCollumnBarcode.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getbarcode());
         stockCollumnAmont.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getamont());
@@ -288,5 +269,47 @@ public class MainScreen {
             productEntryLabelSellPrice.setText(String.valueOf(selectedproduct.getunitsell().getValue()));
         }
     }
+    @FXML
+    public void sellScreenKeyTyped(KeyEvent keyEvent){
+        if (tabpane.getSelectionModel().getSelectedItem().getId().equals(sellScreenTab.getId())){
+            byte[] enter = {13};
+            byte[] back = {8};
+            if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(enter))) {
+                boolean add = false;
+                boolean find = false;
+                Products productdb = null;
+                if (sellScreenTable.getItems().size() > 0) {
+                    for (Products pro : sellScreenTable.getItems()) {
+                        if (Objects.equals(pro.barcode, barcodeField.getText())) {
+                            pro.amount++;
+                            pro.calsellprice.setText(String.valueOf((pro.unitsellprice - Integer.parseInt(pro.discount.getText())) * pro.amount));
+                            find = true;
+                        }
+                    }
+                }
+                if (!find) {
+                    productdb = ProductInteractions.getProduct(barcodeField.getText());
+                    add = true;
+                }
+                refreshtabledata();
+                if (add) {
+                    sellScreenTable.getItems().addAll(productdb);
+                }
+                sellScreenTable.refresh();
+                init();
+                changetotaldata();
+                barcodeField.setText("");
+            }
+            else if(Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(back))){
+                String prebarcode = barcodeField.getText();
+                prebarcode = prebarcode.substring(0,prebarcode.length()-1);
+                barcodeField.setText(prebarcode);
+            }else{
+                String prebarcode = barcodeField.getText();
+                barcodeField.setText(prebarcode+keyEvent.getCharacter());
+            }
+        }
+    }
+
 }
 
