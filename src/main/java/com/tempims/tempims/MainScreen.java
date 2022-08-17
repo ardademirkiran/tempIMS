@@ -23,6 +23,7 @@ public class MainScreen {
     public static Label totalDiscountLabelstatic;
     public static Label totalPriceLabelstatic;
     public static Label totalTaxLabelstatic;
+    public static Label subTotalLabelstatic;
 
 
 
@@ -36,7 +37,6 @@ public class MainScreen {
     public TableColumn<Products, TextField> percentageDiscountCollumn;
     public TableColumn<Products, TextField> discountCollumn;
     public TableColumn<Products, Label> lastPriceCollumn;
-    public Button sellButton;
     public TextField barcodeField;
     public Tab sellScreenTab;
     public Tab buyScreenTab;
@@ -57,6 +57,7 @@ public class MainScreen {
     public Label totalPriceLabel;
     public Label totalTaxLabel;
     public TabPane tabpane;
+    public Label subTotalLabel;
     String barcodeeverwritten = "";
 
 
@@ -186,18 +187,21 @@ public class MainScreen {
     public static void changetotaldata(){
         int totalprice = 0;
         int totaldiscount = 0;
-        double totaltax = 0.0;
+        int subtotal = 0;
         totalPriceLabelstatic.setText(String.valueOf(0));
         totalDiscountLabelstatic.setText(String.valueOf(0));
         totalTaxLabelstatic.setText(String.valueOf(0));
+        subTotalLabelstatic.setText(String.valueOf(0));
+
         for (Products item : sellScreenTablestatic.getItems()) {
             totalprice += Integer.parseInt(lastPriceCollumnstatic.getCellObservableValue(item).getValue().getText());
             totaldiscount += Integer.parseInt(discountCollumnstatic.getCellObservableValue(item).getValue().getText())* item.amount;
-            totaltax += Double.parseDouble(String.valueOf(kdvCollumnstatic.getCellObservableValue(item).getValue()))*Double.parseDouble(lastPriceCollumnstatic.getCellObservableValue(item).getValue().getText())/100;
+            subtotal += Integer.parseInt(lastPriceCollumnstatic.getCellObservableValue(item).getValue().getText())/(1 + kdvCollumnstatic.getCellObservableValue(item).getValue()/100.0);
         }
         totalPriceLabelstatic.setText(String.valueOf(totalprice));
+        subTotalLabelstatic.setText(String.valueOf(subtotal));
         totalDiscountLabelstatic.setText(String.valueOf(totaldiscount));
-        totalTaxLabelstatic.setText(String.valueOf(totaltax));
+        totalTaxLabelstatic.setText(String.valueOf(totalprice-subtotal));
     }
     public void init(){
         lastPriceCollumnstatic = lastPriceCollumn;
@@ -207,6 +211,7 @@ public class MainScreen {
         totalDiscountLabelstatic = totalDiscountLabel;
         totalPriceLabelstatic = totalPriceLabel;
         totalTaxLabelstatic = totalTaxLabel;
+        subTotalLabelstatic = subTotalLabel;
     }
     public void refreshtabledata(){
         for (Products pro:sellScreenTable.getItems()) {

@@ -23,7 +23,7 @@
                 <ComboBox layoutX="20.0" layoutY="20.0" promptText="Müşteri (Genel Müşteri)" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                 <TextField fx:id="barcodeField" layoutX="240.0" layoutY="20.0" onKeyPressed="#enterPressed" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="75.0" AnchorPane.topAnchor="10.0" />
                 <Button alignment="CENTER" layoutX="431.0" layoutY="20.0" mnemonicParsing="false" onAction="#cancelButtonClicked" text="İptal" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
-                <TableView fx:id="sellScreenTable" editable="true" layoutX="20.0" layoutY="64.0" AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0">
+                <TableView fx:id="sellScreenTable" editable="true" layoutX="20.0" layoutY="64.0" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0">
                     <columns>
                         <TableColumn fx:id="barcodeCollumn" prefWidth="75.0" text="Barkod" />
                         <TableColumn fx:id="nameCollumn" prefWidth="75.0" text="Ad" />
@@ -31,47 +31,57 @@
                         <TableColumn fx:id="kdvCollumn" prefWidth="75.0" text="Kdv Oranı" />
                         <TableColumn fx:id="percentageDiscountCollumn" prefWidth="75.0" text="İskonto %" />
                         <TableColumn fx:id="discountCollumn" prefWidth="75.0" text="İskonto TL" />
-                        <TableColumn fx:id="lastPriceCollumn" prefWidth="75.0" text="Son Ücret" />
+                        <TableColumn fx:id="lastPriceCollumn" prefWidth="75.0" text="Ara Toplam" />
                     </columns>
                     <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                     </columnResizePolicy>
                 </TableView>
-                <Button mnemonicParsing="false" prefHeight="80.0" prefWidth="295.0" text="İşlemi Onayla" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="30.0">
+                <Button mnemonicParsing="false" onMouseClicked="#sellButtonClicked" prefHeight="80.0" prefWidth="295.0" text="İşlemi Onayla" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="30.0">
                     <font>
                         <Font size="36.0" />
                     </font>
                 </Button>
-                <Label text="Toplam İskonto :" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
+                <Label text="İskonto :" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="10.0">
                     <font>
                         <Font size="36.0" />
                     </font>
                 </Label>
-                <Label text="Toplam Kdv :" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="10.0">
+                <Label text="Kdv :" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="10.0">
                     <font>
                         <Font size="36.0" />
                     </font>
                 </Label>
-                <Label layoutX="10.0" layoutY="10.0" text="Toplam Fiyat :" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="10.0">
+                <Label layoutX="10.0" layoutY="10.0" text="Satış Fiyatı :" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
                     <font>
                         <Font size="36.0" />
                     </font>
                 </Label>
-                <Label fx:id="totalDiscountLabel" layoutX="20.0" layoutY="447.0" text="0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="320.0">
+                <Label fx:id="totalDiscountLabel" layoutX="20.0" layoutY="447.0" text="0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="320.0">
                     <font>
                         <Font size="36.0" />
                     </font>
                 </Label>
-                <Label fx:id="totalPriceLabel" layoutX="140.0" layoutY="447.0" text="0" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="320.0">
+                <Label fx:id="totalPriceLabel" layoutX="140.0" layoutY="447.0" text="0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="320.0">
                     <font>
                         <Font size="36.0" />
                     </font>
                 </Label>
-                <Label fx:id="totalTaxLabel" layoutX="140.0" layoutY="447.0" text="0.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="320.0">
+                <Label fx:id="totalTaxLabel" layoutX="140.0" layoutY="447.0" text="0.0" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="320.0">
                     <font>
                         <Font size="36.0" />
                     </font>
                 </Label>
+            <Label layoutX="17.0" layoutY="409.0" text="Ara Toplam:" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="10.0">
+               <font>
+                  <Font size="36.0" />
+               </font>
+            </Label>
+            <Label fx:id="subTotalLabel" layoutX="340.0" layoutY="463.0" text="0.0" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="320.0">
+               <font>
+                  <Font size="36.0" />
+               </font>
+            </Label>
                 <padding>
                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                 </padding>

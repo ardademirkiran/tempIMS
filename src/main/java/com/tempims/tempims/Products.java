@@ -16,7 +16,7 @@ public class Products {
     TextField discountper = new TextField("0");
     TextField discount = new TextField("0");
     Label calsellprice = new Label("");
-    int tax, unitsellprice, amount, calculatedunitsellprice, sellpricedb;
+    int tax, unitsellprice, amount, calculatedunitsellprice, sellpricedb, pricewithouttax;
     String name, barcode;
 
     Products(String barcode, String name, int tax, int sellpricedb) {
@@ -30,8 +30,6 @@ public class Products {
         this.tax = tax;
         this.amount = 1;
         this.calsellprice.setText(String.valueOf(sellpricedb));
-
-
     }
 
     public ObservableValue<TextField> observableValuedisper() {
