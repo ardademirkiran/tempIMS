@@ -324,13 +324,9 @@ public class MainScreen {
         }
     }
     @FXML
-    public void statisticsTabOpened(){
-        HashMap<String,Number> pieChartData = new HashMap<>(); // Name and total price of that product
-        pieChartData.put("Kalem",100);
-        pieChartData.put("Silgi",200);
-        pieChartData.put("Portakal",300);
-        pieChartData.put("Limon",400);
-        setPieChart(pieChartData);
+    public void statisticsTabOpened() throws IOException {
+        Stats.createChartInfo();
+        setPieChart(Stats.productChartInfo);
 
 
         HashMap<LocalDate,Number> barChartData = new HashMap<>(); // date and total price of that day
