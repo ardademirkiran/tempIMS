@@ -1,19 +1,23 @@
 package com.tempims.tempims;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
-import javafx.scene.AccessibleRole;
+import javafx.geometry.Side;
 import javafx.scene.Node;
+import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
-import javafx.stage.WindowEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -27,6 +31,13 @@ public class MainScreen {
     public static Label totalPriceLabelstatic;
     public static Label totalTaxLabelstatic;
     public static Label subTotalLabelstatic;
+    public AnchorPane statisticAnchorPane;
+
+
+    CategoryAxis xAxis = new CategoryAxis();
+    NumberAxis yAxis = new NumberAxis("TL",0,50,5);
+    public StackedBarChart<String,Number> stackedBarChart = new StackedBarChart<>(xAxis,yAxis);
+    public PieChart pieChart;
 
     boolean eventhandleradded = false;
     public Tab openedtab;
@@ -309,6 +320,62 @@ public class MainScreen {
                 barcodeField.setText(prebarcode+keyEvent.getCharacter());
             }
         }
+    }
+    @FXML
+    public void statisticsTabOpened(){
+        pieChart.getData().add(new PieChart.Data("Elma",4));
+        pieChart.getData().add(new PieChart.Data("Armut",2));
+        pieChart.getData().add(new PieChart.Data("Limon",5));
+        Label pieInfo = new Label("");
+        pieInfo.setTextFill(Color.BLACK);
+        DoubleBinding total = Bindings.createDoubleBinding(() ->
+                (Double) pieChart.getData().stream().mapToDouble(PieChart.Data::getPieValue).sum(), pieChart.getData());
+        for (final PieChart.Data data : pieChart.getData()) {
+            data.getNode().addEventHandler(MouseEvent.MOUSE_MOVED,
+                    e -> {
+                        pieInfo.setVisible(true);
+                        pieInfo.setTranslateX(e.getSceneX()+5);
+                        pieInfo.setTranslateY(e.getSceneY()-90);
+                        String text = String.format("%.1f%%", 100*data.getPieValue()/total.get()) ;
+                        pieInfo.setText(text+"\n"+(int)data.getPieValue()+"TL");
+                    }
+            );data.getNode().addEventHandler(MouseEvent.MOUSE_EXITED, mouseEvent -> {
+                pieInfo.setVisible(false);
+            });
+        }
+        statisticAnchorPane.getChildren().add(pieInfo);
+
+
+
+        var series = new StackedBarChart.Series<String,Number>();
+        series.getData().add(new StackedBarChart.Data<String,Number>(LocalDate.of(2020,10,5).toString(),1));
+        series.getData().add(new StackedBarChart.Data<String,Number>(LocalDate.of(2020,10,6).toString(),2));
+        series.getData().add(new StackedBarChart.Data<String,Number>(LocalDate.of(2020,10,7).toString(),3));
+        series.getData().add(new StackedBarChart.Data<String,Number>(LocalDate.of(2020,10,8).toString(),4));
+        series.getData().add(new StackedBarChart.Data<String,Number>(LocalDate.of(2020,10,9).toString(),3));
+        series.getData().add(new StackedBarChart.Data<String,Number>(LocalDate.of(2020,10,10).toString(),2));
+        series.getData().add(new StackedBarChart.Data<String,Number>(LocalDate.of(2020,10,11).toString(),1));
+        series.getData().add(new StackedBarChart.Data<String,Number>(LocalDate.of(2020,10,12).toString(),10));
+        series.setName("Tarih");
+        stackedBarChart.getData().add(series);
+        stackedBarChart.setAnimated(false);
+        Label barinfo = new Label("");
+        for (final StackedBarChart.Data data: series.getData()){
+            data.getNode().addEventHandler(MouseEvent.MOUSE_MOVED, mouseEvent -> {
+                barinfo.setVisible(true);
+                barinfo.setTranslateX(mouseEvent.getSceneX());
+                barinfo.setTranslateY(mouseEvent.getSceneY()-80);
+                barinfo.setText(data.getYValue().toString());
+            });
+            data.getNode().addEventHandler(MouseEvent.MOUSE_EXITED,mouseEvent -> {
+                barinfo.setVisible(false);
+            });
+
+        }barinfo.setTextFill(Color.BLACK);
+
+        statisticAnchorPane.getChildren().add(barinfo);
+
+
     }
 
 }
