@@ -93,6 +93,7 @@ public class MainScreen {
     @FXML
     protected void sellButtonClicked() throws IOException {
         ObservableList<Products> productslist = sellScreenTable.getItems();
+        Stats.updateProfit(productslist);
         ProcessLogs.recordSalesProcess(productslist, Double.parseDouble(totalPriceLabel.getText()));
         for (Products product : productslist) {
             ProductInteractions.sellProduct(product.barcode, product.amount);
@@ -265,7 +266,7 @@ public class MainScreen {
         stockCollumnUnitBuy.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getunitbuy());
         stockCollumnUnitSell.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getunitsell());
         stockCollumnExpectedProfit.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getprofit());
-        stockTable.getItems().add(new AllProducts("a","b","c","2","3","10","20"));
+        //stockTable.getItems().add(new AllProducts("a","b","c","2","3","10","20"));
     }
     @FXML
     public void stockControlClicked(MouseEvent mouseEvent){
