@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class MainScreen {
@@ -323,10 +325,27 @@ public class MainScreen {
     }
     @FXML
     public void statisticsTabOpened(){
-        pieChart.getData().add(new PieChart.Data("Elma",4));
-        pieChart.getData().add(new PieChart.Data("Armut",2));
-        pieChart.getData().add(new PieChart.Data("Limon",5));
-        Label pieInfo = new Label("");
+        HashMap<String,Number> pieChartData = new HashMap<>(); // Name and total price of that product
+        pieChartData.put("Kalem",100);
+        pieChartData.put("Silgi",200);
+        pieChartData.put("Portakal",300);
+        pieChartData.put("Limon",400);
+        setPieChart(pieChartData);
+
+
+        HashMap<LocalDate,Number> barChartData = new HashMap<>(); // date and total price of that day
+        barChartData.put(LocalDate.of(2022,8,20),50);
+        barChartData.put(LocalDate.of(2022,8,21),100);
+        barChartData.put(LocalDate.of(2022,8,22),80);
+        barChartData.put(LocalDate.of(2022,8,23),200);
+        setBarChart(barChartData);
+
+
+    }
+    public void setPieChart(HashMap<String,Number> nameAndPrice){
+        for (String name: nameAndPrice.keySet()) {
+            pieChart.getData().add(new PieChart.Data(name, (Integer)nameAndPrice.get(name)+0.0));
+        }Label pieInfo = new Label("");
         pieInfo.setTextFill(Color.BLACK);
         DoubleBinding total = Bindings.createDoubleBinding(() ->
                 (Double) pieChart.getData().stream().mapToDouble(PieChart.Data::getPieValue).sum(), pieChart.getData());
@@ -342,21 +361,15 @@ public class MainScreen {
             );data.getNode().addEventHandler(MouseEvent.MOUSE_EXITED, mouseEvent -> {
                 pieInfo.setVisible(false);
             });
-        }
-        statisticAnchorPane.getChildren().add(pieInfo);
+        }statisticAnchorPane.getChildren().add(pieInfo);
 
+    }
 
-
+    public void setBarChart(HashMap<LocalDate,Number> dateAndPriceList){
         var series = new StackedBarChart.Series<String,Number>();
-        series.getData().add(new StackedBarChart.Data<String,Number>(LocalDate.of(2020,10,5).toString(),1));
-        series.getData().add(new StackedBarChart.Data<String,Number>(LocalDate.of(2020,10,6).toString(),2));
-        series.getData().add(new StackedBarChart.Data<String,Number>(LocalDate.of(2020,10,7).toString(),3));
-        series.getData().add(new StackedBarChart.Data<String,Number>(LocalDate.of(2020,10,8).toString(),4));
-        series.getData().add(new StackedBarChart.Data<String,Number>(LocalDate.of(2020,10,9).toString(),3));
-        series.getData().add(new StackedBarChart.Data<String,Number>(LocalDate.of(2020,10,10).toString(),2));
-        series.getData().add(new StackedBarChart.Data<String,Number>(LocalDate.of(2020,10,11).toString(),1));
-        series.getData().add(new StackedBarChart.Data<String,Number>(LocalDate.of(2020,10,12).toString(),10));
-        series.setName("Tarih");
+        for (LocalDate date : dateAndPriceList.keySet()) {
+            series.getData().add(new XYChart.Data<>(date.toString(),dateAndPriceList.get(date)));
+        }series.setName("Tarih");
         stackedBarChart.getData().add(series);
         stackedBarChart.setAnimated(false);
         Label barinfo = new Label("");
@@ -374,8 +387,6 @@ public class MainScreen {
         }barinfo.setTextFill(Color.BLACK);
 
         statisticAnchorPane.getChildren().add(barinfo);
-
-
     }
 
 }
