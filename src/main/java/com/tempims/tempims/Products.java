@@ -16,10 +16,11 @@ public class Products {
     TextField discountper = new TextField("0");
     TextField discount = new TextField("0");
     Label calsellprice = new Label("");
-    int tax, unitsellprice, amount, calculatedunitsellprice, sellpricedb, pricewithouttax;
+    int amount, tax;
+    Double unitsellprice, calculatedunitsellprice, sellpricedb, pricewithouttax;
     String name, barcode;
 
-    Products(String barcode, String name, int tax, int sellpricedb) {
+    Products(String barcode, String name, Integer tax, Double sellpricedb) {
         discount.setPromptText("0");
         discountper.setPromptText("0");
         this.name = name;
@@ -134,25 +135,25 @@ public class Products {
         return new SimpleIntegerProperty(amount).asObject();
     }
 
-    private Integer calculateperdis() {
+    private Double calculateperdis() {
         if (this.discount.getText().isEmpty()){
-            return 0;
+            return 0.0;
         }
-        return ((Integer.parseInt(this.discount.getText()) * 100) / this.unitsellprice);
+        return ((Double.parseDouble(this.discount.getText()) * 100) / this.unitsellprice);
     }
 
-    private Integer calculatedis() {
+    private Double calculatedis() {
         if (this.discountper.getText().isEmpty()){
-            return 0;
+            return 0.0;
         }
-        return (Integer.parseInt(this.discountper.getText()) * this.unitsellprice) / 100;
+        return (Double.parseDouble(this.discountper.getText()) * this.unitsellprice) / 100;
     }
     public void init(){
         discountper.setOnKeyTyped(keyEvent -> {
             try {
                 calculatedunitsellprice = (sellpricedb - calculatedis());
                 discount.setText(String.valueOf(calculatedis()));
-                calsellprice.setText(String.valueOf((unitsellprice - Integer.parseInt(discount.getText())) * amount));
+                calsellprice.setText(String.valueOf((unitsellprice - Double.parseDouble(discount.getText())) * amount));
                 MainScreen.changetotaldata();
             }catch (NumberFormatException e){
                 discount.setText("");
@@ -164,16 +165,15 @@ public class Products {
             try {
                 String[] strings = new String[]{"8"};
                 if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(strings)) && discount.getText().isEmpty()){
-                    System.out.println("back");
                     if (discount.getText().isEmpty()){
                         discountper.setText("0");
                         calsellprice.setText(String.valueOf(sellpricedb));
                     }
                 }
                 else {
-                    calculatedunitsellprice = (sellpricedb - Integer.parseInt(discount.getText()));
+                    calculatedunitsellprice = (sellpricedb - Double.parseDouble(discount.getText()));
                     discountper.setText(String.valueOf(calculateperdis()));
-                    calsellprice.setText(String.valueOf((unitsellprice - Integer.parseInt(discount.getText())) * amount));}
+                    calsellprice.setText(String.valueOf((unitsellprice - Double.parseDouble(discount.getText())) * amount));}
                 MainScreen.changetotaldata();
             }
 
@@ -183,6 +183,6 @@ public class Products {
                 calsellprice.setText(String.valueOf(sellpricedb));
             }
         });
-        calsellprice.setText(String.valueOf((unitsellprice - Integer.parseInt(discount.getText())) * amount));
+        calsellprice.setText(String.valueOf((unitsellprice - Double.parseDouble(discount.getText())) * amount));
     }
 }
