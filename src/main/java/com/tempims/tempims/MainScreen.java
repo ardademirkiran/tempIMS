@@ -5,13 +5,13 @@ import javafx.beans.binding.DoubleBinding;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
-import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
-import javafx.scene.input.*;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 
@@ -19,13 +19,12 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 
 public class MainScreen {
 
-    public static TableColumn<Products,Label> lastPriceCollumnstatic;
+    public static TableColumn<Products, Label> lastPriceCollumnstatic;
     public static TableView<Products> sellScreenTablestatic;
     public static TableColumn<Products, TextField> discountCollumnstatic;
     public static TableColumn<Products, Integer> kdvCollumnstatic;
@@ -34,16 +33,9 @@ public class MainScreen {
     public static Label totalTaxLabelstatic;
     public static Label subTotalLabelstatic;
     public AnchorPane statisticAnchorPane;
-
-
-    CategoryAxis xAxis = new CategoryAxis();
-    NumberAxis yAxis = new NumberAxis("TL",0,50,5);
-    public StackedBarChart<String,Number> stackedBarChart = new StackedBarChart<>(xAxis,yAxis);
+    public Tab statisticsTab;
     public PieChart pieChart;
-
-    boolean eventhandleradded = false;
     public Tab openedtab;
-
     public Label username;
     public TableView<Products> sellScreenTable;
     public TableColumn<Products, String> barcodeCollumn;
@@ -58,8 +50,6 @@ public class MainScreen {
     public Tab buyScreenTab;
     public Tab returnTab;
     public Tab stockControlTab;
-
-
     public TextField productEntryLabelBarcode;
     public TextField productEntryLabelName;
     public TextField productEntryLabelTax;
@@ -74,21 +64,40 @@ public class MainScreen {
     public Label totalTaxLabel;
     public TabPane tabpane;
     public Label subTotalLabel;
+    public TableView<AllProducts> stockTable;
+    public TableColumn<AllProducts, String> stockCollumnBarcode;
+    public TableColumn<AllProducts, String> stockCollumnBrand;
+    public TableColumn<AllProducts, String> stockCollumnName;
+    public TableColumn<AllProducts, Integer> stockCollumnAmont;
+    public TableColumn<AllProducts, Integer> stockCollumnTax;
+    public TableColumn<AllProducts, Double> stockCollumnUnitBuy;
+    public TableColumn<AllProducts, Double> stockCollumnUnitSell;
+    public TableColumn<AllProducts, Double> stockCollumnExpectedProfit;
+    CategoryAxis xAxis = new CategoryAxis();
+    NumberAxis yAxis = new NumberAxis("TL", 0, 50, 5);
+    public StackedBarChart<String, Number> stackedBarChart = new StackedBarChart<>(xAxis, yAxis);
+    boolean eventhandleradded = false;
     String barcodeeverwritten = "";
 
+    public static void changetotaldata() {
+        double totalprice = 0;
+        double totaldiscount = 0;
+        double subtotal = 0;
+        totalPriceLabelstatic.setText(String.valueOf(0));
+        totalDiscountLabelstatic.setText(String.valueOf(0));
+        totalTaxLabelstatic.setText(String.valueOf(0));
+        subTotalLabelstatic.setText(String.valueOf(0));
 
-    public TableView<AllProducts> stockTable;
-    public TableColumn<AllProducts,String> stockCollumnBarcode;
-    public TableColumn<AllProducts,String> stockCollumnBrand;
-    public TableColumn<AllProducts,String> stockCollumnName;
-    public TableColumn<AllProducts,Integer> stockCollumnAmont;
-    public TableColumn<AllProducts,Integer> stockCollumnTax;
-    public TableColumn<AllProducts,Double> stockCollumnUnitBuy;
-    public TableColumn<AllProducts,Double> stockCollumnUnitSell;
-    public TableColumn<AllProducts,Double> stockCollumnExpectedProfit;
-
-
-
+        for (Products item : sellScreenTablestatic.getItems()) {
+            totalprice += Double.parseDouble(lastPriceCollumnstatic.getCellObservableValue(item).getValue().getText());
+            totaldiscount += Double.parseDouble(discountCollumnstatic.getCellObservableValue(item).getValue().getText()) * item.amount;
+            subtotal += Double.parseDouble(lastPriceCollumnstatic.getCellObservableValue(item).getValue().getText()) / (1 + kdvCollumnstatic.getCellObservableValue(item).getValue() / 100.0);
+        }
+        totalPriceLabelstatic.setText(String.valueOf(totalprice));
+        subTotalLabelstatic.setText(String.valueOf(subtotal));
+        totalDiscountLabelstatic.setText(String.valueOf(totaldiscount));
+        totalTaxLabelstatic.setText(String.valueOf(totalprice - subtotal));
+    }
 
     @FXML
     protected void sellButtonClicked() throws IOException {
@@ -99,16 +108,17 @@ public class MainScreen {
         }
         cancelButtonClicked();
     }
+
     @FXML
     protected void tabChanged() {
-        if (!eventhandleradded){
-        Main.globalStage.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                sellScreenKeyTyped(keyEvent);
-            }
-        });
-        eventhandleradded = true;
+        if (!eventhandleradded) {
+            Main.globalStage.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(KeyEvent keyEvent) {
+                    sellScreenKeyTyped(keyEvent);
+                }
+            });
+            eventhandleradded = true;
         }
         openedtab = tabpane.getSelectionModel().getSelectedItem();
         changeActiveUser(username);
@@ -130,19 +140,21 @@ public class MainScreen {
                     sellScreenTable.getSelectionModel().clearSelection();
 
                 }
-                if (sellScreenTable.getSelectionModel().getSelectedItem()!=null & !(source == null || ((TableRow<?>) source).isEmpty())){
-                    contextMenu.show(sellScreenTable,contextMenuEvent.getScreenX(),contextMenuEvent.getScreenY());
-                }sellScreenTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                if (sellScreenTable.getSelectionModel().getSelectedItem() != null & !(source == null || ((TableRow<?>) source).isEmpty())) {
+                    contextMenu.show(sellScreenTable, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
+                }
+                sellScreenTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
-                        if (i[0] >0)
-                            contextMenu.hide();else{
-                                i[0]++;
-                            }
+                        if (i[0] > 0)
+                            contextMenu.hide();
+                        else {
+                            i[0]++;
                         }
-                    });
-                }
-            });
+                    }
+                });
+            }
+        });
     }
 
     @FXML
@@ -168,8 +180,9 @@ public class MainScreen {
         ProcessLogs.recordStockEntryProcess(productEntryLabelBarcode.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText());
         ProductInteractions.productEntry(productEntryLabelBarcode.getText(), productEntryLabelBrand.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText(), productEntryLabelTax.getText(), productEntryLabelBuyPrice.getText(), String.valueOf(Double.parseDouble(productEntryLabelBuyPrice.getText()) / Double.parseDouble(productEntryLabelPiece.getText())), productEntryLabelSellPrice.getText());
     }
+
     @FXML
-    protected void barcodeFieldKeyTyped(KeyEvent keyEvent){
+    protected void barcodeFieldKeyTyped(KeyEvent keyEvent) {
         byte[] enter = {13};
         if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(enter))) {
             boolean add = false;
@@ -198,37 +211,21 @@ public class MainScreen {
             barcodeField.setText("");
         }
     }
+
     @FXML
-    protected void buyPriceKeyPressed(){
+    protected void buyPriceKeyPressed() {
         try {
-            productEntryLabelPrice.setText(String.valueOf(Double.parseDouble(productEntryLabelBuyPrice.getText())/Double.parseDouble(productEntryLabelPiece.getText())));
-        }catch (NumberFormatException e){
+            productEntryLabelPrice.setText(String.valueOf(Double.parseDouble(productEntryLabelBuyPrice.getText()) / Double.parseDouble(productEntryLabelPiece.getText())));
+        } catch (NumberFormatException e) {
             productEntryLabelPrice.setText("0");
         }
     }
+
     protected void changeActiveUser(Label label) {
         label.setText("Kullanıcı: " + Session.username);
     }
-    public static void changetotaldata(){
-        double totalprice = 0;
-        double totaldiscount = 0;
-        double subtotal = 0;
-        totalPriceLabelstatic.setText(String.valueOf(0));
-        totalDiscountLabelstatic.setText(String.valueOf(0));
-        totalTaxLabelstatic.setText(String.valueOf(0));
-        subTotalLabelstatic.setText(String.valueOf(0));
 
-        for (Products item : sellScreenTablestatic.getItems()) {
-            totalprice += Double.parseDouble(lastPriceCollumnstatic.getCellObservableValue(item).getValue().getText());
-            totaldiscount += Double.parseDouble(discountCollumnstatic.getCellObservableValue(item).getValue().getText())* item.amount;
-            subtotal += Double.parseDouble(lastPriceCollumnstatic.getCellObservableValue(item).getValue().getText())/(1 + kdvCollumnstatic.getCellObservableValue(item).getValue()/100.0);
-        }
-        totalPriceLabelstatic.setText(String.valueOf(totalprice));
-        subTotalLabelstatic.setText(String.valueOf(subtotal));
-        totalDiscountLabelstatic.setText(String.valueOf(totaldiscount));
-        totalTaxLabelstatic.setText(String.valueOf(totalprice-subtotal));
-    }
-    public void init(){
+    public void init() {
         lastPriceCollumnstatic = lastPriceCollumn;
         sellScreenTablestatic = sellScreenTable;
         discountCollumnstatic = discountCollumn;
@@ -238,8 +235,9 @@ public class MainScreen {
         totalTaxLabelstatic = totalTaxLabel;
         subTotalLabelstatic = subTotalLabel;
     }
-    public void refreshtabledata(){
-        for (Products pro:sellScreenTable.getItems()) {
+
+    public void refreshtabledata() {
+        for (Products pro : sellScreenTable.getItems()) {
             pro.init();
         }
         amountCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().getamount()));
@@ -251,15 +249,16 @@ public class MainScreen {
         lastPriceCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().observableValueprice()));
         sellScreenTable.refresh();
     }
-    public ContextMenu setcontextmenu(){
+
+    public ContextMenu setcontextmenu() {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem azalt = new MenuItem("Azalt");
         azalt.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if (sellScreenTable.getSelectionModel().getSelectedItem().amount == 1){
+                if (sellScreenTable.getSelectionModel().getSelectedItem().amount == 1) {
                     sellScreenTable.getItems().remove(sellScreenTable.getSelectionModel().getSelectedItem());
-                }else{
+                } else {
                     sellScreenTable.getSelectionModel().getSelectedItem().amount--;
                 }
                 refreshtabledata();
@@ -267,12 +266,13 @@ public class MainScreen {
                 changetotaldata();
 
             }
-        });MenuItem sil = new MenuItem("Sil");
+        });
+        MenuItem sil = new MenuItem("Sil");
         sil.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 sellScreenTable.getItems().remove(sellScreenTable.getSelectionModel().getSelectedItem());
-                if (sellScreenTable.getSelectionModel().getSelectedItem()!=null){
+                if (sellScreenTable.getSelectionModel().getSelectedItem() != null) {
                     sellScreenTable.getSelectionModel().getSelectedItem().init();
                 }
                 refreshtabledata();
@@ -284,9 +284,10 @@ public class MainScreen {
         contextMenu.getItems().add(sil);
         return contextMenu;
     }
+
     @FXML
-    public void onstockcontrolopened(){
-        ProductInteractions.createAllProducts();
+    public void onstockcontrolopened() {
+        //ProductInteractions.createAllProducts();
         stockCollumnBarcode.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getbarcode());
         stockCollumnAmont.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getamont());
         stockCollumnBrand.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getbrand());
@@ -297,24 +298,26 @@ public class MainScreen {
         stockCollumnExpectedProfit.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getprofit());
         stockTable.refresh();
     }
+
     @FXML
-    public void stockControlClicked(MouseEvent mouseEvent){
-        if (mouseEvent.getClickCount()==2 & stockTable.getSelectionModel().getSelectedItem()!=null){
+    public void stockControlClicked(MouseEvent mouseEvent) {
+        if (mouseEvent.getClickCount() == 2 & stockTable.getSelectionModel().getSelectedItem() != null) {
             tabpane.getSelectionModel().select(buyScreenTab);
             AllProducts selectedproduct = stockTable.getSelectionModel().getSelectedItem();
             productEntryLabelBarcode.setText(selectedproduct.getbarcode().getValue());
             productEntryLabelPrice.setText(String.valueOf(selectedproduct.getunitbuy().getValue()));
             productEntryLabelPiece.setText(String.valueOf(selectedproduct.getamont().getValue()));
-            productEntryLabelBuyPrice.setText(String.valueOf(selectedproduct.getunitbuy().getValue()*selectedproduct.getamont().getValue()));
+            productEntryLabelBuyPrice.setText(String.valueOf(selectedproduct.getunitbuy().getValue() * selectedproduct.getamont().getValue()));
             productEntryLabelBrand.setText(selectedproduct.getbrand().getValue());
             productEntryLabelName.setText(selectedproduct.getname().getValue());
             productEntryLabelTax.setText(String.valueOf(selectedproduct.gettax().getValue()));
             productEntryLabelSellPrice.setText(String.valueOf(selectedproduct.getunitsell().getValue()));
         }
     }
+
     @FXML
-    public void sellScreenKeyTyped(KeyEvent keyEvent){
-        if (tabpane.getSelectionModel().getSelectedItem().getId().equals(sellScreenTab.getId())){
+    public void sellScreenKeyTyped(KeyEvent keyEvent) {
+        if (tabpane.getSelectionModel().getSelectedItem().getId().equals(sellScreenTab.getId())) {
             byte[] enter = {13};
             byte[] back = {8};
             if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(enter))) {
@@ -342,75 +345,88 @@ public class MainScreen {
                 init();
                 changetotaldata();
                 barcodeField.setText("");
-            }
-            else if(Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(back))){
+            } else if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(back))) {
                 String prebarcode = barcodeField.getText();
-                prebarcode = prebarcode.substring(0,prebarcode.length()-1);
+                prebarcode = prebarcode.substring(0, prebarcode.length() - 1);
                 barcodeField.setText(prebarcode);
-            }else{
+            } else {
                 String prebarcode = barcodeField.getText();
-                barcodeField.setText(prebarcode+keyEvent.getCharacter());
+                barcodeField.setText(prebarcode + keyEvent.getCharacter());
             }
         }
     }
+
     @FXML
     public void statisticsTabOpened() throws IOException {
-        Stats.createChartInfo();
-        setPieChart(Stats.productChartInfo);
-
-
-        HashMap<LocalDate,Number> barChartData = new HashMap<>(); // date and total price of that day
-        barChartData.put(LocalDate.of(2022,8,20),50);
-        barChartData.put(LocalDate.of(2022,8,21),100);
-        barChartData.put(LocalDate.of(2022,8,22),80);
-        barChartData.put(LocalDate.of(2022,8,23),200);
-        setBarChart(barChartData);
+        if (tabpane.getSelectionModel().getSelectedItem().equals(statisticsTab)) {
+            if (pieChart.getData().size() != 0) {
+                pieChart.getData().removeAll(pieChart.getData());
+            }
+            Stats.productChartInfo.put("Elma",100);
+            Stats.productChartInfo.put("Armut",200);
+            setPieChart(Stats.productChartInfo);
+            if (stackedBarChart.getData().size() != 0) {
+                stackedBarChart.getData().removeAll(stackedBarChart.getData());
+            }
+            HashMap<LocalDate, Number> barChartData = new HashMap<>(); // date and total price of that day
+            barChartData.put(LocalDate.of(2022, 8, 20), 50);
+            barChartData.put(LocalDate.of(2022, 8, 21), 100);
+            barChartData.put(LocalDate.of(2022, 8, 22), 80);
+            barChartData.put(LocalDate.of(2022, 8, 23), 200);
+            setBarChart(barChartData);
+        }
 
 
     }
-    public void setPieChart(HashMap<String,Number> nameAndPrice){
-        for (String name: nameAndPrice.keySet()) {
-            pieChart.getData().add(new PieChart.Data(name, (Double) nameAndPrice.get(name)+0.0));
-        }Label pieInfo = new Label("");
+
+    public void setPieChart(HashMap<String, Number> nameAndPrice) {
+        for (String name : nameAndPrice.keySet()) {
+            pieChart.getData().add(new PieChart.Data(name, nameAndPrice.get(name).doubleValue()));
+        }
+        Label pieInfo = new Label("");
         pieInfo.setTextFill(Color.BLACK);
         DoubleBinding total = Bindings.createDoubleBinding(() ->
-                (Double) pieChart.getData().stream().mapToDouble(PieChart.Data::getPieValue).sum(), pieChart.getData());
+                pieChart.getData().stream().mapToDouble(PieChart.Data::getPieValue).sum(), pieChart.getData());
         for (final PieChart.Data data : pieChart.getData()) {
             data.getNode().addEventHandler(MouseEvent.MOUSE_MOVED,
                     e -> {
                         pieInfo.setVisible(true);
-                        pieInfo.setTranslateX(e.getSceneX()+5);
-                        pieInfo.setTranslateY(e.getSceneY()-90);
-                        String text = String.format("%.1f%%", 100*data.getPieValue()/total.get()) ;
-                        pieInfo.setText(text+"\n"+(int)data.getPieValue()+"TL");
+                        pieInfo.setTranslateX(e.getSceneX() + 5);
+                        pieInfo.setTranslateY(e.getSceneY() - 90);
+                        String text = String.format("%.1f%%", 100 * data.getPieValue() / total.get());
+                        pieInfo.setText(text + "\n" + (int) data.getPieValue() + "TL");
                     }
-            );data.getNode().addEventHandler(MouseEvent.MOUSE_EXITED, mouseEvent -> {
+            );
+            data.getNode().addEventHandler(MouseEvent.MOUSE_EXITED, mouseEvent -> {
                 pieInfo.setVisible(false);
             });
-        }statisticAnchorPane.getChildren().add(pieInfo);
+        }
+        statisticAnchorPane.getChildren().add(pieInfo);
 
     }
 
-    public void setBarChart(HashMap<LocalDate,Number> dateAndPriceList){
-        var series = new StackedBarChart.Series<String,Number>();
+    public void setBarChart(HashMap<LocalDate, Number> dateAndPriceList) {
+        var series = new StackedBarChart.Series<String, Number>();
         for (LocalDate date : dateAndPriceList.keySet()) {
-            series.getData().add(new XYChart.Data<>(date.toString(),dateAndPriceList.get(date)));
-        }series.setName("Tarih");
+            series.getData().add(new XYChart.Data<>(date.toString(), dateAndPriceList.get(date)));
+        }
+        series.setName("Tarih");
         stackedBarChart.getData().add(series);
         stackedBarChart.setAnimated(false);
         Label barinfo = new Label("");
-        for (final StackedBarChart.Data data: series.getData()){
+        for (final StackedBarChart.Data data : series.getData()) {
             data.getNode().addEventHandler(MouseEvent.MOUSE_MOVED, mouseEvent -> {
                 barinfo.setVisible(true);
                 barinfo.setTranslateX(mouseEvent.getSceneX());
-                barinfo.setTranslateY(mouseEvent.getSceneY()-80);
+                barinfo.setTranslateY(mouseEvent.getSceneY() - 80);
                 barinfo.setText(data.getYValue().toString());
             });
-            data.getNode().addEventHandler(MouseEvent.MOUSE_EXITED,mouseEvent -> {
+            data.getNode().addEventHandler(MouseEvent.MOUSE_EXITED, mouseEvent -> {
                 barinfo.setVisible(false);
             });
 
-        }barinfo.setTextFill(Color.BLACK);
+        }
+        barinfo.setTextFill(Color.BLACK);
 
         statisticAnchorPane.getChildren().add(barinfo);
     }
