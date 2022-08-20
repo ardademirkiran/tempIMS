@@ -41,7 +41,8 @@ public class DBAccess {
                     + " TAX TINYINT(127),\n"
                     + " UNIT_PRICE DECIMAL(32,2),\n"
                     + " BUYING_PRICE DECIMAL(32,2),\n"
-                    + " SELLING_PRICE DECIMAL(32,2)\n"
+                    + " SELLING_PRICE DECIMAL(32,2),\n"
+                    + " PROFIT DECIMAL(32,2)\n"
                     + ");";
             Statement stmt = conn.createStatement();
             stmt.execute(sql);
@@ -57,8 +58,8 @@ public class DBAccess {
             Statement checkStmt = conn.createStatement();
             ResultSet rs = checkStmt.executeQuery(productCheck);
             if (!rs.next()) { // Product doesn't exist, add new product to database
-                String newProduct = "INSERT INTO PRODUCTS (BARCODE, BRAND, NAME, PRODUCT_NUMBER, TAX, UNIT_PRICE, BUYING_PRICE, SELLING_PRICE) "
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                String newProduct = "INSERT INTO PRODUCTS (BARCODE, BRAND, NAME, PRODUCT_NUMBER, TAX, UNIT_PRICE, BUYING_PRICE, SELLING_PRICE, PROFIT) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)";
                 PreparedStatement pstmt = conn.prepareStatement(newProduct);
                 pstmt.setString(1, barcodeInput);
                 pstmt.setString(2, brandInput);
@@ -206,4 +207,84 @@ public class DBAccess {
         return null;
     }
 
+    protected static ResultSet fetchProducts(String purpose){
+        Connection conn = connect();
+        if(purpose.equals("stockView")){
+            try{
+                String sql = "SELECT * FROM PRODUCTS";
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql);
+                return rs;
+            }
+            catch (SQLException e) {
+                e.printStackTrace(System.out);
+            }
+            finally {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace(System.out);
+                }
+            }
+        }
+
+        else if(purpose.equals("statView")){
+            try{
+                String sql = "SELECT NAME, PROFIT FROM PRODUCTS WHERE PROFIT <> 0.00 ";
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql);
+                return rs;
+            }
+            catch (SQLException e) {
+                e.printStackTrace(System.out);
+            }
+            finally {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace(System.out);
+                }
+            }
+        }
+        return null;
+    }
+
+    protected static double fetchUnitPrice(String barcode){
+        Connection conn = connect();
+        try {
+            String sql = String.format("SELECT UNIT_PRICE FROM PRODUCTS WHERE BARCODE = '%s'", barcode);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            return rs.getDouble("UNIT_PRICE");
+        } catch (SQLException e) {
+            e.printStackTrace(System.out);
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace(System.out);
+            }
+        }
+        return 0;
+    }
+
+    protected static void amendProfit(String barcode, double newProfit){
+        Connection conn = connect();
+        try{
+            String sql = String.format("UPDATE PRODUCTS SET PROFIT = PROFIT + '%,.2f' WHERE BARCODE = '%s'",newProfit,barcode);
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+        }
+        catch (SQLException e){
+            e.printStackTrace(System.out);
+        }
+        finally{
+            try{
+                conn.close();
+            }
+            catch (SQLException e){
+                e.printStackTrace(System.out);
+            }
+        }
+    }
 }

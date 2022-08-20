@@ -83,9 +83,9 @@ public class MainScreen {
     public TableColumn<AllProducts,String> stockCollumnName;
     public TableColumn<AllProducts,Integer> stockCollumnAmont;
     public TableColumn<AllProducts,Integer> stockCollumnTax;
-    public TableColumn<AllProducts,Double> stockCollumnUnitBuy;
-    public TableColumn<AllProducts,Double> stockCollumnUnitSell;
-    public TableColumn<AllProducts,Double> stockCollumnExpectedProfit;
+    public TableColumn<AllProducts,Integer> stockCollumnUnitBuy;
+    public TableColumn<AllProducts,Integer> stockCollumnUnitSell;
+    public TableColumn<AllProducts,Integer> stockCollumnExpectedProfit;
 
 
 
@@ -93,12 +93,13 @@ public class MainScreen {
     @FXML
     protected void sellButtonClicked() throws IOException {
         ObservableList<Products> productslist = sellScreenTable.getItems();
+        Stats.updateProfit(productslist);
         ProcessLogs.recordSalesProcess(productslist, Double.parseDouble(totalPriceLabel.getText()));
         for (Products product : productslist) {
             ProductInteractions.sellProduct(product.barcode, product.amount);
         }
-        cancelButtonClicked();
     }
+
     @FXML
     protected void tabChanged() {
         if (!eventhandleradded){
@@ -148,7 +149,6 @@ public class MainScreen {
     @FXML
     protected void cancelButtonClicked() {
         sellScreenTable.getItems().removeAll(sellScreenTable.getItems());
-        changetotaldata();
     }
 
     @FXML
@@ -166,42 +166,13 @@ public class MainScreen {
     @FXML
     protected void productEntryLabelButtonOnClicked() throws IOException {
         ProcessLogs.recordStockEntryProcess(productEntryLabelBarcode.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText());
-        ProductInteractions.productEntry(productEntryLabelBarcode.getText(), productEntryLabelBrand.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText(), productEntryLabelTax.getText(), productEntryLabelBuyPrice.getText(), String.valueOf(Double.parseDouble(productEntryLabelBuyPrice.getText()) / Double.parseDouble(productEntryLabelPiece.getText())), productEntryLabelSellPrice.getText());
+        ProductInteractions.productEntry(productEntryLabelBarcode.getText(), productEntryLabelBrand.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText(), productEntryLabelTax.getText(), productEntryLabelBuyPrice.getText(), String.valueOf(Integer.parseInt(productEntryLabelBuyPrice.getText()) / Integer.parseInt(productEntryLabelPiece.getText())), productEntryLabelSellPrice.getText());
     }
-    @FXML
-    protected void barcodeFieldKeyTyped(KeyEvent keyEvent){
-        byte[] enter = {13};
-        if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(enter))) {
-            boolean add = false;
-            boolean find = false;
-            Products productdb = null;
-            if (sellScreenTable.getItems().size() > 0) {
-                for (Products pro : sellScreenTable.getItems()) {
-                    if (Objects.equals(pro.barcode, barcodeField.getText())) {
-                        pro.amount++;
-                        pro.calsellprice.setText(String.valueOf((pro.unitsellprice - Double.parseDouble(pro.discount.getText())) * pro.amount));
-                        find = true;
-                    }
-                }
-            }
-            if (!find) {
-                productdb = ProductInteractions.getProduct(barcodeField.getText());
-                add = true;
-            }
-            refreshtabledata();
-            if (add) {
-                sellScreenTable.getItems().addAll(productdb);
-            }
-            sellScreenTable.refresh();
-            init();
-            changetotaldata();
-            barcodeField.setText("");
-        }
-    }
+
     @FXML
     protected void buyPriceKeyPressed(){
         try {
-            productEntryLabelPrice.setText(String.valueOf(Double.parseDouble(productEntryLabelBuyPrice.getText())/Double.parseDouble(productEntryLabelPiece.getText())));
+            productEntryLabelPrice.setText(String.valueOf(Integer.parseInt(productEntryLabelBuyPrice.getText())/Integer.parseInt(productEntryLabelPiece.getText())));
         }catch (NumberFormatException e){
             productEntryLabelPrice.setText("0");
         }
@@ -210,18 +181,18 @@ public class MainScreen {
         label.setText("Kullanıcı: " + Session.username);
     }
     public static void changetotaldata(){
-        double totalprice = 0;
-        double totaldiscount = 0;
-        double subtotal = 0;
+        int totalprice = 0;
+        int totaldiscount = 0;
+        int subtotal = 0;
         totalPriceLabelstatic.setText(String.valueOf(0));
         totalDiscountLabelstatic.setText(String.valueOf(0));
         totalTaxLabelstatic.setText(String.valueOf(0));
         subTotalLabelstatic.setText(String.valueOf(0));
 
         for (Products item : sellScreenTablestatic.getItems()) {
-            totalprice += Double.parseDouble(lastPriceCollumnstatic.getCellObservableValue(item).getValue().getText());
-            totaldiscount += Double.parseDouble(discountCollumnstatic.getCellObservableValue(item).getValue().getText())* item.amount;
-            subtotal += Double.parseDouble(lastPriceCollumnstatic.getCellObservableValue(item).getValue().getText())/(1 + kdvCollumnstatic.getCellObservableValue(item).getValue()/100.0);
+            totalprice += Integer.parseInt(lastPriceCollumnstatic.getCellObservableValue(item).getValue().getText());
+            totaldiscount += Integer.parseInt(discountCollumnstatic.getCellObservableValue(item).getValue().getText())* item.amount;
+            subtotal += Integer.parseInt(lastPriceCollumnstatic.getCellObservableValue(item).getValue().getText())/(1 + kdvCollumnstatic.getCellObservableValue(item).getValue()/100.0);
         }
         totalPriceLabelstatic.setText(String.valueOf(totalprice));
         subTotalLabelstatic.setText(String.valueOf(subtotal));
@@ -295,7 +266,7 @@ public class MainScreen {
         stockCollumnUnitBuy.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getunitbuy());
         stockCollumnUnitSell.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getunitsell());
         stockCollumnExpectedProfit.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getprofit());
-        stockTable.refresh();
+        //stockTable.getItems().add(new AllProducts("a","b","c","2","3","10","20"));
     }
     @FXML
     public void stockControlClicked(MouseEvent mouseEvent){
@@ -325,7 +296,7 @@ public class MainScreen {
                     for (Products pro : sellScreenTable.getItems()) {
                         if (Objects.equals(pro.barcode, barcodeField.getText())) {
                             pro.amount++;
-                            pro.calsellprice.setText(String.valueOf((pro.unitsellprice - Double.parseDouble(pro.discount.getText())) * pro.amount));
+                            pro.calsellprice.setText(String.valueOf((pro.unitsellprice - Integer.parseInt(pro.discount.getText())) * pro.amount));
                             find = true;
                         }
                     }
@@ -370,7 +341,7 @@ public class MainScreen {
     }
     public void setPieChart(HashMap<String,Number> nameAndPrice){
         for (String name: nameAndPrice.keySet()) {
-            pieChart.getData().add(new PieChart.Data(name, (Double) nameAndPrice.get(name)+0.0));
+            pieChart.getData().add(new PieChart.Data(name, (Integer)nameAndPrice.get(name)+0.0));
         }Label pieInfo = new Label("");
         pieInfo.setTextFill(Color.BLACK);
         DoubleBinding total = Bindings.createDoubleBinding(() ->

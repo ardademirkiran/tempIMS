@@ -5,6 +5,8 @@ import javafx.collections.ObservableList;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class Stats {
     static HashMap<String, Number> productChartInfo= new HashMap<>();
@@ -14,14 +16,23 @@ public class Stats {
         for () {
             productChartInfo.put(productName, profit)
       } */
+        ResultSet rs = DBAccess.fetchProducts("statView");
+        try{
+            while(rs.next()){
+                productChartInfo.put(rs.getString("NAME"), rs.getDouble("PROFIT"));
+            }
+        }
+        catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
     }
 
 
     public static void updateProfit(ObservableList<Products> soldProducts) throws IOException {
         for(Products product : soldProducts){
-            double unitBuyPrice = 0; //sql part to get buyPrice per unit by using "product.barcode"
+            double unitBuyPrice = DBAccess.fetchUnitPrice(product.barcode); //sql part to get buyPrice per unit by using "product.barcode"
             double profitToAdd = product.amount * (product.calculatedunitsellprice - unitBuyPrice);
-            //update profit on database
+            DBAccess.amendProfit(product.barcode,profitToAdd); //update profit on database
         }
 
     }
