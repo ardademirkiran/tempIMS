@@ -19,6 +19,7 @@ public class Stats {
         ResultSet rs = DBAccess.fetchProducts("statView");
         try{
             while(rs.next()){
+                System.out.println("runned");
                 productChartInfo.put(rs.getString("NAME"), rs.getDouble("PROFIT"));
             }
         }

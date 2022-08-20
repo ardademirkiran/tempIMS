@@ -103,6 +103,7 @@ public class MainScreen {
     protected void sellButtonClicked() throws IOException {
         ObservableList<Products> productslist = sellScreenTable.getItems();
         ProcessLogs.recordSalesProcess(productslist, Double.parseDouble(totalPriceLabel.getText()));
+        Stats.updateProfit(productslist);
         for (Products product : productslist) {
             ProductInteractions.sellProduct(product.barcode, product.amount);
         }
@@ -362,8 +363,7 @@ public class MainScreen {
             if (pieChart.getData().size() != 0) {
                 pieChart.getData().removeAll(pieChart.getData());
             }
-            Stats.productChartInfo.put("Elma",100);
-            Stats.productChartInfo.put("Armut",200);
+            Stats.createChartInfo();
             setPieChart(Stats.productChartInfo);
             if (stackedBarChart.getData().size() != 0) {
                 stackedBarChart.getData().removeAll(stackedBarChart.getData());
