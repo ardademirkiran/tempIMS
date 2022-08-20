@@ -208,42 +208,30 @@ public class DBAccess {
     }
 
     protected static ResultSet fetchProducts(String purpose){
-        Connection conn = connect();
         if(purpose.equals("stockView")){
+            Connection connStock = connect();
             try{
-                String sql = "SELECT * FROM PRODUCTS";
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql);
-                return rs;
+                String sqlStock = "SELECT * FROM PRODUCTS";
+                Statement stmtStock = connStock.createStatement();
+                ResultSet rsStock = stmtStock.executeQuery(sqlStock);
+                return rsStock;
             }
             catch (SQLException e) {
                 e.printStackTrace(System.out);
-            }
-            finally {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace(System.out);
-                }
             }
         }
 
         else if(purpose.equals("statView")){
+            Connection connStat = connect();
             try{
-                String sql = "SELECT NAME, PROFIT FROM PRODUCTS WHERE PROFIT <> 0.00 ";
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql);
-                return rs;
+                String sqlStat = "SELECT NAME, PROFIT FROM PRODUCTS WHERE PROFIT <> 0.00 ";
+                Statement stmtStat = connStat.createStatement();
+                ResultSet rsStat = stmtStat.executeQuery(sqlStat);
+                return rsStat;
             }
             catch (SQLException e) {
+                System.out.println("Problem 1");
                 e.printStackTrace(System.out);
-            }
-            finally {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace(System.out);
-                }
             }
         }
         return null;
