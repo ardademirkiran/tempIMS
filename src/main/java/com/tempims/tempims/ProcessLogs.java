@@ -40,4 +40,10 @@ public class ProcessLogs {
 
 
    }
+
+   public static void recordDaily(){
+      //if db doesn't include Stats.currentDate then insert it with a "0" profit value
+
+      // else do nothing
+   }
 }
