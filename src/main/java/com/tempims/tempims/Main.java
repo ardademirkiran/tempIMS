@@ -20,6 +20,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        //sql part to insert Stats.currentDate to DB with a "0" value profit 
         globalStage = stage;
         FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("LoginScreen.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 480, 360);
