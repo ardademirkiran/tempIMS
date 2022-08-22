@@ -36,7 +36,7 @@ public class Stats {
             DBAccess.amendProfit(product.barcode,profitToAdd); //update profit on database
         }
 
-        //sql part to update current daily profit with "current daily profit + totalProfit" by using "currentDate"
+        DBAccess.updateDailyProfit(currentDate,totalProfit);//sql part to update current daily profit with "current daily profit + totalProfit" by using "currentDate"
 
     }
 

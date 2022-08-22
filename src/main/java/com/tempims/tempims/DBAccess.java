@@ -1,6 +1,7 @@
 package com.tempims.tempims;
 
 import java.sql.*;
+import java.time.LocalDate;
 
 public class DBAccess {
     private static Connection connect() {
@@ -11,6 +12,7 @@ public class DBAccess {
             System.out.println("Connected successfully !");
             createUserTable(conn);
             createProductTable(conn);
+            createProfitTable(conn);
             return conn;
         } catch (SQLException e) {
             e.printStackTrace(System.out);
@@ -43,6 +45,19 @@ public class DBAccess {
                     + " BUYING_PRICE DECIMAL(32,2),\n"
                     + " SELLING_PRICE DECIMAL(32,2),\n"
                     + " PROFIT DECIMAL(32,2)\n"
+                    + ");";
+            Statement stmt = conn.createStatement();
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            e.printStackTrace(System.out);
+        }
+    }
+
+    protected static void createProfitTable(Connection conn) {
+        try {
+            String sql = "CREATE TABLE IF NOT EXISTS PROFITS (\n"
+                    + " DATE CHAR(127) PRIMARY KEY,\n"
+                    + " GROSS_PROFIT DECIMAL(32,2)\n"
                     + ");";
             Statement stmt = conn.createStatement();
             stmt.execute(sql);
@@ -264,6 +279,55 @@ public class DBAccess {
             stmt.executeUpdate(sql);
         }
         catch (SQLException e){
+            e.printStackTrace(System.out);
+        }
+        finally{
+            try{
+                conn.close();
+            }
+            catch (SQLException e){
+                e.printStackTrace(System.out);
+            }
+        }
+    }
+
+    protected static void insertProfitRow(LocalDate date){
+        Connection conn = connect();
+        try{
+            String sql = String.format("SELECT * FROM PROFITS WHERE DATE = '%s'", date);
+            System.out.println(sql);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            if(!rs.next()){
+                String newDate = "INSERT INTO PROFITS (DATE, GROSS_PROFIT) VALUES(?, ?)";
+                PreparedStatement pstmt = conn.prepareStatement(newDate);
+                pstmt.setString(1,String.valueOf(date));
+                pstmt.setDouble(2,0.00);
+                pstmt.executeUpdate();
+            }
+        }
+        catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+        finally{
+            try{
+                conn.close();
+            }
+            catch(SQLException e){
+                e.printStackTrace(System.out);
+            }
+        }
+    }
+
+    protected static void updateDailyProfit(LocalDate date, double newDailyProfit){
+        Connection conn = connect();
+        try{
+            String sql = String.format("UPDATE PROFITS SET GROSS_PROFIT = GROSS_PROFIT + '%,.2f' WHERE DATE = '%s'",
+                    newDailyProfit, date); // might create a problem later, should test and see (using date without parsing) !!!
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+        }
+        catch(SQLException e){
             e.printStackTrace(System.out);
         }
         finally{
