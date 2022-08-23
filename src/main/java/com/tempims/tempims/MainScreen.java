@@ -363,17 +363,19 @@ public class MainScreen {
     @FXML
     GridPane switchPane;
     @FXML
+    ToggleSwitch toggleSwitch = new ToggleSwitch();
     public void statisticsTabOpened() {
         if (tabpane.getSelectionModel().getSelectedItem().equals(statisticsTab)) {
-            ToggleSwitch toggleSwitch = null;
             if (!switchadded){
-                toggleSwitch = new ToggleSwitch();
                 Label dateLabel = new Label(LocalDate.now().getMonth().toString());
                 switchadded = true;
+                ToggleSwitch finalToggleSwitch = toggleSwitch;
                 toggleSwitch.switchOnProperty().addListener((a, b, c) -> {
                     if (c) {
+                        initBarData(finalToggleSwitch.switchOnProperty().getValue());
                         dateLabel.setText(LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)) + " " +LocalDate.now().getDayOfWeek());
                     } else {
+                        initBarData(finalToggleSwitch.switchOnProperty().getValue());
                         dateLabel.setText(LocalDate.now().getMonth().toString());
                     }
                 });
@@ -405,8 +407,14 @@ public class MainScreen {
         datesAndProfits.put("2022-10-19", 63.50);
         datesAndProfits.put("2022-10-11", 35.43);
         datesAndProfits.put("2022-11-28", 31.46);*/
-        HashMap<String, Double> barChartData = Stats.calculateMonthlyProfits(datesAndProfits);
-        setBarChart(barChartData);
+        if (isdaily){
+            setBarChart(datesAndProfits);
+        } else {
+            HashMap<String, Double> barChartData = Stats.calculateMonthlyProfits(datesAndProfits);
+            setBarChart(barChartData);
+
+        }
+
     }
     public void setPieChart(HashMap<String, Number> nameAndPrice) {
         for (String name : nameAndPrice.keySet()) {
