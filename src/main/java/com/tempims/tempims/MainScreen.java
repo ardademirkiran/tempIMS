@@ -288,7 +288,7 @@ public class MainScreen {
 
     @FXML
     public void onstockcontrolopened() {
-        //ProductInteractions.createAllProducts();
+        stockTable.getItems().removeAll(stockTable.getItems());
         stockCollumnBarcode.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getbarcode());
         stockCollumnAmont.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getamont());
         stockCollumnBrand.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getbrand());
@@ -297,18 +297,17 @@ public class MainScreen {
         stockCollumnUnitBuy.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getunitbuy());
         stockCollumnUnitSell.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getunitsell());
         stockCollumnExpectedProfit.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getprofit());
+        stockTable.getItems().addAll(ProductInteractions.createAllProducts());
         stockTable.refresh();
     }
 
     @FXML
     public void stockControlClicked(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 2 & stockTable.getSelectionModel().getSelectedItem() != null) {
-            tabpane.getSelectionModel().select(buyScreenTab);
             AllProducts selectedproduct = stockTable.getSelectionModel().getSelectedItem();
+            tabpane.getSelectionModel().select(buyScreenTab);
             productEntryLabelBarcode.setText(selectedproduct.getbarcode().getValue());
             productEntryLabelPrice.setText(String.valueOf(selectedproduct.getunitbuy().getValue()));
-            productEntryLabelPiece.setText(String.valueOf(selectedproduct.getamont().getValue()));
-            productEntryLabelBuyPrice.setText(String.valueOf(selectedproduct.getunitbuy().getValue() * selectedproduct.getamont().getValue()));
             productEntryLabelBrand.setText(selectedproduct.getbrand().getValue());
             productEntryLabelName.setText(selectedproduct.getname().getValue());
             productEntryLabelTax.setText(String.valueOf(selectedproduct.gettax().getValue()));
@@ -360,9 +359,7 @@ public class MainScreen {
     @FXML
     public void statisticsTabOpened() throws IOException {
         if (tabpane.getSelectionModel().getSelectedItem().equals(statisticsTab)) {
-            if (pieChart.getData().size() != 0) {
-                pieChart.getData().removeAll(pieChart.getData());
-            }
+            pieChart.getData().removeAll(pieChart.getData());
             Stats.createChartInfo();
             setPieChart(Stats.productChartInfo);
             if (stackedBarChart.getData().size() != 0) {
@@ -401,6 +398,7 @@ public class MainScreen {
                 pieInfo.setVisible(false);
             });
         }
+        pieChart.setLabelsVisible(false);
         statisticAnchorPane.getChildren().add(pieInfo);
 
     }

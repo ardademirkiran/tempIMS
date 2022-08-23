@@ -15,6 +15,7 @@ public class Stats {
     static LocalDate currentDate = java.time.LocalDate.now();
 
     public static void createChartInfo(){
+        productChartInfo.clear();
         ResultSet rs = DBAccess.fetchProducts("statView");
         try{
             while(rs.next()){

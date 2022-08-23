@@ -2,6 +2,7 @@ package com.tempims.tempims;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class ProductInteractions {
     public static void productEntry(String barcodeInput, String brandInput, String nameInput, String numberInput, String taxInput, String totalBuyPriceInput, String unitBuyPriceInput, String sellPriceInput) {
@@ -31,20 +32,20 @@ public class ProductInteractions {
 
         return new Products(barcode, name, tax, sellprice);
     }
-    public static void createAllProducts(){
+    public static ArrayList<AllProducts> createAllProducts(){
+        ArrayList<AllProducts> allProducts = new ArrayList<>();
         ResultSet rs = DBAccess.fetchProducts("stockView");
         try {
             while (rs.next()) {
-                new AllProducts(rs.getString("BARCODE"), rs.getString("BRAND"), rs.getString("NAME"),
+                allProducts.add(new AllProducts(rs.getString("BARCODE"), rs.getString("BRAND"), rs.getString("NAME"),
                         String.valueOf(rs.getInt("PRODUCT_NUMBER")), String.valueOf(rs.getInt("TAX")),
-                        String.valueOf(rs.getDouble("UNIT_PRICE")), String.valueOf(rs.getDouble("SELLING_PRICE")));
+                        String.valueOf(rs.getDouble("UNIT_PRICE")), String.valueOf(rs.getDouble("SELLING_PRICE"))));
             }
         }
         catch (SQLException e){
             e.printStackTrace(System.out);
         }
-        //new AllProducts(barcodeInput, brandInput, nameInput, numberInput, taxInput, totalBuyPriceInput, unitBuyPriceInput, sellPriceInput)
-        // bu kadar
+        return allProducts;
     }
 
 }
