@@ -59,5 +59,10 @@ public class Stats {
         return monthsAndProfits;
     }
 
+    public static double calculateAverageEntryPrice(int prevAmount, double prevAvPrice, int numOfNewProducts, double newEntryPrice){
+        double totalRevenue = (prevAmount * prevAvPrice) + (numOfNewProducts * newEntryPrice);
+        return totalRevenue / (prevAmount + numOfNewProducts);
+    }
+
 
 }
