@@ -167,7 +167,7 @@ public class MainScreen {
         if (matchedbarcodeslist.size() < 6 && matchedbarcodeslist.size() > 0) {
             for (String barcode : matchedbarcodeslist) {
                 Label label = new Label(barcode);
-                label.setPrefWidth(productEntryLabelBarcode.getWidth());
+                label.setPrefWidth(productEntryLabelBarcode.getWidth()-13);
                 CustomMenuItem menuItem = new CustomMenuItem(label, true);
                 menuItem.setOnAction(actionEvent -> {
                     productEntryLabelBarcode.setText(label.getText());
