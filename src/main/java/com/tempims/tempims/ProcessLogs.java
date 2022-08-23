@@ -2,11 +2,12 @@ package com.tempims.tempims;
 
 import javafx.collections.ObservableList;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class ProcessLogs {
+   static LocalDate currentDate;
 
    public static void recordSalesProcess(ObservableList<Products> soldProducts, double totalSellPrice) throws IOException {
       FileWriter logsFile = new FileWriter("logs.txt", true);
@@ -39,9 +40,22 @@ public class ProcessLogs {
 
    }
 
-   public static void recordDaily(){
-      //if db doesn't include Stats.currentDate then insert it with a "0" profit value
-      DBAccess.insertProfitRow(Stats.currentDate);
-      // else do nothing
+   public static void setUpDate() throws IOException {
+      currentDate = java.time.LocalDate.now();
+      BufferedReader reader = new BufferedReader(new FileReader("date.txt"));
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+      LocalDate lastLoggedDate = LocalDate.parse(reader.readLine(), formatter);
+      if (!lastLoggedDate.toString().equals(currentDate.toString())){
+         DBAccess.insertProfitRow(currentDate);
+      }
+
+      if (lastLoggedDate.getMonthValue() != currentDate.getMonthValue() || lastLoggedDate.getYear() != currentDate.getYear()){
+         //sql part to update to 0(zero) all of profit values from PROFITS table  
+      }
+
+      BufferedWriter writer = new BufferedWriter(new FileWriter("date.txt"));
+      writer.write(currentDate.toString());
+      writer.close();
+
    }
 }
