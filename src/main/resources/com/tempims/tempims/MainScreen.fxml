@@ -204,25 +204,35 @@
         </Tab>
         <Tab fx:id="statisticsTab" onSelectionChanged="#statisticsTabOpened" text="İstatistik Ekranı">
             <AnchorPane fx:id="statisticAnchorPane">
-                <GridPane alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50"/>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50"/>
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
-                    </rowConstraints>
-                    <PieChart fx:id="pieChart" GridPane.hgrow="NEVER"/>
-                    <StackedBarChart fx:id="stackedBarChart" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
-                        <xAxis>
-                            <CategoryAxis side="BOTTOM"/>
-                        </xAxis>
-                        <yAxis>
-                            <NumberAxis side="LEFT"/>
-                        </yAxis>
-                    </StackedBarChart>
-                </GridPane>
+            <GridPane fx:id="switchPane" prefHeight="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
+              </rowConstraints>
+            </GridPane>
+            <GridPane alignment="CENTER" layoutX="10.0" layoutY="60.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <PieChart fx:id="pieChart" GridPane.hgrow="NEVER" />
+                  <StackedBarChart fx:id="stackedBarChart" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
+                     <xAxis>
+                        <CategoryAxis side="BOTTOM" />
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis side="LEFT" />
+                     </yAxis>
+                  </StackedBarChart>
+               </children>
+            </GridPane>
             </AnchorPane>
         </Tab>
     </TabPane>

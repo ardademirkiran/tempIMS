@@ -2,20 +2,25 @@ package com.tempims.tempims;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 
 public class MainScreen {
@@ -354,33 +359,55 @@ public class MainScreen {
         changetotaldata();
         barcodeField.setText("");
     }
-
+    boolean switchadded = false;
+    @FXML
+    GridPane switchPane;
     @FXML
     public void statisticsTabOpened() {
         if (tabpane.getSelectionModel().getSelectedItem().equals(statisticsTab)) {
-            pieChart.getData().removeAll(pieChart.getData());
-            Stats.createChartInfo();
-            setPieChart(Stats.productChartInfo);
-            if (stackedBarChart.getData().size() != 0) {
-                stackedBarChart.getData().removeAll(stackedBarChart.getData());
+            ToggleSwitch toggleSwitch = null;
+            if (!switchadded){
+                toggleSwitch = new ToggleSwitch();
+                Label dateLabel = new Label(LocalDate.now().getMonth().toString());
+                switchadded = true;
+                toggleSwitch.switchOnProperty().addListener((a, b, c) -> {
+                    if (c) {
+                        dateLabel.setText(LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)) + " " +LocalDate.now().getDayOfWeek());
+                    } else {
+                        dateLabel.setText(LocalDate.now().getMonth().toString());
+                    }
+                });
+                toggleSwitch.setMaxWidth(200);
+                toggleSwitch.setAlignment(Pos.CENTER);
+                switchPane.setHalignment(toggleSwitch,HPos.CENTER);
+                switchPane.setHalignment(dateLabel,HPos.CENTER);
+                switchPane.add(toggleSwitch, 0,0,1,1);
+                switchPane.add(dateLabel,0,1,1,1);
+                switchPane.setPrefWidth(200);
             }
-
-            //LinkedHashMap<String, Double> datesAndProfits = A <String, Double> LinkedHashMap from PROFITS TABLE
-            LinkedHashMap<String, Double> datesAndProfits = new LinkedHashMap<>();
-            datesAndProfits.put("2022-08-09", 43.0);
-            datesAndProfits.put("2022-08-12", 32.0);
-            datesAndProfits.put("2022-09-15", 37.0);
-            datesAndProfits.put("2022-09-18", 51.0);
-            datesAndProfits.put("2022-10-19", 63.50);
-            datesAndProfits.put("2022-10-11", 35.43);
-            datesAndProfits.put("2022-11-28", 31.46);
-            HashMap<String, Double> barChartData = Stats.calculateMonthlyProfits(datesAndProfits);
-            setBarChart(barChartData);
+            initPieData(toggleSwitch.switchOnProperty().getValue());
+            initBarData(toggleSwitch.switchOnProperty().getValue());
         }
-
-
     }
-
+    public void initPieData(Boolean isdaily){
+        pieChart.getData().removeAll(pieChart.getData());
+        Stats.createChartInfo();
+        setPieChart(Stats.productChartInfo);
+    }
+    public void initBarData(Boolean isdaily){
+        stackedBarChart.getData().removeAll(stackedBarChart.getData());
+        //LinkedHashMap<String, Double> datesAndProfits = A <String, Double> LinkedHashMap from PROFITS TABLE
+        LinkedHashMap<String, Double> datesAndProfits = new LinkedHashMap<>();
+        datesAndProfits.put("2022-08-09", 43.0);
+        datesAndProfits.put("2022-08-12", 32.0);
+        datesAndProfits.put("2022-09-15", 37.0);
+        datesAndProfits.put("2022-09-18", 51.0);
+        datesAndProfits.put("2022-10-19", 63.50);
+        datesAndProfits.put("2022-10-11", 35.43);
+        datesAndProfits.put("2022-11-28", 31.46);
+        HashMap<String, Double> barChartData = Stats.calculateMonthlyProfits(datesAndProfits);
+        setBarChart(barChartData);
+    }
     public void setPieChart(HashMap<String, Number> nameAndPrice) {
         for (String name : nameAndPrice.keySet()) {
             pieChart.getData().add(new PieChart.Data(name, nameAndPrice.get(name).doubleValue()));
@@ -428,4 +455,3 @@ public class MainScreen {
     }
 
 }
-
