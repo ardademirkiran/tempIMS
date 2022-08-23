@@ -16,10 +16,7 @@ import javafx.scene.paint.Color;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.*;
 
 public class MainScreen {
 
@@ -367,11 +364,17 @@ public class MainScreen {
             if (stackedBarChart.getData().size() != 0) {
                 stackedBarChart.getData().removeAll(stackedBarChart.getData());
             }
-            HashMap<LocalDate, Number> barChartData = new HashMap<>(); // date and total price of that day
-            barChartData.put(LocalDate.of(2022, 8, 20), 50);
-            barChartData.put(LocalDate.of(2022, 8, 21), 100);
-            barChartData.put(LocalDate.of(2022, 8, 22), 80);
-            barChartData.put(LocalDate.of(2022, 8, 23), 200);
+
+            //LinkedHashMap<String, Double> datesAndProfits = A <String, Double> LinkedHashMap from PROFITS TABLE
+            LinkedHashMap<String, Double> datesAndProfits = new LinkedHashMap<>();
+            datesAndProfits.put("2022-08-09", 43.0);
+            datesAndProfits.put("2022-08-12", 32.0);
+            datesAndProfits.put("2022-09-15", 37.0);
+            datesAndProfits.put("2022-09-18", 51.0);
+            datesAndProfits.put("2022-10-19", 63.50);
+            datesAndProfits.put("2022-10-11", 35.43);
+            datesAndProfits.put("2022-11-28", 31.46);
+            HashMap<String, Double> barChartData = Stats.calculateMonthlyProfits(datesAndProfits);
             setBarChart(barChartData);
         }
 
@@ -400,10 +403,10 @@ public class MainScreen {
 
     }
 
-    public void setBarChart(HashMap<LocalDate, Number> dateAndPriceList) {
+    public void setBarChart(HashMap<String, Double> dateAndPriceList) {
         var series = new StackedBarChart.Series<String, Number>();
-        for (LocalDate date : dateAndPriceList.keySet()) {
-            series.getData().add(new XYChart.Data<>(date.toString(), dateAndPriceList.get(date)));
+        for (String date : dateAndPriceList.keySet()) {
+            series.getData().add(new XYChart.Data<>(date, dateAndPriceList.get(date)));
         }
         series.setName("Tarih");
         stackedBarChart.getData().add(series);

@@ -50,7 +50,7 @@ public class ProcessLogs {
       }
 
       if (lastLoggedDate.getMonthValue() != currentDate.getMonthValue() || lastLoggedDate.getYear() != currentDate.getYear()){
-         //sql part to update to 0(zero) all of profit values from PROFITS table  
+         //sql part to update to 0(zero) all of profit values from PROFITS table
       }
 
       BufferedWriter writer = new BufferedWriter(new FileWriter("date.txt"));

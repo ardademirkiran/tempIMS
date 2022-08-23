@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -39,22 +40,24 @@ public class Stats {
 
     }
 
-    public static LinkedHashMap<String, Double> calculateMonthlyProfits(LinkedHashMap<LocalDate, Double> datesAndProfits){
+    public static LinkedHashMap<String, Double> calculateMonthlyProfits(LinkedHashMap<String, Double> datesAndProfits){
         LinkedHashMap<String, Double> monthsAndProfits = new LinkedHashMap<>();
-        String currentMonth = " ";
+        String currentMonth = "1111-11-11";
         Double monthsProfit = 0.00;
         String loopCurrentMonth;
-        for (LocalDate ld : datesAndProfits.keySet()){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        for (String ldString : datesAndProfits.keySet()){
+            LocalDate ld = LocalDate.parse(ldString, formatter);
             loopCurrentMonth = ld.getMonthValue() + "/" + ld.getYear();
             if (!loopCurrentMonth.equals(currentMonth)){
                 monthsAndProfits.put(currentMonth, monthsProfit);
                 currentMonth = loopCurrentMonth;
                 monthsProfit = 0.00;
             }
-            monthsProfit += datesAndProfits.get(ld);
+            monthsProfit += datesAndProfits.get(ldString);
         }
         monthsAndProfits.put(currentMonth, monthsProfit);
-        monthsAndProfits.remove(" ");
+        monthsAndProfits.remove("1111-11-11");
         System.out.println(monthsAndProfits);
         return monthsAndProfits;
     }
