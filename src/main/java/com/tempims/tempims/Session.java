@@ -54,7 +54,7 @@ public class Session {
 
     private static String hashPassword(String password) { //password hashing method
         byte[] bytesOfPassword = password.getBytes(StandardCharsets.UTF_8);
-        byte[] md5Digest = new byte[0];
+        byte[] md5Digest;
         try {
             md5Digest = MessageDigest.getInstance("MD5").digest(bytesOfPassword);
         } catch (NoSuchAlgorithmException e) {

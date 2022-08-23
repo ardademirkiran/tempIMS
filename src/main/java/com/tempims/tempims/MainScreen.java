@@ -3,13 +3,11 @@ package com.tempims.tempims;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
-import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -18,6 +16,7 @@ import javafx.scene.paint.Color;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
@@ -78,6 +77,7 @@ public class MainScreen {
     public StackedBarChart<String, Number> stackedBarChart = new StackedBarChart<>(xAxis, yAxis);
     boolean eventhandleradded = false;
     String barcodeeverwritten = "";
+    ContextMenu productEntryBarcodeContextMenu = new ContextMenu();
 
     public static void changetotaldata() {
         double totalprice = 0;
@@ -113,12 +113,7 @@ public class MainScreen {
     @FXML
     protected void tabChanged() {
         if (!eventhandleradded) {
-            Main.globalStage.addEventHandler(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(KeyEvent keyEvent) {
-                    sellScreenKeyTyped(keyEvent);
-                }
-            });
+            Main.globalStage.addEventHandler(KeyEvent.KEY_TYPED, this::sellScreenKeyTyped);
             eventhandleradded = true;
         }
         openedtab = tabpane.getSelectionModel().getSelectedItem();
@@ -127,34 +122,27 @@ public class MainScreen {
         setcontextmenu();
 
         ContextMenu contextMenu = setcontextmenu();
-        sellScreenTable.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
-            @Override
-            public void handle(ContextMenuEvent contextMenuEvent) {
-                final int[] i = {0};
-                Node source = contextMenuEvent.getPickResult().getIntersectedNode();
+        sellScreenTable.setOnContextMenuRequested(contextMenuEvent -> {
+            final int[] i = {0};
+            Node source = contextMenuEvent.getPickResult().getIntersectedNode();
 
-                while (source != null && !(source instanceof TableRow)) {
-                    source = source.getParent();
-                }
-
-                if (source == null || ((TableRow<?>) source).isEmpty()) {
-                    sellScreenTable.getSelectionModel().clearSelection();
-
-                }
-                if (sellScreenTable.getSelectionModel().getSelectedItem() != null & !(source == null || ((TableRow<?>) source).isEmpty())) {
-                    contextMenu.show(sellScreenTable, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
-                }
-                sellScreenTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        if (i[0] > 0)
-                            contextMenu.hide();
-                        else {
-                            i[0]++;
-                        }
-                    }
-                });
+            while (source != null && !(source instanceof TableRow)) {
+                source = source.getParent();
             }
+
+            if (source == null || ((TableRow<?>) source).isEmpty()) {
+                sellScreenTable.getSelectionModel().clearSelection();
+
+            }
+            if (sellScreenTable.getSelectionModel().getSelectedItem() != null & !(source == null || ((TableRow<?>) source).isEmpty())) {
+                contextMenu.show(sellScreenTable, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
+            }
+            sellScreenTable.setOnMouseClicked(event -> {
+                if (i[0] > 0) contextMenu.hide();
+                else {
+                    i[0]++;
+                }
+            });
         });
     }
 
@@ -166,13 +154,52 @@ public class MainScreen {
 
     @FXML
     protected void productEntryLabelBarcodeKeyPressed(KeyEvent event) {
-        barcodeeverwritten += event.getCharacter();
-        matchedbarcodes(); // eğer bi taneyse diğer bilgileri direkt dbden doldur
-
+        byte[] enter = {13};
+        if (!Arrays.toString(event.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(enter))) {
+            productEntryBarcodeContextMenu.hide();
+            productEntryBarcodeContextMenu.getItems().clear();
+            barcodeeverwritten = productEntryLabelBarcode.getText();
+            setBarcodeContextMenu(matchedbarcodes(barcodeeverwritten));
+        }
     }
 
-    protected String[] matchedbarcodes() {
-        String[] barcodes = {}; // dbden bak o ana kadar yazılan kısmı eşleşenleri returle
+    protected void setBarcodeContextMenu(ArrayList<String> matchedbarcodeslist) {
+        if (matchedbarcodeslist.size() < 6 && matchedbarcodeslist.size() > 0) {
+            for (String barcode : matchedbarcodeslist) {
+                Label label = new Label(barcode);
+                label.setPrefWidth(productEntryLabelBarcode.getWidth());
+                CustomMenuItem menuItem = new CustomMenuItem(label, true);
+                menuItem.setOnAction(actionEvent -> {
+                    productEntryLabelBarcode.setText(label.getText());
+                    final AllProducts[] products = new AllProducts[1];
+                    ProductInteractions.createAllProducts().forEach(allProducts -> products[0] = (allProducts.getbarcode().getValue().equals(label.getText()) ? allProducts : products[0]));
+                    productEntryLabelBarcode.setText(products[0].getbarcode().getValue());
+                    productEntryLabelPrice.setText(String.valueOf(products[0].getunitbuy().getValue()));
+                    productEntryLabelBrand.setText(products[0].getbrand().getValue());
+                    productEntryLabelName.setText(products[0].getname().getValue());
+                    productEntryLabelTax.setText(String.valueOf(products[0].gettax().getValue()));
+                    productEntryLabelSellPrice.setText(String.valueOf(products[0].getunitsell().getValue()));
+                    productEntryBarcodeContextMenu.hide();
+                });
+                productEntryBarcodeContextMenu.getItems().add(menuItem);
+            }
+            productEntryBarcodeContextMenu.show(productEntryLabelBarcode, Side.BOTTOM, 0, 0);
+        }
+    }
+
+    protected ArrayList<String> matchedbarcodes(String barcodeeverwritten) {
+        ArrayList<String> barcodes = new ArrayList<>();
+        int size = barcodeeverwritten.length();
+
+        for (AllProducts allproducts : ProductInteractions.createAllProducts()) {
+            if (allproducts.getbarcode().getValue().length() >= size) {
+                if (allproducts.getbarcode().getValue().substring(0, size).equals(barcodeeverwritten)) {
+                    barcodes.add(allproducts.getbarcode().getValue());
+                }
+            }
+        }
+
+
         return barcodes;
     }
 
@@ -186,30 +213,7 @@ public class MainScreen {
     protected void barcodeFieldKeyTyped(KeyEvent keyEvent) {
         byte[] enter = {13};
         if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(enter))) {
-            boolean add = false;
-            boolean find = false;
-            Products productdb = null;
-            if (sellScreenTable.getItems().size() > 0) {
-                for (Products pro : sellScreenTable.getItems()) {
-                    if (Objects.equals(pro.barcode, barcodeField.getText())) {
-                        pro.amount++;
-                        pro.calsellprice.setText(String.valueOf((pro.unitsellprice - Double.parseDouble(pro.discount.getText())) * pro.amount));
-                        find = true;
-                    }
-                }
-            }
-            if (!find) {
-                productdb = ProductInteractions.getProduct(barcodeField.getText());
-                add = true;
-            }
-            refreshtabledata();
-            if (add) {
-                sellScreenTable.getItems().addAll(productdb);
-            }
-            sellScreenTable.refresh();
-            init();
-            changetotaldata();
-            barcodeField.setText("");
+            keyTypedAlgorithm();
         }
     }
 
@@ -254,32 +258,26 @@ public class MainScreen {
     public ContextMenu setcontextmenu() {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem azalt = new MenuItem("Azalt");
-        azalt.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                if (sellScreenTable.getSelectionModel().getSelectedItem().amount == 1) {
-                    sellScreenTable.getItems().remove(sellScreenTable.getSelectionModel().getSelectedItem());
-                } else {
-                    sellScreenTable.getSelectionModel().getSelectedItem().amount--;
-                }
-                refreshtabledata();
-                init();
-                changetotaldata();
-
+        azalt.setOnAction(actionEvent -> {
+            if (sellScreenTable.getSelectionModel().getSelectedItem().amount == 1) {
+                sellScreenTable.getItems().remove(sellScreenTable.getSelectionModel().getSelectedItem());
+            } else {
+                sellScreenTable.getSelectionModel().getSelectedItem().amount--;
             }
+            refreshtabledata();
+            init();
+            changetotaldata();
+
         });
         MenuItem sil = new MenuItem("Sil");
-        sil.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                sellScreenTable.getItems().remove(sellScreenTable.getSelectionModel().getSelectedItem());
-                if (sellScreenTable.getSelectionModel().getSelectedItem() != null) {
-                    sellScreenTable.getSelectionModel().getSelectedItem().init();
-                }
-                refreshtabledata();
-                init();
-                changetotaldata();
+        sil.setOnAction(actionEvent -> {
+            sellScreenTable.getItems().remove(sellScreenTable.getSelectionModel().getSelectedItem());
+            if (sellScreenTable.getSelectionModel().getSelectedItem() != null) {
+                sellScreenTable.getSelectionModel().getSelectedItem().init();
             }
+            refreshtabledata();
+            init();
+            changetotaldata();
         });
         contextMenu.getItems().add(azalt);
         contextMenu.getItems().add(sil);
@@ -321,30 +319,7 @@ public class MainScreen {
             byte[] enter = {13};
             byte[] back = {8};
             if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(enter))) {
-                boolean add = false;
-                boolean find = false;
-                Products productdb = null;
-                if (sellScreenTable.getItems().size() > 0) {
-                    for (Products pro : sellScreenTable.getItems()) {
-                        if (Objects.equals(pro.barcode, barcodeField.getText())) {
-                            pro.amount++;
-                            pro.calsellprice.setText(String.valueOf((pro.unitsellprice - Double.parseDouble(pro.discount.getText())) * pro.amount));
-                            find = true;
-                        }
-                    }
-                }
-                if (!find) {
-                    productdb = ProductInteractions.getProduct(barcodeField.getText());
-                    add = true;
-                }
-                refreshtabledata();
-                if (add) {
-                    sellScreenTable.getItems().addAll(productdb);
-                }
-                sellScreenTable.refresh();
-                init();
-                changetotaldata();
-                barcodeField.setText("");
+                keyTypedAlgorithm();
             } else if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(back))) {
                 String prebarcode = barcodeField.getText();
                 prebarcode = prebarcode.substring(0, prebarcode.length() - 1);
@@ -356,8 +331,35 @@ public class MainScreen {
         }
     }
 
+    private void keyTypedAlgorithm() {
+        boolean add = false;
+        boolean find = false;
+        Products productdb = null;
+        if (sellScreenTable.getItems().size() > 0) {
+            for (Products pro : sellScreenTable.getItems()) {
+                if (Objects.equals(pro.barcode, barcodeField.getText())) {
+                    pro.amount++;
+                    pro.calsellprice.setText(String.valueOf((pro.unitsellprice - Double.parseDouble(pro.discount.getText())) * pro.amount));
+                    find = true;
+                }
+            }
+        }
+        if (!find) {
+            productdb = ProductInteractions.getProduct(barcodeField.getText());
+            add = true;
+        }
+        refreshtabledata();
+        if (add) {
+            sellScreenTable.getItems().addAll(productdb);
+        }
+        sellScreenTable.refresh();
+        init();
+        changetotaldata();
+        barcodeField.setText("");
+    }
+
     @FXML
-    public void statisticsTabOpened() throws IOException {
+    public void statisticsTabOpened() {
         if (tabpane.getSelectionModel().getSelectedItem().equals(statisticsTab)) {
             pieChart.getData().removeAll(pieChart.getData());
             Stats.createChartInfo();
@@ -382,21 +384,16 @@ public class MainScreen {
         }
         Label pieInfo = new Label("");
         pieInfo.setTextFill(Color.BLACK);
-        DoubleBinding total = Bindings.createDoubleBinding(() ->
-                pieChart.getData().stream().mapToDouble(PieChart.Data::getPieValue).sum(), pieChart.getData());
+        DoubleBinding total = Bindings.createDoubleBinding(() -> pieChart.getData().stream().mapToDouble(PieChart.Data::getPieValue).sum(), pieChart.getData());
         for (final PieChart.Data data : pieChart.getData()) {
-            data.getNode().addEventHandler(MouseEvent.MOUSE_MOVED,
-                    e -> {
-                        pieInfo.setVisible(true);
-                        pieInfo.setTranslateX(e.getSceneX() + 5);
-                        pieInfo.setTranslateY(e.getSceneY() - 90);
-                        String text = String.format("%.1f%%", 100 * data.getPieValue() / total.get());
-                        pieInfo.setText(text + "\n" + (int) data.getPieValue() + "TL");
-                    }
-            );
-            data.getNode().addEventHandler(MouseEvent.MOUSE_EXITED, mouseEvent -> {
-                pieInfo.setVisible(false);
+            data.getNode().addEventHandler(MouseEvent.MOUSE_MOVED, e -> {
+                pieInfo.setVisible(true);
+                pieInfo.setTranslateX(e.getSceneX() + 5);
+                pieInfo.setTranslateY(e.getSceneY() - 90);
+                String text = String.format("%.1f%%", 100 * data.getPieValue() / total.get());
+                pieInfo.setText(text + "\n" + (int) data.getPieValue() + "TL");
             });
+            data.getNode().addEventHandler(MouseEvent.MOUSE_EXITED, mouseEvent -> pieInfo.setVisible(false));
         }
         pieChart.setLabelsVisible(false);
         statisticAnchorPane.getChildren().add(pieInfo);
@@ -412,16 +409,14 @@ public class MainScreen {
         stackedBarChart.getData().add(series);
         stackedBarChart.setAnimated(false);
         Label barinfo = new Label("");
-        for (final StackedBarChart.Data data : series.getData()) {
+        for (final StackedBarChart.Data<String,Number> data : series.getData()) {
             data.getNode().addEventHandler(MouseEvent.MOUSE_MOVED, mouseEvent -> {
                 barinfo.setVisible(true);
                 barinfo.setTranslateX(mouseEvent.getSceneX());
                 barinfo.setTranslateY(mouseEvent.getSceneY() - 80);
                 barinfo.setText(data.getYValue().toString());
             });
-            data.getNode().addEventHandler(MouseEvent.MOUSE_EXITED, mouseEvent -> {
-                barinfo.setVisible(false);
-            });
+            data.getNode().addEventHandler(MouseEvent.MOUSE_EXITED, mouseEvent -> barinfo.setVisible(false));
 
         }
         barinfo.setTextFill(Color.BLACK);

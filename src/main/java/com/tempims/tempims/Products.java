@@ -17,7 +17,9 @@ public class Products {
     TextField discount = new TextField("0");
     Label calsellprice = new Label("");
     int amount, tax;
-    Double unitsellprice, calculatedunitsellprice, sellpricedb, pricewithouttax;
+    Double unitsellprice;
+    Double calculatedunitsellprice;
+    Double sellpricedb;
     String name, barcode;
 
     Products(String barcode, String name, Integer tax, Double sellpricedb) {
@@ -34,7 +36,11 @@ public class Products {
     }
 
     public ObservableValue<TextField> observableValuedisper() {
-        return new ObservableValue<TextField>() {
+        return getObservableValue(discountper);
+    }
+
+    private ObservableValue<TextField> getObservableValue(TextField a) {
+        return new ObservableValue<>() {
             @Override
             public void addListener(ChangeListener<? super TextField> changeListener) {
 
@@ -47,7 +53,7 @@ public class Products {
 
             @Override
             public TextField getValue() {
-                return discountper;
+                return a;
             }
 
             @Override
@@ -63,35 +69,11 @@ public class Products {
     }
 
     public ObservableValue<TextField> observableValuedis() {
-        return new ObservableValue<TextField>() {
-            @Override
-            public void addListener(ChangeListener<? super TextField> changeListener) {
-
-            }
-
-            @Override
-            public void removeListener(ChangeListener<? super TextField> changeListener) {
-
-            }
-
-            @Override
-            public TextField getValue() {
-                return discount;
-            }
-
-            @Override
-            public void addListener(InvalidationListener invalidationListener) {
-            }
-
-            @Override
-            public void removeListener(InvalidationListener invalidationListener) {
-
-            }
-        };
+        return getObservableValue(discount);
     }
 
     public ObservableValue<Label> observableValueprice() {
-        return new ObservableValue<Label>() {
+        return new ObservableValue<>() {
             @Override
             public void addListener(ChangeListener<? super Label> changeListener) {
 

@@ -5,8 +5,6 @@ import javafx.collections.ObservableList;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class ProcessLogs {
 

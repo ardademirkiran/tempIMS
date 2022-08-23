@@ -2,13 +2,10 @@ package com.tempims.tempims;
 
 import javafx.collections.ObservableList;
 
-import java.io.*;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.HashMap;
 
 public class Stats {
     static HashMap<String, Number> productChartInfo= new HashMap<>();
@@ -28,7 +25,7 @@ public class Stats {
     }
 
 
-    public static void updateProfit(ObservableList<Products> soldProducts) throws IOException {
+    public static void updateProfit(ObservableList<Products> soldProducts) {
         double totalProfit = 0;
         for(Products product : soldProducts){
             double unitBuyPrice = DBAccess.fetchUnitPrice(product.barcode); //sql part to get buyPrice per unit by using "product.barcode"

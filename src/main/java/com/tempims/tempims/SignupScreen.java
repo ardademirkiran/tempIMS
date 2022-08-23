@@ -19,7 +19,7 @@ public class SignupScreen {
     public PasswordField passwordField;
     public PasswordField passwordField1;
 
-    public void loginButtonAction(ActionEvent actionEvent) throws IOException {
+    public void loginButtonAction() throws IOException {
         Stop[] stops = new Stop[]{new Stop(0, Color.web("#9e899b")), new Stop(1, Color.GRAY)};
         LinearGradient lg1 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
         FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("LoginScreen.fxml"));
@@ -28,7 +28,7 @@ public class SignupScreen {
         Main.globalStage.setScene(scene);
     }
 
-    public void signupButtonAction(ActionEvent actionEvent) throws IOException {
+    public void signupButtonAction() throws IOException {
         int flag = Session.checkSignUp(usernameField.getText(), passwordField.getText(), passwordField1.getText());
         if (flag == -2) {
             System.out.println("Bu kullanıcı adı zaten kullanılıyor.");
