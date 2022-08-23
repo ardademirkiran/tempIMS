@@ -2,6 +2,7 @@ package com.tempims.tempims;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
 
 public class DBAccess {
     private static Connection connect() {
@@ -41,10 +42,10 @@ public class DBAccess {
                     + " NAME CHAR(127),\n"
                     + " PRODUCT_NUMBER TINYINT(127),\n"
                     + " TAX TINYINT(127),\n"
-                    + " UNIT_PRICE DECIMAL(32,2),\n"
-                    + " BUYING_PRICE DECIMAL(32,2),\n"
-                    + " SELLING_PRICE DECIMAL(32,2),\n"
-                    + " PROFIT DECIMAL(32,2)\n"
+                    + " UNIT_BUYING_PRICE DECIMAL(32,2),\n"
+                    + " TOTAL_BUYING_PRICE DECIMAL(32,2),\n"
+                    + " UNIT_SELLING_PRICE DECIMAL(32,2),\n"
+                    + " PROFIT_RETURN DECIMAL(32,2)\n"
                     + ");";
             Statement stmt = conn.createStatement();
             stmt.execute(sql);
@@ -73,7 +74,7 @@ public class DBAccess {
             Statement checkStmt = conn.createStatement();
             ResultSet rs = checkStmt.executeQuery(productCheck);
             if (!rs.next()) { // Product doesn't exist, add new product to database
-                String newProduct = "INSERT INTO PRODUCTS (BARCODE, BRAND, NAME, PRODUCT_NUMBER, TAX, UNIT_PRICE, BUYING_PRICE, SELLING_PRICE, PROFIT) "
+                String newProduct = "INSERT INTO PRODUCTS (BARCODE, BRAND, NAME, PRODUCT_NUMBER, TAX, UNIT_BUYING_PRICE, TOTAL_BUYING_PRICE, UNIT_SELLING_PRICE, PROFIT_RETURN) "
                         + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)";
                 PreparedStatement pstmt = conn.prepareStatement(newProduct);
                 pstmt.setString(1, barcodeInput);
@@ -86,9 +87,14 @@ public class DBAccess {
                 pstmt.setDouble(8, Double.parseDouble(sellPriceInput));
                 pstmt.executeUpdate();
             }
-            /*else{ // Product is already on the database, change the stock
+            else{ // Product is already on the database, change the stock and price columns if necessary
+                conn.close();
+                int currentStock = getStock(barcodeInput);
+                double currentAvgUnitBuyingPrice = fetchUnitBuyingPrice(barcodeInput);
+                double avgUnitBuyingPrice = Stats.calculateAverageEntryPrice(currentStock,currentAvgUnitBuyingPrice,Integer.parseInt(numberInput),Double.parseDouble(unitBuyPriceInput));
+                updatePriceInfo(avgUnitBuyingPrice,Double.parseDouble(sellPriceInput),Double.parseDouble(totalBuyPriceInput),barcodeInput);
                 updateStock(barcodeInput, Integer.parseInt(numberInput));
-            }*/
+            }
 
         } catch (SQLException e) {
             e.printStackTrace(System.out);
@@ -205,10 +211,10 @@ public class DBAccess {
     protected static String newProductInfo(String barcode) {
         Connection conn = connect();
         try {
-            String sql = String.format("SELECT NAME, TAX, SELLING_PRICE FROM PRODUCTS WHERE BARCODE = '%s'", barcode);
+            String sql = String.format("SELECT NAME, TAX, UNIT_SELLING_PRICE FROM PRODUCTS WHERE BARCODE = '%s'", barcode);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
-            String returnVal = String.format("%s:%d:%,.2f", rs.getString("NAME"), rs.getInt("TAX"), rs.getDouble("SELLING_PRICE"));
+            String returnVal = String.format("%s:%d:%,.2f", rs.getString("NAME"), rs.getInt("TAX"), rs.getDouble("UNIT_SELLING_PRICE"));
             return returnVal;
         } catch (SQLException e) {
             e.printStackTrace(System.out);
@@ -239,7 +245,7 @@ public class DBAccess {
         else if(purpose.equals("statView")){
             Connection connStat = connect();
             try{
-                String sqlStat = "SELECT NAME, PROFIT FROM PRODUCTS WHERE PROFIT <> 0.00 ";
+                String sqlStat = "SELECT NAME, PROFIT_RETURN FROM PRODUCTS WHERE PROFIT_RETURN <> 0.00 ";
                 Statement stmtStat = connStat.createStatement();
                 ResultSet rsStat = stmtStat.executeQuery(sqlStat);
                 return rsStat;
@@ -252,13 +258,13 @@ public class DBAccess {
         return null;
     }
 
-    protected static double fetchUnitPrice(String barcode){
+    protected static double fetchUnitBuyingPrice(String barcode){
         Connection conn = connect();
         try {
-            String sql = String.format("SELECT UNIT_PRICE FROM PRODUCTS WHERE BARCODE = '%s'", barcode);
+            String sql = String.format("SELECT UNIT_BUYING_PRICE FROM PRODUCTS WHERE BARCODE = '%s'", barcode);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
-            return rs.getDouble("UNIT_PRICE");
+            return rs.getDouble("UNIT_BUYING_PRICE");
         } catch (SQLException e) {
             e.printStackTrace(System.out);
         } finally {
@@ -274,7 +280,7 @@ public class DBAccess {
     protected static void amendProfit(String barcode, double newProfit){
         Connection conn = connect();
         try{
-            String sql = String.format("UPDATE PRODUCTS SET PROFIT = PROFIT + '%,.2f' WHERE BARCODE = '%s'",newProfit,barcode);
+            String sql = String.format("UPDATE PRODUCTS SET PROFIT_RETURN = PROFIT_RETURN + '%,.2f' WHERE BARCODE = '%s'",newProfit,barcode);
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
         }
@@ -335,6 +341,73 @@ public class DBAccess {
                 conn.close();
             }
             catch (SQLException e){
+                e.printStackTrace(System.out);
+            }
+        }
+    }
+
+    protected static void updatePriceInfo(double newUnitPrice, double newSellingPrice, double newBuyingPrice, String barcode){
+        Connection conn = connect();
+        try{
+            String sql = String.format("UPDATE PRODUCTS SET UNIT_BUYING_PRICE = '%,.2f', UNIT_SELLING_PRICE = '%,.2f', TOTAL_BUYING_PRICE = TOTAL_BUYING_PRICE + '%,.2f' WHERE BARCODE = '%s'",
+                    newUnitPrice, newSellingPrice, newBuyingPrice, barcode);
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+        }
+        catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+        finally{
+            try{
+                conn.close();
+            }
+            catch(SQLException e){
+                e.printStackTrace(System.out);
+            }
+        }
+    }
+
+    protected static LinkedHashMap<String, Double> barChartValues(){
+        Connection conn = connect();
+        LinkedHashMap<String, Double> returnVal = new LinkedHashMap<>();
+        try{
+            String sql = "SELECT * FROM PROFITS";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while(rs.next()){
+                returnVal.put(rs.getString("DATE"), rs.getDouble("GROSS_PROFIT"));
+            }
+            return returnVal;
+        }
+        catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+        finally{
+            try{
+                conn.close();
+            }
+            catch(SQLException e){
+                e.printStackTrace(System.out);
+            }
+        }
+        return returnVal;
+    }
+
+    protected static void clearProfitTable(){
+        Connection conn = connect();
+        try{
+            String sql = "DELETE FROM PROFITS";
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+        }
+        catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+        finally{
+            try{
+                conn.close();
+            }
+            catch(SQLException e){
                 e.printStackTrace(System.out);
             }
         }

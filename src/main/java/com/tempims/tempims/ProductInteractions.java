@@ -39,7 +39,7 @@ public class ProductInteractions {
             while (rs.next()) {
                 allProducts.add(new AllProducts(rs.getString("BARCODE"), rs.getString("BRAND"), rs.getString("NAME"),
                         String.valueOf(rs.getInt("PRODUCT_NUMBER")), String.valueOf(rs.getInt("TAX")),
-                        String.valueOf(rs.getDouble("UNIT_PRICE")), String.valueOf(rs.getDouble("SELLING_PRICE"))));
+                        String.valueOf(rs.getDouble("UNIT_BUYING_PRICE")), String.valueOf(rs.getDouble("UNIT_SELLING_PRICE"))));
             }
         }
         catch (SQLException e){

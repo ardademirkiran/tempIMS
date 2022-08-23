@@ -397,14 +397,14 @@ public class MainScreen {
     public void initBarData(Boolean isdaily){
         stackedBarChart.getData().removeAll(stackedBarChart.getData());
         //LinkedHashMap<String, Double> datesAndProfits = A <String, Double> LinkedHashMap from PROFITS TABLE
-        LinkedHashMap<String, Double> datesAndProfits = new LinkedHashMap<>();
-        datesAndProfits.put("2022-08-09", 43.0);
+        LinkedHashMap<String, Double> datesAndProfits = DBAccess.barChartValues();
+        /*datesAndProfits.put("2022-08-09", 43.0);
         datesAndProfits.put("2022-08-12", 32.0);
         datesAndProfits.put("2022-09-15", 37.0);
         datesAndProfits.put("2022-09-18", 51.0);
         datesAndProfits.put("2022-10-19", 63.50);
         datesAndProfits.put("2022-10-11", 35.43);
-        datesAndProfits.put("2022-11-28", 31.46);
+        datesAndProfits.put("2022-11-28", 31.46);*/
         HashMap<String, Double> barChartData = Stats.calculateMonthlyProfits(datesAndProfits);
         setBarChart(barChartData);
     }
