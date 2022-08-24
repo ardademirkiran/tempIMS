@@ -2,7 +2,6 @@ package com.tempims.tempims;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
@@ -49,7 +48,6 @@ public class MainScreen {
     public TextField barcodeField;
     public Tab sellScreenTab;
     public Tab buyScreenTab;
-    public Tab returnTab;
     public Tab stockControlTab;
     public TextField productEntryLabelBarcode;
     public TextField productEntryLabelName;
@@ -74,6 +72,8 @@ public class MainScreen {
     public TableColumn<AllProducts, Double> stockCollumnUnitBuy;
     public TableColumn<AllProducts, Double> stockCollumnUnitSell;
     public TableColumn<AllProducts, Double> stockCollumnExpectedProfit;
+    public TableColumn<AllProducts, Button> stockCollumnAddList;
+    public AnchorPane stockControlPane;
     CategoryAxis xAxis = new CategoryAxis();
     NumberAxis yAxis = new NumberAxis("TL", 0, 50, 5);
     public StackedBarChart<String, Number> stackedBarChart = new StackedBarChart<>(xAxis, yAxis);
@@ -285,20 +285,41 @@ public class MainScreen {
         contextMenu.getItems().add(sil);
         return contextMenu;
     }
-
+    boolean stockControlSwitchAdded = false;
+    ToggleSwitch toggleSwitchStock = new ToggleSwitch("Sipariş Listesi","Stok Kontrol");
     @FXML
     public void onstockcontrolopened() {
-        stockTable.getItems().removeAll(stockTable.getItems());
-        stockCollumnBarcode.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getbarcode());
-        stockCollumnAmont.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getamont());
-        stockCollumnBrand.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getbrand());
-        stockCollumnName.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getname());
-        stockCollumnTax.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().gettax());
-        stockCollumnUnitBuy.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getunitbuy());
-        stockCollumnUnitSell.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getunitsell());
-        stockCollumnExpectedProfit.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getprofit());
-        stockTable.getItems().addAll(ProductInteractions.createAllProducts());
-        stockTable.refresh();
+        if (tabpane.getSelectionModel().getSelectedItem().equals(stockControlTab)){
+            stockCollumnBarcode.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getbarcode());
+            stockCollumnAmont.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getamont());
+            stockCollumnBrand.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getbrand());
+            stockCollumnName.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getname());
+            stockCollumnTax.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().gettax());
+            stockCollumnUnitBuy.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getunitbuy());
+            stockCollumnUnitSell.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getunitsell());
+            stockCollumnExpectedProfit.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getprofit());
+            stockCollumnAddList.setCellValueFactory(allProductsButtonCellDataFeatures -> allProductsButtonCellDataFeatures.getValue().getButton());
+            if (!stockControlSwitchAdded){
+                stockTable.getItems().removeAll(stockTable.getItems());
+                stockTable.getItems().addAll(ProductInteractions.createAllProducts());
+                stockControlSwitchAdded = true;
+                stockControlPane.getChildren().add(toggleSwitchStock);
+                toggleSwitchStock.setMinWidth(500);
+                stockControlPane.setLeftAnchor(toggleSwitchStock,500.0);
+                stockControlPane.setRightAnchor(toggleSwitchStock,500.0);
+                toggleSwitchStock.switchOnProperty().addListener((a,b,c) -> {
+                    if (c){
+                        stockTable.getItems().removeAll(stockTable.getItems());
+                        stockTable.getItems().addAll(AllProducts.buyArray);
+                        stockCollumnAddList.setVisible(false);
+                    }else{
+                        stockTable.getItems().removeAll(stockTable.getItems());
+                        stockTable.getItems().addAll(ProductInteractions.createAllProducts());
+                        stockCollumnAddList.setVisible(true);
+                    }
+                });
+            }
+        }
     }
 
     @FXML
@@ -363,14 +384,14 @@ public class MainScreen {
     @FXML
     GridPane switchPane;
     @FXML
-    ToggleSwitch toggleSwitch = new ToggleSwitch();
+    ToggleSwitch toggleSwitchStatics = new ToggleSwitch("Günlük","Aylık");
     public void statisticsTabOpened() {
         if (tabpane.getSelectionModel().getSelectedItem().equals(statisticsTab)) {
             if (!switchadded){
                 Label dateLabel = new Label(LocalDate.now().getMonth().toString());
                 switchadded = true;
-                ToggleSwitch finalToggleSwitch = toggleSwitch;
-                toggleSwitch.switchOnProperty().addListener((a, b, c) -> {
+                ToggleSwitch finalToggleSwitch = toggleSwitchStatics;
+                toggleSwitchStatics.switchOnProperty().addListener((a, b, c) -> {
                     if (c) {
                         initBarData(finalToggleSwitch.switchOnProperty().getValue());
                         dateLabel.setText(LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)) + " " +LocalDate.now().getDayOfWeek());
@@ -379,16 +400,16 @@ public class MainScreen {
                         dateLabel.setText(LocalDate.now().getMonth().toString());
                     }
                 });
-                toggleSwitch.setMaxWidth(200);
-                toggleSwitch.setAlignment(Pos.CENTER);
-                switchPane.setHalignment(toggleSwitch,HPos.CENTER);
+                toggleSwitchStatics.setMaxWidth(200);
+                toggleSwitchStatics.setAlignment(Pos.CENTER);
+                switchPane.setHalignment(toggleSwitchStatics,HPos.CENTER);
                 switchPane.setHalignment(dateLabel,HPos.CENTER);
-                switchPane.add(toggleSwitch, 0,0,1,1);
+                switchPane.add(toggleSwitchStatics, 0,0,1,1);
                 switchPane.add(dateLabel,0,1,1,1);
                 switchPane.setPrefWidth(200);
             }
-            initPieData(toggleSwitch.switchOnProperty().getValue());
-            initBarData(toggleSwitch.switchOnProperty().getValue());
+            initPieData(toggleSwitchStatics.switchOnProperty().getValue());
+            initBarData(toggleSwitchStatics.switchOnProperty().getValue());
         }
     }
     public void initPieData(Boolean isdaily){

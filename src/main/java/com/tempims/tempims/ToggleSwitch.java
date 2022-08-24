@@ -19,9 +19,9 @@ public class ToggleSwitch extends HBox {
         return isDaily;
     }
 
-    private void init() {
-        button.setText("Günlük");
-        label.setText("Aylık");
+    private void init(String firsttext, String secondtext) {
+        button.setText(firsttext);
+        label.setText(secondtext);
 
         getChildren().addAll(label, button);
         button.setOnAction((e) -> {
@@ -48,17 +48,17 @@ public class ToggleSwitch extends HBox {
         button.prefHeightProperty().bind(heightProperty());
     }
 
-    public ToggleSwitch() {
-        init();
+    public ToggleSwitch(String firsttext, String secondtext) {
+        init(firsttext,secondtext);
         isDaily.addListener((a, b, c) -> {
             if (c) {
-                label.setText("Günlük");
-                button.setText("Aylık");
+                label.setText(firsttext);
+                button.setText(secondtext);
                 setStyle("-fx-background-color: gray;");
                 label.toFront();
             } else {
-                label.setText("Aylık");
-                button.setText("Günlük");
+                label.setText(secondtext);
+                button.setText(firsttext);
                 setStyle("-fx-background-color: gray;");
                 button.toFront();
             }
