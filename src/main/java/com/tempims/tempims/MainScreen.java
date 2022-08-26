@@ -2,11 +2,13 @@ package com.tempims.tempims;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
+import javafx.scene.AccessibleRole;
 import javafx.scene.Node;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
@@ -21,6 +23,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MainScreen {
 
@@ -73,7 +76,14 @@ public class MainScreen {
     public TableColumn<AllProducts, Double> stockCollumnUnitSell;
     public TableColumn<AllProducts, Double> stockCollumnExpectedProfit;
     public TableColumn<AllProducts, Button> stockCollumnAddList;
+    public Tab logTab;
     public AnchorPane stockControlPane;
+    public TableView<LogObject> historyTable;
+    public TableColumn<LogObject, String> historyTableDate;
+    public TableColumn<LogObject, String> historyTableEmployee;
+    public TableColumn<LogObject, String> historyTableType;
+    public TableColumn<LogObject, String> historyTableExplanation;
+    public TableColumn<LogObject, String> historyTableDetails;
     CategoryAxis xAxis = new CategoryAxis();
     NumberAxis yAxis = new NumberAxis("TL", 0, 50, 5);
     public StackedBarChart<String, Number> stackedBarChart = new StackedBarChart<>(xAxis, yAxis);
@@ -104,12 +114,15 @@ public class MainScreen {
     @FXML
     protected void sellButtonClicked() throws IOException {
         ObservableList<Products> productslist = sellScreenTable.getItems();
+        if (productslist.size()>0){
         ProcessLogs.recordSalesProcess(productslist, Double.parseDouble(totalPriceLabel.getText()));
         Stats.updateProfit(productslist);
         for (Products product : productslist) {
             ProductInteractions.sellProduct(product.barcode, product.amount);
         }
-        cancelButtonClicked();
+        cancelButtonClicked();}else{
+            System.out.println("bossatış");
+        }
     }
 
     @FXML
@@ -411,6 +424,14 @@ public class MainScreen {
             initPieData(toggleSwitchStatics.switchOnProperty().getValue());
             initBarData(toggleSwitchStatics.switchOnProperty().getValue());
         }
+        tabpane.getSelectionModel().selectedItemProperty().addListener((ov, oldTab, newTab) -> {
+            if (oldTab.equals(statisticsTab)){
+                for (PieChart.Data data:pieChart.getData()
+                ) {
+                    data.nameProperty().set("");
+                }
+            }
+        });
     }
     public void initPieData(Boolean isdaily){
         pieChart.getData().removeAll(pieChart.getData());
@@ -454,7 +475,8 @@ public class MainScreen {
             });
             data.getNode().addEventHandler(MouseEvent.MOUSE_EXITED, mouseEvent -> pieInfo.setVisible(false));
         }
-        pieChart.setLabelsVisible(false);
+        pieChart.setLabelsVisible(true);
+        pieChart.setAnimated(true);
         statisticAnchorPane.getChildren().add(pieInfo);
 
     }
@@ -481,6 +503,17 @@ public class MainScreen {
         barinfo.setTextFill(Color.BLACK);
 
         statisticAnchorPane.getChildren().add(barinfo);
+    }
+    public void logTabOpened() throws IOException {
+        if (tabpane.getSelectionModel().getSelectedItem().equals(logTab)){
+            historyTable.getItems().removeAll(historyTable.getItems());
+            historyTableDate.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getDate());
+            historyTableDetails.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getDetails());
+            historyTableEmployee.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getEmployee());
+            historyTableType.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getType());
+            historyTableExplanation.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getExplanation());
+            historyTable.getItems().addAll(ProcessLogs.getLogObjects());
+        }
     }
 
 }

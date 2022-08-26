@@ -180,8 +180,22 @@
                 </Label>
             </AnchorPane>
         </Tab>
-        <Tab fx:id="orderListScreen" text="İade Ekranı">
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+        <Tab fx:id="logTab" onSelectionChanged="#logTabOpened" text="Geçmiş">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+            <children>
+               <TableView fx:id="historyTable" layoutX="185.0" layoutY="73.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                 <columns>
+                   <TableColumn fx:id="historyTableDate" prefWidth="75.0" text="Tarih" />
+                     <TableColumn fx:id="historyTableEmployee" prefWidth="75.0" text="Çalışan" />
+                   <TableColumn fx:id="historyTableType" prefWidth="75.0" text="Tür" />
+                     <TableColumn fx:id="historyTableExplanation" prefWidth="75.0" text="Açıklama" />
+                     <TableColumn fx:id="historyTableDetails" prefWidth="75.0" text="Detay" />
+                 </columns>
+                  <columnResizePolicy>
+                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                  </columnResizePolicy>
+               </TableView>
+            </children></AnchorPane>
         </Tab>
         <Tab fx:id="stockControlTab" onSelectionChanged="#onstockcontrolopened" text="Stok Kontrol Ekranı">
             <AnchorPane fx:id="stockControlPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
