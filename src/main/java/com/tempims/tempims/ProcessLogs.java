@@ -46,12 +46,12 @@ public class ProcessLogs {
       BufferedReader reader = new BufferedReader(new FileReader("date.txt"));
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
       LocalDate lastLoggedDate = LocalDate.parse(reader.readLine(), formatter);
-      if (!lastLoggedDate.toString().equals(currentDate.toString())){
-         DBAccess.insertProfitRow(currentDate);
-      }
-
       if (lastLoggedDate.getMonthValue() != currentDate.getMonthValue() || lastLoggedDate.getYear() != currentDate.getYear()){
          DBAccess.clearProfitTable();//sql part to update to 0(zero) all of profit values from PROFITS table
+      }
+
+      if (!lastLoggedDate.toString().equals(currentDate.toString())){
+         DBAccess.insertProfitRow(currentDate);
       }
 
       BufferedWriter writer = new BufferedWriter(new FileWriter("date.txt"));
@@ -74,7 +74,7 @@ public class ProcessLogs {
             }
             logObjects.add(new LogObject(splittedLine[1], splittedLine[0], splittedLine[3], detailsString, splittedLine[4]));
          } else if(splittedLine[0].equals("STOK TANIMI")){
-            String explanationString = "Barkod: " + splittedLine[2] + " " + splittedLine[4] + " adet " + splittedLine[3];
+            String explanationString = splittedLine[4] + " adet " + splittedLine[3] + " " + "-- Barkod: " + splittedLine[2];
             logObjects.add(new LogObject(splittedLine[1], splittedLine[0], explanationString, "", splittedLine[5]));
 
          } else if (splittedLine[0].equals("GİRİŞ")){

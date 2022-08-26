@@ -10,11 +10,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class Stats {
-    static HashMap<String, Number> productChartInfo= new HashMap<>();
+    //static HashMap<String, Number> productChartInfo= new HashMap<>();
     static LocalDate currentDate = java.time.LocalDate.now();
 
-    public static void createChartInfo(){
-        productChartInfo.clear();
+    public static HashMap<String, Number> createChartInfo(){
+        HashMap<String, Number> productChartInfo= new HashMap<>();
         ResultSet rs = DBAccess.fetchProducts("statView");
         try{
             while(rs.next()){
@@ -24,6 +24,7 @@ public class Stats {
         catch(SQLException e){
             e.printStackTrace(System.out);
         }
+        return productChartInfo;
     }
 
 
@@ -33,10 +34,10 @@ public class Stats {
             double unitBuyPrice = DBAccess.fetchUnitBuyingPrice(product.barcode); //sql part to get buyPrice per unit by using "product.barcode"
             double profitToAdd = product.amount * (product.calculatedunitsellprice - unitBuyPrice);
             totalProfit += profitToAdd;
-            DBAccess.amendProfit(product.barcode,profitToAdd); //update profit on database
+            DBAccess.amendProfit(product.barcode, profitToAdd); //update profit on database
         }
 
-        DBAccess.updateDailyProfit(currentDate,totalProfit);//sql part to update current daily profit with "current daily profit + totalProfit" by using "currentDate"
+        DBAccess.updateDailyProfit(currentDate, totalProfit);//sql part to update current daily profit with "current daily profit + totalProfit" by using "currentDate"
 
     }
 

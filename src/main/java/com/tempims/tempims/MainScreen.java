@@ -435,8 +435,7 @@ public class MainScreen {
     }
     public void initPieData(Boolean isdaily){
         pieChart.getData().removeAll(pieChart.getData());
-        Stats.createChartInfo();
-        setPieChart(Stats.productChartInfo);
+        setPieChart(Stats.createChartInfo());
     }
     public void initBarData(Boolean isdaily){
         stackedBarChart.getData().removeAll(stackedBarChart.getData());

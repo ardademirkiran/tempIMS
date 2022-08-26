@@ -11,7 +11,7 @@ public class Session {
 
     public static int checkLogin(String usernameInput, String passwordInput) throws IOException {
 
-        String hashedPasswordDB = DBAccess.fetchPassword(usernameInput);  // This part will be accessed from sql database by using "username"
+        String hashedPasswordDB = DBAccess.fetchPassword(usernameInput);
         String hashedPasswordInput = hashPassword(passwordInput);
 
         if (hashedPasswordDB == null) {
