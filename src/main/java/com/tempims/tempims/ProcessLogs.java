@@ -42,6 +42,7 @@ public class ProcessLogs {
    }
 
    public static void setUpDate() throws IOException {
+      checkDateFile();
       currentDate = java.time.LocalDate.now();
       BufferedReader reader = new BufferedReader(new FileReader("date.txt"));
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -84,5 +85,14 @@ public class ProcessLogs {
          }
       }
       return logObjects;
+   }
+
+   public static void checkDateFile() throws IOException {
+      File dateFile = new File("date.txt");
+      if(dateFile.createNewFile()){
+         BufferedWriter writer = new BufferedWriter(new FileWriter(dateFile));
+         writer.write("1111-11-11");
+         writer.close();
+      }
    }
 }
