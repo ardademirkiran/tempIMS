@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 public class Session {
-    public static String username;
+    public static User user;
 
     public static int checkLogin(String usernameInput, String passwordInput) throws IOException {
 
@@ -19,8 +19,10 @@ public class Session {
         }
 
         if (hashedPasswordDB.equals(hashedPasswordInput)) {
-            username = usernameInput; // This line assigns username of the current user to static "username" variable for action recording.
-            ProcessLogs.recordUserProcess(1, username);
+            //sql part to get permissions from USERS table
+            user = new User(usernameInput, "110111");
+
+            ProcessLogs.recordUserProcess(1, user.username);
             return 1;
         } else {
             return 0;
@@ -50,6 +52,9 @@ public class Session {
 
 
     }
+
+
+
 
 
     private static String hashPassword(String password) { //password hashing method

@@ -256,7 +256,7 @@ public class MainScreen {
     }
 
     protected void changeActiveUser(Label label) {
-        label.setText("Kullanıcı: " + Session.username);
+        label.setText("Kullanıcı: " + Session.user.username);
     }
 
     public void init() {

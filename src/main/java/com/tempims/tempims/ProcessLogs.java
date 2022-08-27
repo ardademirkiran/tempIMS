@@ -17,7 +17,7 @@ public class ProcessLogs {
       for (Products product : soldProducts){
          midText += product.amount + "x" + product.name + "/-";
       }
-      writer.write("SATIŞ//" + java.time.LocalDate.now() + "||" +  java.time.LocalTime.now() + "//" + midText + "//" + totalSellPrice + "//" + Session.username + "\n");
+      writer.write("SATIŞ//" + java.time.LocalDate.now() + "||" +  java.time.LocalTime.now() + "//" + midText + "//" + totalSellPrice + "//" + Session.user.username + "\n");
       writer.close();
 
    }
@@ -35,7 +35,7 @@ public class ProcessLogs {
    public static void recordStockEntryProcess(String barcode, String name, String amount) throws IOException {
       FileWriter logsFile = new FileWriter("logs.txt", true);
       BufferedWriter writer = new BufferedWriter(logsFile);
-      writer.write("STOK TANIMI//" + java.time.LocalDate.now() + "||" + java.time.LocalTime.now() + "//" + barcode + "//" + name + "//" + amount + "//" + Session.username + "\n");
+      writer.write("STOK TANIMI//" + java.time.LocalDate.now() + "||" + java.time.LocalTime.now() + "//" + barcode + "//" + name + "//" + amount + "//" + Session.user.username + "\n");
       writer.close();
 
 
