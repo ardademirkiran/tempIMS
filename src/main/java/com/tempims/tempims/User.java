@@ -3,6 +3,8 @@ package com.tempims.tempims;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 
+import java.util.ArrayList;
+
 public class User {
     public String username;
     public String sellScreenPerm;
@@ -63,6 +65,13 @@ public class User {
 
     public static void changePermissions(String username, String permissions) {
         //sql part to insert new permissions string to USERS db by using username
+    }
+
+    public ArrayList<User> getAllUsers(){
+        ArrayList<User> usersList = new ArrayList<>();
+        //sql part to get all users from USERS table
+        //fill the arraylist with new User(username, permissions)
+        return usersList;
     }
 
 }
