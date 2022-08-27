@@ -508,7 +508,6 @@ public class MainScreen {
             historyTableType.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getType());
             historyTableExplanation.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getExplanation());
             historyTable.getItems().addAll(ProcessLogs.getLogObjects());
-
             historyTable.setRowFactory(tv -> new TableRow<>() {
                 Node detailsPane;
                 {
@@ -523,6 +522,12 @@ public class MainScreen {
                     detailsPane = createDetailsPane(itemProperty());
                 }
 
+                @Override
+                protected void updateItem(LogObject item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item != null && !item.getDetails().getValue().isEmpty())
+                        setStyle("-fx-background-color: skyblue");
+                }
                 @Override
                 protected double computePrefHeight(double width) {
                     if (isSelected()) {
@@ -552,7 +557,7 @@ public class MainScreen {
         labels.setAlignment(Pos.CENTER_LEFT);
         labels.setPadding(new Insets(2, 2, 2, 16));
         detailsPane.setCenter(labels);
-        detailsPane.setStyle("-fx-background-color: -fx-background; -fx-background: skyblue;");
+        detailsPane.setStyle("-fx-background-color: -fx-background; -fx-background: lightblue;");
         item.addListener((obs, oldItem, newItem) -> {
             if (newItem == null) {
                 detailsLabel.setText("");
