@@ -3,7 +3,6 @@ package com.tempims.tempims;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
@@ -15,7 +14,10 @@ import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 import java.io.IOException;
@@ -24,7 +26,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
-import java.util.function.Function;
 
 public class MainScreen {
 
@@ -84,13 +85,19 @@ public class MainScreen {
     public TableColumn<LogObject, String> historyTableEmployee;
     public TableColumn<LogObject, String> historyTableType;
     public TableColumn<LogObject, String> historyTableExplanation;
-    public TableColumn<LogObject, String> historyTableDetails;
     CategoryAxis xAxis = new CategoryAxis();
     NumberAxis yAxis = new NumberAxis("TL", 0, 50, 5);
     public StackedBarChart<String, Number> stackedBarChart = new StackedBarChart<>(xAxis, yAxis);
     boolean eventhandleradded = false;
     String barcodeeverwritten = "";
     ContextMenu productEntryBarcodeContextMenu = new ContextMenu();
+    boolean stockControlSwitchAdded = false;
+    ToggleSwitch toggleSwitchStock = new ToggleSwitch("Sipariş Listesi", "Stok Kontrol");
+    boolean switchadded = false;
+    @FXML
+    GridPane switchPane;
+    @FXML
+    ToggleSwitch toggleSwitchStatics = new ToggleSwitch("Günlük", "Aylık");
 
     public static void changetotaldata() {
         double totalprice = 0;
@@ -115,13 +122,14 @@ public class MainScreen {
     @FXML
     protected void sellButtonClicked() throws IOException {
         ObservableList<Products> productslist = sellScreenTable.getItems();
-        if (productslist.size()>0){
-        ProcessLogs.recordSalesProcess(productslist, Double.parseDouble(totalPriceLabel.getText()));
-        Stats.updateProfit(productslist);
-        for (Products product : productslist) {
-            ProductInteractions.sellProduct(product.barcode, product.amount);
-        }
-        cancelButtonClicked();}else{
+        if (productslist.size() > 0) {
+            ProcessLogs.recordSalesProcess(productslist, Double.parseDouble(totalPriceLabel.getText()));
+            Stats.updateProfit(productslist);
+            for (Products product : productslist) {
+                ProductInteractions.sellProduct(product.barcode, product.amount);
+            }
+            cancelButtonClicked();
+        } else {
             System.out.println("bossatış");
         }
     }
@@ -183,7 +191,7 @@ public class MainScreen {
         if (matchedbarcodeslist.size() < 6 && matchedbarcodeslist.size() > 0) {
             for (String barcode : matchedbarcodeslist) {
                 Label label = new Label(barcode);
-                label.setPrefWidth(productEntryLabelBarcode.getWidth()-13);
+                label.setPrefWidth(productEntryLabelBarcode.getWidth() - 13);
                 CustomMenuItem menuItem = new CustomMenuItem(label, true);
                 menuItem.setOnAction(actionEvent -> {
                     productEntryLabelBarcode.setText(label.getText());
@@ -299,11 +307,10 @@ public class MainScreen {
         contextMenu.getItems().add(sil);
         return contextMenu;
     }
-    boolean stockControlSwitchAdded = false;
-    ToggleSwitch toggleSwitchStock = new ToggleSwitch("Sipariş Listesi","Stok Kontrol");
+
     @FXML
     public void onstockcontrolopened() {
-        if (tabpane.getSelectionModel().getSelectedItem().equals(stockControlTab)){
+        if (tabpane.getSelectionModel().getSelectedItem().equals(stockControlTab)) {
             stockCollumnBarcode.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getbarcode());
             stockCollumnAmont.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getamont());
             stockCollumnBrand.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getbrand());
@@ -313,20 +320,20 @@ public class MainScreen {
             stockCollumnUnitSell.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getunitsell());
             stockCollumnExpectedProfit.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getprofit());
             stockCollumnAddList.setCellValueFactory(allProductsButtonCellDataFeatures -> allProductsButtonCellDataFeatures.getValue().getButton());
-            if (!stockControlSwitchAdded){
+            if (!stockControlSwitchAdded) {
                 stockTable.getItems().removeAll(stockTable.getItems());
                 stockTable.getItems().addAll(ProductInteractions.createAllProducts());
                 stockControlSwitchAdded = true;
                 stockControlPane.getChildren().add(toggleSwitchStock);
                 toggleSwitchStock.setMinWidth(500);
-                stockControlPane.setLeftAnchor(toggleSwitchStock,500.0);
-                stockControlPane.setRightAnchor(toggleSwitchStock,500.0);
-                toggleSwitchStock.switchOnProperty().addListener((a,b,c) -> {
-                    if (c){
+                AnchorPane.setLeftAnchor(toggleSwitchStock, 500.0);
+                AnchorPane.setRightAnchor(toggleSwitchStock, 500.0);
+                toggleSwitchStock.switchOnProperty().addListener((a, b, c) -> {
+                    if (c) {
                         stockTable.getItems().removeAll(stockTable.getItems());
                         stockTable.getItems().addAll(AllProducts.buyArray);
                         stockCollumnAddList.setVisible(false);
-                    }else{
+                    } else {
                         stockTable.getItems().removeAll(stockTable.getItems());
                         stockTable.getItems().addAll(ProductInteractions.createAllProducts());
                         stockCollumnAddList.setVisible(true);
@@ -394,21 +401,17 @@ public class MainScreen {
         changetotaldata();
         barcodeField.setText("");
     }
-    boolean switchadded = false;
-    @FXML
-    GridPane switchPane;
-    @FXML
-    ToggleSwitch toggleSwitchStatics = new ToggleSwitch("Günlük","Aylık");
+
     public void statisticsTabOpened() {
         if (tabpane.getSelectionModel().getSelectedItem().equals(statisticsTab)) {
-            if (!switchadded){
+            if (!switchadded) {
                 Label dateLabel = new Label(LocalDate.now().getMonth().toString());
                 switchadded = true;
                 ToggleSwitch finalToggleSwitch = toggleSwitchStatics;
                 toggleSwitchStatics.switchOnProperty().addListener((a, b, c) -> {
                     if (c) {
                         initBarData(finalToggleSwitch.switchOnProperty().getValue());
-                        dateLabel.setText(LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)) + " " +LocalDate.now().getDayOfWeek());
+                        dateLabel.setText(LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)) + " " + LocalDate.now().getDayOfWeek());
                     } else {
                         initBarData(finalToggleSwitch.switchOnProperty().getValue());
                         dateLabel.setText(LocalDate.now().getMonth().toString());
@@ -416,36 +419,37 @@ public class MainScreen {
                 });
                 toggleSwitchStatics.setMaxWidth(200);
                 toggleSwitchStatics.setAlignment(Pos.CENTER);
-                switchPane.setHalignment(toggleSwitchStatics,HPos.CENTER);
-                switchPane.setHalignment(dateLabel,HPos.CENTER);
-                switchPane.add(toggleSwitchStatics, 0,0,1,1);
-                switchPane.add(dateLabel,0,1,1,1);
+                GridPane.setHalignment(toggleSwitchStatics, HPos.CENTER);
+                GridPane.setHalignment(dateLabel, HPos.CENTER);
+                switchPane.add(toggleSwitchStatics, 0, 0, 1, 1);
+                switchPane.add(dateLabel, 0, 1, 1, 1);
                 switchPane.setPrefWidth(200);
             }
             initPieData(toggleSwitchStatics.switchOnProperty().getValue());
             initBarData(toggleSwitchStatics.switchOnProperty().getValue());
         }
         tabpane.getSelectionModel().selectedItemProperty().addListener((ov, oldTab, newTab) -> {
-            if (oldTab.equals(statisticsTab)){
-                for (PieChart.Data data:pieChart.getData()
-                ) {
+            if (oldTab.equals(statisticsTab)) {
+                for (PieChart.Data data : pieChart.getData()) {
                     data.nameProperty().set("");
                 }
             }
         });
     }
-    public void initPieData(Boolean isdaily){
+
+    public void initPieData(Boolean isdaily) {
         pieChart.getData().removeAll(pieChart.getData());
-        if (isdaily){
+        if (isdaily) {
             setPieChart(Stats.createDailyPieChartInfo());
         } else {
             setPieChart(Stats.createMonthlyPieChartInfo());
         }
     }
-    public void initBarData(Boolean isdaily){
+
+    public void initBarData(Boolean isdaily) {
         stackedBarChart.getData().removeAll(stackedBarChart.getData());
         LinkedHashMap<String, Double> datesAndProfits = DBAccess.barChartValues();
-        if (isdaily){
+        if (isdaily) {
             setBarChart(datesAndProfits);
         } else {
             HashMap<String, Double> barChartData = Stats.calculateMonthlyProfits(datesAndProfits);
@@ -454,6 +458,7 @@ public class MainScreen {
         }
 
     }
+
     public void setPieChart(HashMap<String, Number> nameAndPrice) {
         for (String name : nameAndPrice.keySet()) {
             pieChart.getData().add(new PieChart.Data(name, nameAndPrice.get(name).doubleValue()));
@@ -486,7 +491,7 @@ public class MainScreen {
         stackedBarChart.getData().add(series);
         stackedBarChart.setAnimated(false);
         Label barinfo = new Label("");
-        for (final StackedBarChart.Data<String,Number> data : series.getData()) {
+        for (final StackedBarChart.Data<String, Number> data : series.getData()) {
             data.getNode().addEventHandler(MouseEvent.MOUSE_MOVED, mouseEvent -> {
                 barinfo.setVisible(true);
                 barinfo.setTranslateX(mouseEvent.getSceneX());
@@ -500,8 +505,9 @@ public class MainScreen {
 
         statisticAnchorPane.getChildren().add(barinfo);
     }
+
     public void logTabOpened() throws IOException {
-        if (tabpane.getSelectionModel().getSelectedItem().equals(logTab)){
+        if (tabpane.getSelectionModel().getSelectedItem().equals(logTab)) {
             historyTable.getItems().removeAll(historyTable.getItems());
             historyTableDate.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getDate());
             historyTableEmployee.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getEmployee());
@@ -510,6 +516,7 @@ public class MainScreen {
             historyTable.getItems().addAll(ProcessLogs.getLogObjects());
             historyTable.setRowFactory(tv -> new TableRow<>() {
                 Node detailsPane;
+
                 {
                     selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
                         if (isNowSelected && !itemProperty().getValue().getDetails().getValue().isEmpty()) {
@@ -527,7 +534,11 @@ public class MainScreen {
                     super.updateItem(item, empty);
                     if (item != null && !item.getDetails().getValue().isEmpty())
                         setStyle("-fx-background-color: skyblue");
+                    else {
+                        setStyle("");
+                    }
                 }
+
                 @Override
                 protected double computePrefHeight(double width) {
                     if (isSelected()) {
@@ -550,6 +561,7 @@ public class MainScreen {
 
         }
     }
+
     private Node createDetailsPane(ObjectProperty<LogObject> item) {
         BorderPane detailsPane = new BorderPane();
         Label detailsLabel = new Label();
@@ -562,9 +574,9 @@ public class MainScreen {
             if (newItem == null) {
                 detailsLabel.setText("");
             } else {
-                detailsLabel.setText("Satış Detayı : "+newItem.getDetails().getValue());
+                detailsLabel.setText("Satış Detayı : " + newItem.getDetails().getValue());
             }
         });
-        return detailsPane ;
+        return detailsPane;
     }
 }
