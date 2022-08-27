@@ -2,13 +2,11 @@ package com.tempims.tempims;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
-import javafx.scene.AccessibleRole;
 import javafx.scene.Node;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
@@ -23,7 +21,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class MainScreen {
 
@@ -435,19 +432,15 @@ public class MainScreen {
     }
     public void initPieData(Boolean isdaily){
         pieChart.getData().removeAll(pieChart.getData());
-        setPieChart(Stats.createChartInfo());
+        if (isdaily){
+            setPieChart(Stats.createDailyPieChartInfo());
+        } else {
+            setPieChart(Stats.createMonthlyPieChartInfo());
+        }
     }
     public void initBarData(Boolean isdaily){
         stackedBarChart.getData().removeAll(stackedBarChart.getData());
-        //LinkedHashMap<String, Double> datesAndProfits = A <String, Double> LinkedHashMap from PROFITS TABLE
         LinkedHashMap<String, Double> datesAndProfits = DBAccess.barChartValues();
-        /*datesAndProfits.put("2022-08-09", 43.0);
-        datesAndProfits.put("2022-08-12", 32.0);
-        datesAndProfits.put("2022-09-15", 37.0);
-        datesAndProfits.put("2022-09-18", 51.0);
-        datesAndProfits.put("2022-10-19", 63.50);
-        datesAndProfits.put("2022-10-11", 35.43);
-        datesAndProfits.put("2022-11-28", 31.46);*/
         if (isdaily){
             setBarChart(datesAndProfits);
         } else {

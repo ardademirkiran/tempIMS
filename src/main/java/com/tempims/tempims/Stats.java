@@ -13,18 +13,27 @@ public class Stats {
     //static HashMap<String, Number> productChartInfo= new HashMap<>();
     static LocalDate currentDate = java.time.LocalDate.now();
 
-    public static HashMap<String, Number> createChartInfo(){
-        HashMap<String, Number> productChartInfo= new HashMap<>();
+    public static HashMap<String, Number> createMonthlyPieChartInfo(){
+        HashMap<String, Number> productMonthlyChartInfo= new HashMap<>();
         ResultSet rs = DBAccess.fetchProducts("statView");
         try{
             while(rs.next()){
-                productChartInfo.put(rs.getString("NAME"), rs.getDouble("PROFIT_RETURN"));
+                productMonthlyChartInfo.put(rs.getString("NAME"), rs.getDouble("PROFIT_RETURN"));
             }
         }
         catch(SQLException e){
             e.printStackTrace(System.out);
         }
-        return productChartInfo;
+        return productMonthlyChartInfo;
+    }
+
+    public static HashMap<String, Number> createDailyPieChartInfo(){
+        HashMap<String, Number> productDailyChartInfo= new HashMap<>();
+
+        //sql part to create daily profits hashmap
+
+        return productDailyChartInfo;
+
     }
 
 
@@ -35,6 +44,7 @@ public class Stats {
             double profitToAdd = product.amount * (product.calculatedunitsellprice - unitBuyPrice);
             totalProfit += profitToAdd;
             DBAccess.amendProfit(product.barcode, profitToAdd); //update profit on database
+            //sql part to update DAILYPROFIT on PRODUCTS table it may be handled internally in amendProfit()
         }
 
         DBAccess.updateDailyProfit(currentDate, totalProfit);//sql part to update current daily profit with "current daily profit + totalProfit" by using "currentDate"

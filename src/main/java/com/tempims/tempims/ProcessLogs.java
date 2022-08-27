@@ -48,11 +48,12 @@ public class ProcessLogs {
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
       LocalDate lastLoggedDate = LocalDate.parse(reader.readLine(), formatter);
       if (lastLoggedDate.getMonthValue() != currentDate.getMonthValue() || lastLoggedDate.getYear() != currentDate.getYear()){
-         DBAccess.clearProfitTable();//sql part to update to 0(zero) all of profit values from PROFITS table
+         DBAccess.clearProfitTable();
       }
 
       if (!lastLoggedDate.toString().equals(currentDate.toString())){
          DBAccess.insertProfitRow(currentDate);
+         //sql part to clear daily profit columns at "PRODUCTS" table
       }
 
       BufferedWriter writer = new BufferedWriter(new FileWriter("date.txt"));
