@@ -25,12 +25,12 @@ public class User {
 
     public User(String username, String permissions) {
         this.username = username;
-        sellScreenPerm = permissions.indexOf(0) == 1;
-        entryScreenPerm = permissions.indexOf(1) == 1;
-        historyScreenPerm = permissions.indexOf(2) == 1;
-        trackStockScreenPerm = permissions.indexOf(3) == 1;
-        statsScreenPerm = permissions.indexOf(4) == 1;
-        usersScreenPerm = permissions.indexOf(5) == 1;
+        sellScreenPerm = Character.toString(permissions.charAt(0)).equals("1");
+        entryScreenPerm = Character.toString(permissions.charAt(1)).equals("1");
+        historyScreenPerm = Character.toString(permissions.charAt(2)).equals("1");
+        trackStockScreenPerm = Character.toString(permissions.charAt(3)).equals("1");
+        statsScreenPerm = Character.toString(permissions.charAt(4)).equals("1");
+        usersScreenPerm = Character.toString(permissions.charAt(5)).equals("1");
         checkBoxEntryScreenPerm.setSelected(entryScreenPerm);
         checkBoxStatsScreenPerm.setSelected(statsScreenPerm);
         checkBoxUsersScreenPerm.setSelected(usersScreenPerm);

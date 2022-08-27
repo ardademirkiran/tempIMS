@@ -138,19 +138,24 @@ public class MainScreen {
     }
 
     protected void editTabsForUsers(){
-        if (!Session.user.entryScreenPerm){
-            buyScreenTab.getTabPane().getTabs().remove(buyScreenTab);
-        }if (!Session.user.historyScreenPerm){
-            logTab.getTabPane().getTabs().remove(logTab);
-        }if (!Session.user.sellScreenPerm){
-            sellScreenTab.getTabPane().getTabs().remove(sellScreenTab);
-        }if (!Session.user.statsScreenPerm){
-            statisticsTab.getTabPane().getTabs().remove(statisticsTab);
-        }if (!Session.user.trackStockScreenPerm){
-            stockControlTab.getTabPane().getTabs().remove(stockControlTab);
-        }if (!Session.user.usersScreenPerm){
-            userTab.getTabPane().getTabs().remove(userTab);
-        }
+            if (!Session.user.entryScreenPerm) {
+                tabpane.getTabs().get(0).getTabPane().getTabs().remove(1);
+            }
+            if (!Session.user.historyScreenPerm) {
+                tabpane.getTabs().get(0).getTabPane().getTabs().remove(2);
+            }
+            if (!Session.user.sellScreenPerm) {
+                tabpane.getTabs().get(0).getTabPane().getTabs().remove(0);
+            }
+            if (!Session.user.statsScreenPerm) {
+                tabpane.getTabs().get(0).getTabPane().getTabs().remove(4);
+            }
+            if (!Session.user.trackStockScreenPerm) {
+                tabpane.getTabs().get(0).getTabPane().getTabs().remove(3);
+            }
+            if (!Session.user.usersScreenPerm) {
+                tabpane.getTabs().get(0).getTabPane().getTabs().remove(5);
+            }
     }
 
     @FXML

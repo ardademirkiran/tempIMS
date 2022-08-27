@@ -20,7 +20,7 @@ public class Session {
 
         if (hashedPasswordDB.equals(hashedPasswordInput)) {
             //sql part to get permissions from USERS table
-            user = new User(usernameInput, "110111");
+            user = new User(usernameInput, "111101");
 
             ProcessLogs.recordUserProcess(1, user.username);
             return 1;
