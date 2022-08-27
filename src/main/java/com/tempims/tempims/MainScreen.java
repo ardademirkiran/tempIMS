@@ -85,6 +85,7 @@ public class MainScreen {
     public TableColumn<LogObject, String> historyTableEmployee;
     public TableColumn<LogObject, String> historyTableType;
     public TableColumn<LogObject, String> historyTableExplanation;
+    public VBox appVbox;
     CategoryAxis xAxis = new CategoryAxis();
     NumberAxis yAxis = new NumberAxis("TL", 0, 50, 5);
     public StackedBarChart<String, Number> stackedBarChart = new StackedBarChart<>(xAxis, yAxis);
@@ -134,9 +135,13 @@ public class MainScreen {
         }
     }
 
+    protected void editTabsForUsers(){
+        // check users authority for tabs and hide them
+    }
     @FXML
     protected void tabChanged() {
         if (!eventhandleradded) {
+            editTabsForUsers();
             Main.globalStage.addEventHandler(KeyEvent.KEY_TYPED, this::sellScreenKeyTyped);
             eventhandleradded = true;
         }
@@ -533,7 +538,7 @@ public class MainScreen {
                 protected void updateItem(LogObject item, boolean empty) {
                     super.updateItem(item, empty);
                     if (item != null && !item.getDetails().getValue().isEmpty())
-                        setStyle("-fx-background-color: skyblue");
+                        setStyle("-fx-background-color: #79cc79");
                     else {
                         setStyle("");
                     }
@@ -569,7 +574,7 @@ public class MainScreen {
         labels.setAlignment(Pos.CENTER_LEFT);
         labels.setPadding(new Insets(2, 2, 2, 16));
         detailsPane.setCenter(labels);
-        detailsPane.setStyle("-fx-background-color: -fx-background; -fx-background: lightblue;");
+        detailsPane.setStyle("-fx-background-color: -fx-background; -fx-background: lightgreen;");
         item.addListener((obs, oldItem, newItem) -> {
             if (newItem == null) {
                 detailsLabel.setText("");
