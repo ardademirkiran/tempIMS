@@ -2,9 +2,12 @@ package com.tempims.tempims;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Node;
@@ -21,6 +24,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
+import java.util.function.Function;
 
 public class MainScreen {
 
@@ -500,12 +504,62 @@ public class MainScreen {
         if (tabpane.getSelectionModel().getSelectedItem().equals(logTab)){
             historyTable.getItems().removeAll(historyTable.getItems());
             historyTableDate.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getDate());
-            historyTableDetails.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getDetails());
             historyTableEmployee.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getEmployee());
             historyTableType.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getType());
             historyTableExplanation.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getExplanation());
             historyTable.getItems().addAll(ProcessLogs.getLogObjects());
+
+            historyTable.setRowFactory(tv -> new TableRow<>() {
+                Node detailsPane;
+                {
+                    selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+                        if (isNowSelected && !itemProperty().getValue().getDetails().getValue().isEmpty()) {
+                            getChildren().add(detailsPane);
+                        } else {
+                            getChildren().remove(detailsPane);
+                        }
+                        this.requestLayout();
+                    });
+                    detailsPane = createDetailsPane(itemProperty());
+                }
+
+                @Override
+                protected double computePrefHeight(double width) {
+                    if (isSelected()) {
+                        return super.computePrefHeight(width) + detailsPane.prefHeight(getWidth());
+                    } else {
+                        return super.computePrefHeight(width);
+                    }
+                }
+
+                @Override
+                protected void layoutChildren() {
+                    super.layoutChildren();
+                    if (isSelected()) {
+                        double width = getWidth();
+                        double paneHeight = detailsPane.prefHeight(width);
+                        detailsPane.resizeRelocate(0, getHeight() - paneHeight, width, paneHeight);
+                    }
+                }
+            });
+
         }
     }
-
+    private Node createDetailsPane(ObjectProperty<LogObject> item) {
+        BorderPane detailsPane = new BorderPane();
+        Label detailsLabel = new Label();
+        VBox labels = new VBox(detailsLabel);
+        labels.setAlignment(Pos.CENTER_LEFT);
+        labels.setPadding(new Insets(2, 2, 2, 16));
+        detailsPane.setCenter(labels);
+        detailsPane.setStyle("-fx-background-color: -fx-background; -fx-background: skyblue;");
+        item.addListener((obs, oldItem, newItem) -> {
+            if (newItem == null) {
+                detailsLabel.setText("");
+            } else {
+                detailsLabel.setText("Satış Detayı : "+newItem.getDetails().getValue());
+            }
+        });
+        return detailsPane ;
+    }
 }
