@@ -537,7 +537,7 @@ public class MainScreen {
                 @Override
                 protected void updateItem(LogObject item, boolean empty) {
                     super.updateItem(item, empty);
-                    if (item != null && !item.getDetails().getValue().isEmpty())
+                    if (item != null && item.type.equals("SATIŞ"))
                         setStyle("-fx-background-color: #79cc79");
                     else {
                         setStyle("");
@@ -574,12 +574,12 @@ public class MainScreen {
         labels.setAlignment(Pos.CENTER_LEFT);
         labels.setPadding(new Insets(2, 2, 2, 16));
         detailsPane.setCenter(labels);
-        detailsPane.setStyle("-fx-background-color: -fx-background; -fx-background: lightgreen;");
+        detailsPane.setStyle("-fx-background-color: -fx-background; -fx-background: lightgray;");
         item.addListener((obs, oldItem, newItem) -> {
             if (newItem == null) {
                 detailsLabel.setText("");
             } else {
-                detailsLabel.setText("Satış Detayı : " + newItem.getDetails().getValue());
+                detailsLabel.setText(newItem.getDetails().getValue());
             }
         });
         return detailsPane;
