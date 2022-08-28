@@ -76,6 +76,7 @@ public class UserInteractions {
         //sql part to insert new permissions string to USERS db by using username
     }
     public static void changePassword(String username, String password){
+        String hashedPassword = hashPassword(password);
         //sql part to change password
     }
     public static void deleteUser(String username){
