@@ -443,9 +443,11 @@ public class MainScreen {
                 toggleSwitchStatics.switchOnProperty().addListener((a, b, c) -> {
                     if (c) {
                         initBarData(finalToggleSwitch.switchOnProperty().getValue());
+                        initPieData(finalToggleSwitch.switchOnProperty().getValue());
                         dateLabel.setText(LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)) + " " + LocalDate.now().getDayOfWeek());
                     } else {
                         initBarData(finalToggleSwitch.switchOnProperty().getValue());
+                        initPieData(finalToggleSwitch.switchOnProperty().getValue());
                         dateLabel.setText(LocalDate.now().getMonth().toString());
                     }
                 });

@@ -76,8 +76,8 @@ public class DBAccess {
             Statement checkStmt = conn.createStatement();
             ResultSet rs = checkStmt.executeQuery(productCheck);
             if (!rs.next()) { // Product doesn't exist, add new product to database
-                String newProduct = "INSERT INTO PRODUCTS (BARCODE, BRAND, NAME, PRODUCT_NUMBER, TAX, UNIT_BUYING_PRICE, TOTAL_BUYING_PRICE, UNIT_SELLING_PRICE, PROFIT_RETURN) "
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)";
+                String newProduct = "INSERT INTO PRODUCTS (BARCODE, BRAND, NAME, PRODUCT_NUMBER, TAX, UNIT_BUYING_PRICE, TOTAL_BUYING_PRICE, UNIT_SELLING_PRICE, PROFIT_RETURN, DAILY_PROFIT_RETURN) "
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 0)";
                 PreparedStatement pstmt = conn.prepareStatement(newProduct);
                 pstmt.setString(1, barcodeInput);
                 pstmt.setString(2, brandInput);
@@ -150,10 +150,11 @@ public class DBAccess {
     protected static void insertUser(String userName, String password) {
         Connection conn = connect();
         try {
-            String sql = "INSERT INTO USERS (USERNAME, PASSWORD) VALUES (?, ?)";
+            String sql = "INSERT INTO USERS (USERNAME, PASSWORD, PERMISSION) VALUES (?, ?, ?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, userName);
             pstmt.setString(2, password);
+            pstmt.setString(3, "111111");
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace(System.out);
