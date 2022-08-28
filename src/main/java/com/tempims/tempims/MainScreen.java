@@ -4,6 +4,8 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -40,7 +42,6 @@ public class MainScreen {
     public AnchorPane statisticAnchorPane;
     public Tab statisticsTab;
     public PieChart pieChart;
-    public Tab openedtab;
     public Label username;
     public TableView<Products> sellScreenTable;
     public TableColumn<Products, String> barcodeCollumn;
@@ -86,6 +87,7 @@ public class MainScreen {
     public TableColumn<LogObject, String> historyTableType;
     public TableColumn<LogObject, String> historyTableExplanation;
     public VBox appVbox;
+    public Tab userTab;
     CategoryAxis xAxis = new CategoryAxis();
     NumberAxis yAxis = new NumberAxis("TL", 0, 50, 5);
     public StackedBarChart<String, Number> stackedBarChart = new StackedBarChart<>(xAxis, yAxis);
@@ -136,16 +138,23 @@ public class MainScreen {
     }
 
     protected void editTabsForUsers(){
-        // check users authority for tabs and hide them
+        if (!Session.user.entryScreenPerm){
+            buyScreenTab.getTabPane().getTabs().remove(buyScreenTab);
+        }if (!Session.user.historyScreenPerm){
+            logTab.getTabPane().getTabs().remove(logTab);
+        }if (!Session.user.sellScreenPerm){
+            sellScreenTab.getTabPane().getTabs().remove(sellScreenTab);
+        }if (!Session.user.statsScreenPerm){
+            statisticsTab.getTabPane().getTabs().remove(statisticsTab);
+        }if (!Session.user.trackStockScreenPerm){
+            stockControlTab.getTabPane().getTabs().remove(stockControlTab);
+        }if (!Session.user.usersScreenPerm){
+            userTab.getTabPane().getTabs().remove(userTab);
+        }
     }
+
     @FXML
     protected void tabChanged() {
-        if (!eventhandleradded) {
-            editTabsForUsers();
-            Main.globalStage.addEventHandler(KeyEvent.KEY_TYPED, this::sellScreenKeyTyped);
-            eventhandleradded = true;
-        }
-        openedtab = tabpane.getSelectionModel().getSelectedItem();
         changeActiveUser(username);
         init();
         setcontextmenu();
@@ -173,6 +182,11 @@ public class MainScreen {
                 }
             });
         });
+        if (!eventhandleradded) {
+            editTabsForUsers();
+            Main.globalStage.addEventHandler(KeyEvent.KEY_TYPED, this::sellScreenKeyTyped);
+            eventhandleradded = true;
+        }
     }
 
     @FXML
