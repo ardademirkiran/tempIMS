@@ -5,6 +5,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
@@ -26,6 +27,7 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -33,6 +35,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class MainScreen {
 
@@ -101,6 +104,7 @@ public class MainScreen {
     public TableColumn<User,CheckBox> userTableStockControlScreenTabPerm;
     public TableColumn<User,CheckBox> userTableStatisticsScreenTabPerm;
     public TableView<User> userTable;
+    public TableColumn<User,CheckBox> userTableUsersScreenTabPerm;
     CategoryAxis xAxis = new CategoryAxis();
     NumberAxis yAxis = new NumberAxis("TL", 0, 50, 5);
     public StackedBarChart<String, Number> stackedBarChart = new StackedBarChart<>(xAxis, yAxis);
@@ -263,6 +267,14 @@ public class MainScreen {
     protected void productEntryLabelButtonOnClicked() throws IOException {
         ProcessLogs.recordStockEntryProcess(productEntryLabelBarcode.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText());
         ProductInteractions.productEntry(productEntryLabelBarcode.getText(), productEntryLabelBrand.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText(), productEntryLabelTax.getText(), productEntryLabelBuyPrice.getText(), String.valueOf(Double.parseDouble(productEntryLabelBuyPrice.getText()) / Double.parseDouble(productEntryLabelPiece.getText())), productEntryLabelSellPrice.getText());
+        productEntryLabelBarcode.setText("");
+        productEntryLabelSellPrice.setText("");
+        productEntryLabelTax.setText("");
+        productEntryLabelName.setText("");
+        productEntryLabelBrand.setText("");
+        productEntryLabelBuyPrice.setText("");
+        productEntryLabelPiece.setText("");
+        productEntryLabelPrice.setText("");
     }
 
     @FXML
@@ -343,6 +355,7 @@ public class MainScreen {
     @FXML
     public void onstockcontrolopened() {
         if (tabpane.getSelectionModel().getSelectedItem().equals(stockControlTab)) {
+            stockTable.getItems().removeAll(stockTable.getItems());
             stockCollumnBarcode.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getbarcode());
             stockCollumnAmont.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getamont());
             stockCollumnBrand.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getbrand());
@@ -352,6 +365,8 @@ public class MainScreen {
             stockCollumnUnitSell.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getunitsell());
             stockCollumnExpectedProfit.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getprofit());
             stockCollumnAddList.setCellValueFactory(allProductsButtonCellDataFeatures -> allProductsButtonCellDataFeatures.getValue().getButton());
+            stockTable.getItems().removeAll(stockTable.getItems());
+            stockTable.getItems().addAll(ProductInteractions.createAllProducts());
             if (!stockControlSwitchAdded) {
                 stockTable.getItems().removeAll(stockTable.getItems());
                 stockTable.getItems().addAll(ProductInteractions.createAllProducts());
@@ -623,16 +638,47 @@ public class MainScreen {
             userTableSellScreenTabPerm.setCellValueFactory(userCheckBoxCellDataFeatures -> userCheckBoxCellDataFeatures.getValue().getCheckBoxSellScreenPerm());
             userTableStatisticsScreenTabPerm.setCellValueFactory(userCheckBoxCellDataFeatures -> userCheckBoxCellDataFeatures.getValue().getCheckBoxStatsScreenPerm());
             userTableStockControlScreenTabPerm.setCellValueFactory(userCheckBoxCellDataFeatures -> userCheckBoxCellDataFeatures.getValue().getCheckBoxTrackStockScreenPerm());
-            userTable.getItems().addAll(UserInteractions.getAllUsers());
-            userTable.getItems().add(new User("Rotroq","010101"));
+            userTableUsersScreenTabPerm.setCellValueFactory(userCheckBoxCellDataFeatures -> userCheckBoxCellDataFeatures.getValue().getCheckBoxUsersScreenPerm());
+            ArrayList<User> users = UserInteractions.getAllUsers();
+            users.removeIf(user -> (user.usersScreenPerm && !(user.getUserName().getValue().equals(UserInteractions.user.getUserName().getValue()))));
+            for (User user: users) {
+                if (user.getUserName().getValue().equals(UserInteractions.user.getUserName().getValue())){
+                    user.setNotEditable();
+                }
+            }
+            userTable.getItems().addAll(users);
         }
     }
     @FXML
     protected void onRegister() throws IOException {
         Stage registerStage = new Stage();
         registerStage.setTitle("Kaydol");
+        SignupScreen.username = "";
         FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("SignupScreen.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 480, 360);
+        registerStage.setAlwaysOnTop(true);
         Main.setGradient(registerStage, scene);
+        registerStage.setOnCloseRequest(windowEvent -> onUserTabOpened());
+    }
+    @FXML
+    protected void removeUserButtonEvent(){
+        if (userTable.getSelectionModel().getSelectedItem()!=null){
+            UserInteractions.deleteUser(userTable.getSelectionModel().getSelectedItem().username);
+            onUserTabOpened();
+        }
+    }
+    @FXML
+    protected void changePasswordButtonAction() throws IOException {
+        if (userTable.getSelectionModel().getSelectedItem()!=null){
+            System.out.println(userTable.getSelectionModel().getSelectedItem().username);
+            Stage changePassStage = new Stage();
+            changePassStage.setTitle("Şifre Değiştir");
+            SignupScreen.username = userTable.getSelectionModel().getSelectedItem().username;
+            FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("SignupScreen.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 480, 360);
+            changePassStage.setAlwaysOnTop(true);
+            Main.setGradient(changePassStage, scene);
+            changePassStage.setOnCloseRequest(windowEvent -> onUserTabOpened());
+        }
     }
 }

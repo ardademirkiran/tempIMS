@@ -6,6 +6,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.CheckBox;
 
+import java.util.ArrayList;
+
 public class User {
     public String username;
     public boolean sellScreenPerm;
@@ -116,7 +118,14 @@ public class User {
         System.out.println(permissionsString);
         return permissionsString;
     }
-
+    public void setNotEditable(){
+        checkBoxSellScreenPerm.setDisable(true);
+        checkBoxEntryScreenPerm.setDisable(true);
+        checkBoxHistoryScreenPerm.setDisable(true);
+        checkBoxTrackStockScreenPerm.setDisable(true);
+        checkBoxStatsScreenPerm.setDisable(true);
+        checkBoxUsersScreenPerm.setDisable(true);
+    }
 
 
 }

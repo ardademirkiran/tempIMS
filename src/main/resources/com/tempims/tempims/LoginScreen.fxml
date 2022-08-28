@@ -35,10 +35,9 @@
             <children>
                 <Button fx:id="loginButton" mnemonicParsing="false" onAction="#loginButtonAction" style="-fx-background-radius: 8;" text="Giriş Yap">
                     <HBox.margin>
-                        <Insets right="70.0" />
+                        <Insets />
                     </HBox.margin>
                 </Button>
-                <Button fx:id="signupButton" mnemonicParsing="false" onAction="#signupButtonAction" style="-fx-background-radius: 8;" text="Kaydol" />
             </children>
             <VBox.margin>
                 <Insets left="10.0" />

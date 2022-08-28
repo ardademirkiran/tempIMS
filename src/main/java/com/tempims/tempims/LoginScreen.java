@@ -6,10 +6,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
 
 import java.io.IOException;
 
@@ -42,15 +38,6 @@ public class LoginScreen {
 
     }
 
-    public void signupButtonAction() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("SignupScreen.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 480, 360);
-        Stop[] stops = new Stop[]{new Stop(0, Color.web("#9e899b")), new Stop(1, Color.GRAY)};
-        LinearGradient lg1 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
-        scene.setFill(lg1);
-        Main.globalStage.setScene(scene);
-
-    }
 
     public void forgetPassword() {
         //şifremi unuttum kısmı

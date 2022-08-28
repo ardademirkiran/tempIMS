@@ -256,14 +256,15 @@
                         <TableColumn fx:id="userTableHistoryScreenTabPerm" prefWidth="27.0" style="-fx-alignment: CENTER;" text="Geçmiş" />
                         <TableColumn fx:id="userTableStockControlScreenTabPerm" prefWidth="27.0" style="-fx-alignment: CENTER;" text="Stok Kontrol Ekranı" />
                         <TableColumn fx:id="userTableStatisticsScreenTabPerm" prefWidth="27.0" style="-fx-alignment: CENTER;" text="İstatistik Ekranı" />
+                  <TableColumn fx:id="userTableUsersScreenTabPerm" prefWidth="27.0" style="-fx-alignment: CENTER;" text="Kullanıcılar Ekranı" />
                     </columns>
                     <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                     </columnResizePolicy>
                 </TableView>
                 <Button layoutX="715.0" layoutY="411.0" mnemonicParsing="false" onMouseReleased="#onRegister" text="Yeni Kayıt Oluştur" AnchorPane.bottomAnchor="150.0" AnchorPane.rightAnchor="10.0" />
-                <Button layoutX="720.0" layoutY="309.0" mnemonicParsing="false" text="Seçili Kullanıcıyı Sil" AnchorPane.bottomAnchor="250.0" AnchorPane.rightAnchor="10.0" />
-                <Button fx:id="bitanebuton" layoutX="720.0" layoutY="354.0" mnemonicParsing="false" text="Seçili Kullanıcının Şifresini Sıfırla" AnchorPane.bottomAnchor="200.0" AnchorPane.rightAnchor="10.0" />
+                <Button layoutX="720.0" layoutY="309.0" mnemonicParsing="false" onAction="#removeUserButtonEvent" text="Seçili Kullanıcıyı Sil" AnchorPane.bottomAnchor="250.0" AnchorPane.rightAnchor="10.0" />
+                <Button layoutX="720.0" layoutY="354.0" mnemonicParsing="false" onAction="#changePasswordButtonAction" text="Seçili Kullanıcının Şifresini Sıfırla" AnchorPane.bottomAnchor="200.0" AnchorPane.rightAnchor="10.0" />
             </AnchorPane>
         </Tab>
     </TabPane>
