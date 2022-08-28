@@ -26,13 +26,13 @@
                 <Button alignment="CENTER" layoutX="431.0" layoutY="20.0" mnemonicParsing="false" onAction="#cancelButtonClicked" text="İptal" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
                 <TableView fx:id="sellScreenTable" editable="true" layoutX="20.0" layoutY="64.0" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0">
                     <columns>
-                        <TableColumn fx:id="barcodeCollumn" prefWidth="75.0" text="Barkod" />
-                        <TableColumn fx:id="nameCollumn" prefWidth="75.0" text="Ad" />
-                        <TableColumn fx:id="amountCollumn" prefWidth="75.0" text="Miktar" />
-                        <TableColumn fx:id="kdvCollumn" prefWidth="75.0" text="Kdv Oranı" />
+                        <TableColumn fx:id="barcodeCollumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Barkod" />
+                        <TableColumn fx:id="nameCollumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Ad" />
+                        <TableColumn fx:id="amountCollumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Miktar" />
+                        <TableColumn fx:id="kdvCollumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Kdv Oranı" />
                         <TableColumn fx:id="percentageDiscountCollumn" prefWidth="75.0" text="İskonto %" />
                         <TableColumn fx:id="discountCollumn" prefWidth="75.0" text="İskonto TL" />
-                        <TableColumn fx:id="lastPriceCollumn" prefWidth="75.0" text="Ara Toplam" />
+                        <TableColumn fx:id="lastPriceCollumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Ara Toplam" />
                     </columns>
                     <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -185,8 +185,8 @@
                 <TableView fx:id="historyTable" layoutX="185.0" layoutY="73.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                     <columns>
                         <TableColumn fx:id="historyTableDate" prefWidth="75.0" text="Tarih" />
-                        <TableColumn fx:id="historyTableEmployee" prefWidth="75.0" text="Çalışan" />
-                        <TableColumn fx:id="historyTableType" prefWidth="75.0" text="Tür" />
+                        <TableColumn fx:id="historyTableEmployee" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Çalışan" />
+                        <TableColumn fx:id="historyTableType" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Tür" />
                         <TableColumn fx:id="historyTableExplanation" prefWidth="75.0" text="Açıklama" />
                     </columns>
                     <columnResizePolicy>
@@ -199,15 +199,15 @@
             <AnchorPane fx:id="stockControlPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                 <TableView fx:id="stockTable" layoutX="141.0" layoutY="66.0" onMouseClicked="#stockControlClicked" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="55.0">
                     <columns>
-                        <TableColumn fx:id="stockCollumnBarcode" prefWidth="105.0" text="Barkod" />
-                        <TableColumn fx:id="stockCollumnBrand" prefWidth="98.0" text="Marka" />
-                        <TableColumn fx:id="stockCollumnName" prefWidth="124.0" text="İsim" />
-                        <TableColumn fx:id="stockCollumnAmont" prefWidth="131.0" text="Stok Miktarı" />
-                        <TableColumn fx:id="stockCollumnTax" prefWidth="81.0" text="Vergi" />
-                        <TableColumn fx:id="stockCollumnUnitBuy" prefWidth="49.0" text="Birim Alış Fiyatı" />
-                        <TableColumn fx:id="stockCollumnUnitSell" prefWidth="90.0" text="Birim Satış Fiyatı" />
-                        <TableColumn fx:id="stockCollumnExpectedProfit" prefWidth="90.0" text="Beklenen Kar" />
-                        <TableColumn fx:id="stockCollumnAddList" prefWidth="90.0" text="Sipariş Listesine Ekle" />
+                        <TableColumn fx:id="stockCollumnBarcode" prefWidth="105.0" style="-fx-alignment: CENTER;" text="Barkod" />
+                        <TableColumn fx:id="stockCollumnBrand" prefWidth="98.0" style="-fx-alignment: CENTER;" text="Marka" />
+                        <TableColumn fx:id="stockCollumnName" prefWidth="124.0" style="-fx-alignment: CENTER;" text="İsim" />
+                        <TableColumn fx:id="stockCollumnAmont" prefWidth="131.0" style="-fx-alignment: CENTER;" text="Stok Miktarı" />
+                        <TableColumn fx:id="stockCollumnTax" prefWidth="81.0" style="-fx-alignment: CENTER;" text="Vergi" />
+                        <TableColumn fx:id="stockCollumnUnitBuy" prefWidth="49.0" style="-fx-alignment: CENTER;" text="Birim Alış Fiyatı" />
+                        <TableColumn fx:id="stockCollumnUnitSell" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Birim Satış Fiyatı" />
+                        <TableColumn fx:id="stockCollumnExpectedProfit" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Beklenen Kar" />
+                        <TableColumn fx:id="stockCollumnAddList" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Sipariş Listesine Ekle" />
                     </columns>
                     <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -250,12 +250,12 @@
             <AnchorPane>
                 <TableView fx:id="userTable" layoutX="261.0" layoutY="59.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="300.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                     <columns>
-                        <TableColumn fx:id="userTableUserName" prefWidth="123.0" text="Kullanıcı Adı" />
-                        <TableColumn fx:id="userTableSellScreenTabPerm" prefWidth="27.0" text="Satış Ekranı" />
-                        <TableColumn fx:id="userTableEntryScreenTabPerm" prefWidth="27.0" text="Ürün Giriş Ekranı" />
-                        <TableColumn fx:id="userTableHistoryScreenTabPerm" prefWidth="27.0" text="Geçmiş" />
-                        <TableColumn fx:id="userTableStockControlScreenTabPerm" prefWidth="27.0" text="Stok Kontrol Ekranı" />
-                        <TableColumn fx:id="userTableStatisticsScreenTabPerm" prefWidth="27.0" text="İstatistik Ekranı" />
+                        <TableColumn fx:id="userTableUserName" prefWidth="123.0" style="-fx-alignment: CENTER;" text="Kullanıcı Adı" />
+                        <TableColumn fx:id="userTableSellScreenTabPerm" prefWidth="27.0" style="-fx-alignment: CENTER;" text="Satış Ekranı" />
+                        <TableColumn fx:id="userTableEntryScreenTabPerm" prefWidth="27.0" style="-fx-alignment: CENTER;" text="Ürün Giriş Ekranı" />
+                        <TableColumn fx:id="userTableHistoryScreenTabPerm" prefWidth="27.0" style="-fx-alignment: CENTER;" text="Geçmiş" />
+                        <TableColumn fx:id="userTableStockControlScreenTabPerm" prefWidth="27.0" style="-fx-alignment: CENTER;" text="Stok Kontrol Ekranı" />
+                        <TableColumn fx:id="userTableStatisticsScreenTabPerm" prefWidth="27.0" style="-fx-alignment: CENTER;" text="İstatistik Ekranı" />
                     </columns>
                     <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

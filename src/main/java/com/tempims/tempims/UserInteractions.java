@@ -21,7 +21,7 @@ public class UserInteractions {
 
         if (hashedPasswordDB.equals(hashedPasswordInput)) {
             //sql part to get permissions from USERS table
-            user = new User(usernameInput, "111101");
+            user = new User(usernameInput, "111111");
 
             ProcessLogs.recordUserProcess(1, user.username);
             return 1;
@@ -81,5 +81,17 @@ public class UserInteractions {
     }
     public static void deleteUser(String username){
         //sql part to delete user
+    }
+
+    public static String generatePermissionsString(User user){
+        String permissionsString = "";
+
+        permissionsString += user.checkBoxSellScreenPerm.isSelected() ? "1" : "0";
+        permissionsString += user.checkBoxEntryScreenPerm.isSelected() ? "1" : "0";
+        permissionsString += user.checkBoxHistoryScreenPerm.isSelected() ? "1" : "0";
+        permissionsString += user.checkBoxTrackStockScreenPerm.isSelected() ? "1" : "0";
+        permissionsString += user.checkBoxStatsScreenPerm.isSelected() ? "1" : "0";
+        permissionsString += user.checkBoxUsersScreenPerm.isSelected() ? "1" : "0";
+        return permissionsString;
     }
 }

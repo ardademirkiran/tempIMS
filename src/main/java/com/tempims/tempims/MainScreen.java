@@ -622,7 +622,8 @@ public class MainScreen {
             userTableStatisticsScreenTabPerm.setCellValueFactory(userCheckBoxCellDataFeatures -> userCheckBoxCellDataFeatures.getValue().getCheckBoxStatsScreenPerm());
             userTableStockControlScreenTabPerm.setCellValueFactory(userCheckBoxCellDataFeatures -> userCheckBoxCellDataFeatures.getValue().getCheckBoxTrackStockScreenPerm());
             userTable.getItems().addAll(UserInteractions.getAllUsers());
-            userTable.getItems().add(new User("Rotroq","000111"));
+            userTable.getItems().add(new User("Rotroq","010101"));
+            System.out.println(UserInteractions.generatePermissionsString(userTable.getItems().get(0)));
         }
     }
     @FXML
