@@ -2,7 +2,7 @@ package com.tempims.tempims;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 public class DBAccess {
     private static Connection connect() {
@@ -25,7 +25,8 @@ public class DBAccess {
         try {
             String sql = "CREATE TABLE IF NOT EXISTS USERS (\n"
                     + " USERNAME CHAR(127) PRIMARY KEY,\n"
-                    + " PASSWORD CHAR(127)\n"
+                    + " PASSWORD CHAR(127),\n"
+                    + " PERMISSION CHAR(127)\n"
                     + ");";
             Statement stmt = conn.createStatement();
             stmt.execute(sql);
@@ -45,7 +46,8 @@ public class DBAccess {
                     + " UNIT_BUYING_PRICE DECIMAL(32,2),\n"
                     + " TOTAL_BUYING_PRICE DECIMAL(32,2),\n"
                     + " UNIT_SELLING_PRICE DECIMAL(32,2),\n"
-                    + " PROFIT_RETURN DECIMAL(32,2)\n"
+                    + " PROFIT_RETURN DECIMAL(32,2),\n"
+                    + " DAILY_PROFIT_RETURN DECIMAL(32,2)\n"
                     + ");";
             Statement stmt = conn.createStatement();
             stmt.execute(sql);
@@ -280,7 +282,7 @@ public class DBAccess {
     protected static void amendProfit(String barcode, double newProfit){
         Connection conn = connect();
         try{
-            String sql = String.format("UPDATE PRODUCTS SET PROFIT_RETURN = PROFIT_RETURN + '%,.2f' WHERE BARCODE = '%s'",newProfit,barcode);
+            String sql = String.format("UPDATE PRODUCTS SET PROFIT_RETURN = PROFIT_RETURN + '%,.2f', DAILY_PROFIT_RETURN = DAILY_PROFIT_RETURN + '%,.2f' WHERE BARCODE = '%s'",newProfit,newProfit,barcode);
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
         }
@@ -411,5 +413,163 @@ public class DBAccess {
                 e.printStackTrace(System.out);
             }
         }
+    }
+
+    protected static void changePassword(String userName, String newPassword){
+        Connection conn = connect();
+        try{
+            String sql = String.format("UPDATE USERS SET PASSWORD = '%s' WHERE USERNAME = '%s'",newPassword, userName);
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+        }
+        catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+        finally{
+            try{
+                conn.close();
+            }
+            catch(SQLException e){
+                e.printStackTrace(System.out);
+            }
+        }
+    }
+
+    protected static void removeUser(String userName){
+        Connection conn = connect();
+        try{
+            String sql = String.format("DELETE FROM USERS WHERE USERNAME = '%s'", userName);
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+        }
+        catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+        finally{
+            try{
+                conn.close();
+            }
+            catch(SQLException e){
+                e.printStackTrace(System.out);
+            }
+        }
+    }
+
+    protected static ArrayList<User> fetchUsers(){
+        ArrayList<User> userList = new ArrayList<>();
+        Connection conn = connect();
+        try{
+            String sql = "SELECT USERNAME, PERMISSION FROM USERS";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while(rs.next()){
+                userList.add(new User(rs.getString("USERNAME"), rs.getString("PERMISSION")));
+            }
+            return userList;
+        }
+        catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+        finally{
+            try{
+                conn.close();
+            }
+            catch(SQLException e){
+                e.printStackTrace(System.out);
+            }
+        }
+        return userList;
+    }
+
+    protected static String fetchUserPermission(String userName){
+        Connection conn = connect();
+        String userPermission = "";
+        try{
+            String sql = String.format("SELECT PERMISSION FROM USERS WHERE USERNAME = '%s'", userName);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            userPermission = rs.getString("PERMISSION");
+            return userPermission;
+        }
+        catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+        finally{
+            try{
+                conn.close();
+            }
+            catch(SQLException e){
+                e.printStackTrace(System.out);
+            }
+        }
+        return userPermission;
+    }
+
+    protected static void setUserPermission(String userName, String permission){
+        Connection conn = connect();
+        try{
+            String sql = String.format("UPDATE USERS SET PERMISSION = '%s' WHERE USERNAME = '%s'",permission, userName);
+            Statement stmt = conn.createStatement();
+            stmt.execute(sql);
+        }
+        catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+        finally{
+            try{
+                conn.close();
+            }
+            catch(SQLException e){
+                e.printStackTrace(System.out);
+            }
+        }
+
+    }
+
+    protected static void clearDailyProfits(){
+        Connection conn = connect();
+        try{
+            String sql = String.format("UPDATE PRODUCTS SET DAILY_PROFIT_RETURN = '%.2f'",0.00);
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+        }
+        catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+        finally{
+            try{
+                conn.close();
+            }
+            catch(SQLException e){
+                e.printStackTrace(System.out);
+            }
+        }
+    }
+
+    protected static HashMap<String, Number> dailyPieChartInfo(){
+        HashMap<String, Number> info = new HashMap<>();
+        Connection conn = connect();
+        try{
+            String sql = "SELECT NAME, DAILY_PROFIT_RETURN FROM PRODUCTS";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while(rs.next()){
+                info.put(rs.getString("NAME"), rs.getDouble("DAILY_PROFIT_RETURN"));
+            }
+            return info;
+
+        }
+        catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+        finally{
+            try{
+                conn.close();
+            }
+            catch(SQLException e){
+                e.printStackTrace(System.out);
+            }
+        }
+        return info;
     }
 }

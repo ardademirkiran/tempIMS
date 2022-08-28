@@ -20,8 +20,8 @@ public class UserInteractions {
         }
 
         if (hashedPasswordDB.equals(hashedPasswordInput)) {
-            //sql part to get permissions from USERS table
-            user = new User(usernameInput, "111111");
+            String userPermission = DBAccess.fetchUserPermission(usernameInput);//sql part to get permissions from USERS table
+            user = new User(usernameInput, userPermission);
 
             ProcessLogs.recordUserProcess(1, user.username);
             return 1;
@@ -66,21 +66,21 @@ public class UserInteractions {
     }
 
     public static ArrayList<User> getAllUsers() {
-        ArrayList<User> usersList = new ArrayList<>();
+        ArrayList<User> usersList = DBAccess.fetchUsers();
         //sql part to get all users from USERS table
         //fill the arraylist with new User(username, permissions)
         return usersList;
     }
 
     public static void changePermissions(String username, String permissions) {
-        //sql part to insert new permissions string to USERS db by using username
+        DBAccess.setUserPermission(username, permissions);//sql part to insert new permissions string to USERS db by using username
     }
     public static void changePassword(String username, String password){
         String hashedPassword = hashPassword(password);
-        //sql part to change password
+        DBAccess.changePassword(username, hashedPassword);//sql part to change password
     }
     public static void deleteUser(String username){
-        //sql part to delete user
+        DBAccess.removeUser(username);//sql part to delete user
     }
 
 

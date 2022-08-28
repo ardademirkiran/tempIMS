@@ -28,8 +28,7 @@ public class Stats {
     }
 
     public static HashMap<String, Number> createDailyPieChartInfo(){
-        HashMap<String, Number> productDailyChartInfo= new HashMap<>();
-
+        HashMap<String, Number> productDailyChartInfo= DBAccess.dailyPieChartInfo();
         //sql part to create daily profits hashmap
 
         return productDailyChartInfo;
@@ -45,6 +44,7 @@ public class Stats {
             totalProfit += profitToAdd;
             DBAccess.amendProfit(product.barcode, profitToAdd); //update profit on database
             //sql part to update DAILYPROFIT on PRODUCTS table it may be handled internally in amendProfit()
+            //handled internally in amendProfit()
         }
 
         DBAccess.updateDailyProfit(currentDate, totalProfit);//sql part to update current daily profit with "current daily profit + totalProfit" by using "currentDate"

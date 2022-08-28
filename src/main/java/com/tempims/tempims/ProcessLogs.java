@@ -53,7 +53,7 @@ public class ProcessLogs {
 
       if (!lastLoggedDate.toString().equals(currentDate.toString())){
          DBAccess.insertProfitRow(currentDate);
-         //sql part to clear daily profit columns at "PRODUCTS" table
+         DBAccess.clearDailyProfits();//sql part to clear daily profit columns at "PRODUCTS" table
       }
 
       BufferedWriter writer = new BufferedWriter(new FileWriter("date.txt"));
