@@ -138,23 +138,24 @@ public class MainScreen {
     }
 
     protected void editTabsForUsers(){
+        System.out.println(tabpane.getTabs().size());
             if (!Session.user.entryScreenPerm) {
-                tabpane.getTabs().get(0).getTabPane().getTabs().remove(1);
+                tabpane.getTabs().remove(buyScreenTab);
             }
             if (!Session.user.historyScreenPerm) {
-                tabpane.getTabs().get(0).getTabPane().getTabs().remove(2);
+                tabpane.getTabs().remove(logTab);
             }
             if (!Session.user.sellScreenPerm) {
-                tabpane.getTabs().get(0).getTabPane().getTabs().remove(0);
+                tabpane.getTabs().remove(sellScreenTab);
             }
             if (!Session.user.statsScreenPerm) {
-                tabpane.getTabs().get(0).getTabPane().getTabs().remove(4);
+                tabpane.getTabs().remove(statisticsTab);
             }
             if (!Session.user.trackStockScreenPerm) {
-                tabpane.getTabs().get(0).getTabPane().getTabs().remove(3);
+                tabpane.getTabs().remove(stockControlTab);
             }
             if (!Session.user.usersScreenPerm) {
-                tabpane.getTabs().get(0).getTabPane().getTabs().remove(5);
+                tabpane.getTabs().remove(userTab);
             }
     }
 
@@ -188,10 +189,10 @@ public class MainScreen {
             });
         });
         if (!eventhandleradded) {
-            editTabsForUsers();
             Main.globalStage.addEventHandler(KeyEvent.KEY_TYPED, this::sellScreenKeyTyped);
             eventhandleradded = true;
         }
+        editTabsForUsers();
     }
 
     @FXML
