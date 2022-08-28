@@ -1,11 +1,10 @@
 package com.tempims.tempims;
 
 import javafx.beans.InvalidationListener;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.CheckBox;
-
-import java.util.ArrayList;
 
 public class User {
     public String username;
@@ -32,15 +31,22 @@ public class User {
         statsScreenPerm = Character.toString(permissions.charAt(4)).equals("1");
         usersScreenPerm = Character.toString(permissions.charAt(5)).equals("1");
         checkBoxEntryScreenPerm.setSelected(entryScreenPerm);
+        checkBoxEntryScreenPerm.selectedProperty().addListener((observable -> UserInteractions.changePermissions(username,getpermissions())));
         checkBoxStatsScreenPerm.setSelected(statsScreenPerm);
+        checkBoxStatsScreenPerm.selectedProperty().addListener((observable -> UserInteractions.changePermissions(username,getpermissions())));
         checkBoxUsersScreenPerm.setSelected(usersScreenPerm);
+        checkBoxUsersScreenPerm.selectedProperty().addListener((observable -> UserInteractions.changePermissions(username,getpermissions())));
         checkBoxHistoryScreenPerm.setSelected(historyScreenPerm);
+        checkBoxHistoryScreenPerm.selectedProperty().addListener((observable -> UserInteractions.changePermissions(username,getpermissions())));
         checkBoxSellScreenPerm.setSelected(sellScreenPerm);
+        checkBoxSellScreenPerm.selectedProperty().addListener((observable -> UserInteractions.changePermissions(username,getpermissions())));
         checkBoxTrackStockScreenPerm.setSelected(trackStockScreenPerm);
+        checkBoxTrackStockScreenPerm.selectedProperty().addListener((observable -> UserInteractions.changePermissions(username,getpermissions())));
     }
 
-    public static void changePermissions(String username, String permissions) {
-        //sql part to insert new permissions string to USERS db by using username
+
+    public String getpermissions(){
+        return checkBoxSellScreenPerm.isSelected() +String.valueOf(checkBoxEntryScreenPerm.isSelected())+checkBoxHistoryScreenPerm.isSelected()+ checkBoxTrackStockScreenPerm.isSelected() +checkBoxStatsScreenPerm.isSelected()+checkBoxUsersScreenPerm.isSelected();
     }
 
     private ObservableValue<CheckBox> getCheckBoxObservableValue(CheckBox checkBoxEntryScreenPerm) {
@@ -95,12 +101,10 @@ public class User {
     public ObservableValue<CheckBox> getCheckBoxEntryScreenPerm() {
         return getCheckBoxObservableValue(checkBoxEntryScreenPerm);
     }
-
-    public ArrayList<User> getAllUsers() {
-        ArrayList<User> usersList = new ArrayList<>();
-        //sql part to get all users from USERS table
-        //fill the arraylist with new User(username, permissions)
-        return usersList;
+    public SimpleStringProperty getUserName(){
+        return new SimpleStringProperty(this.username);
     }
+
+
 
 }

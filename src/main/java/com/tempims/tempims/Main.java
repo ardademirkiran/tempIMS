@@ -25,6 +25,10 @@ public class Main extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("LoginScreen.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 480, 360);
         stage.setTitle("tempIMS");
+        setGradient(stage, scene);
+    }
+
+    static void setGradient(Stage stage, Scene scene) {
         Stop[] stops = new Stop[]{new Stop(0, Color.web("#9e899b")), new Stop(1, Color.GRAY)};
         LinearGradient lg1 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
         scene.setFill(lg1);

@@ -1,6 +1,5 @@
 package com.tempims.tempims;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -25,7 +24,7 @@ public class LoginScreen {
     private Label warningLabel;
 
     public void loginButtonAction() throws IOException {
-        int flag = Session.checkLogin(usernameField.getText(), passwordField.getText());
+        int flag = UserInteractions.checkLogin(usernameField.getText(), passwordField.getText());
         if (flag == -1) {
             warningLabel.setText("Böyle bir kullanıcı yok.");
             TextField[] textFields = {usernameField};

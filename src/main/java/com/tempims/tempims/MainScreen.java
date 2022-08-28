@@ -1,17 +1,18 @@
 package com.tempims.tempims;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
@@ -21,6 +22,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -89,6 +94,13 @@ public class MainScreen {
     public VBox appVbox;
     public Tab userTab;
     public Button bitanebuton;
+    public TableColumn<User,String> userTableUserName;
+    public TableColumn<User,CheckBox> userTableSellScreenTabPerm;
+    public TableColumn<User,CheckBox> userTableEntryScreenTabPerm;
+    public TableColumn<User,CheckBox> userTableHistoryScreenTabPerm;
+    public TableColumn<User,CheckBox> userTableStockControlScreenTabPerm;
+    public TableColumn<User,CheckBox> userTableStatisticsScreenTabPerm;
+    public TableView<User> userTable;
     CategoryAxis xAxis = new CategoryAxis();
     NumberAxis yAxis = new NumberAxis("TL", 0, 50, 5);
     public StackedBarChart<String, Number> stackedBarChart = new StackedBarChart<>(xAxis, yAxis);
@@ -138,22 +150,22 @@ public class MainScreen {
         }
     }
     protected void editTabsForUsers(){
-            if (!Session.user.entryScreenPerm) {
+            if (!UserInteractions.user.entryScreenPerm) {
                 tabpane.getTabs().remove(buyScreenTab);
             }
-            if (!Session.user.historyScreenPerm) {
+            if (!UserInteractions.user.historyScreenPerm) {
                 tabpane.getTabs().remove(logTab);
             }
-            if (!Session.user.sellScreenPerm) {
+            if (!UserInteractions.user.sellScreenPerm) {
                 tabpane.getTabs().remove(sellScreenTab);
             }
-            if (!Session.user.statsScreenPerm) {
+            if (!UserInteractions.user.statsScreenPerm) {
                 tabpane.getTabs().remove(statisticsTab);
             }
-            if (!Session.user.trackStockScreenPerm) {
+            if (!UserInteractions.user.trackStockScreenPerm) {
                 tabpane.getTabs().remove(stockControlTab);
             }
-            if (!Session.user.usersScreenPerm) {
+            if (!UserInteractions.user.usersScreenPerm) {
                 tabpane.getTabs().remove(userTab);
             }
     }
@@ -271,7 +283,7 @@ public class MainScreen {
     }
 
     protected void changeActiveUser(Label label) {
-        label.setText("Kullanıcı: " + Session.user.username);
+        label.setText("Kullanıcı: " + UserInteractions.user.username);
     }
 
     public void init() {
@@ -598,5 +610,27 @@ public class MainScreen {
             }
         });
         return detailsPane;
+    }
+    @FXML
+    protected void onUserTabOpened(){
+        if (tabpane.getSelectionModel().getSelectedItem().equals(userTab)){
+            userTable.getItems().removeAll(userTable.getItems());
+            userTableUserName.setCellValueFactory(userCheckBoxCellDataFeatures -> userCheckBoxCellDataFeatures.getValue().getUserName());
+            userTableEntryScreenTabPerm.setCellValueFactory(userCheckBoxCellDataFeatures -> userCheckBoxCellDataFeatures.getValue().getCheckBoxEntryScreenPerm());
+            userTableHistoryScreenTabPerm.setCellValueFactory(userCheckBoxCellDataFeatures -> userCheckBoxCellDataFeatures.getValue().getCheckBoxHistoryScreenPerm());
+            userTableSellScreenTabPerm.setCellValueFactory(userCheckBoxCellDataFeatures -> userCheckBoxCellDataFeatures.getValue().getCheckBoxSellScreenPerm());
+            userTableStatisticsScreenTabPerm.setCellValueFactory(userCheckBoxCellDataFeatures -> userCheckBoxCellDataFeatures.getValue().getCheckBoxStatsScreenPerm());
+            userTableStockControlScreenTabPerm.setCellValueFactory(userCheckBoxCellDataFeatures -> userCheckBoxCellDataFeatures.getValue().getCheckBoxTrackStockScreenPerm());
+            userTable.getItems().addAll(UserInteractions.getAllUsers());
+            userTable.getItems().add(new User("Rotroq","000111"));
+        }
+    }
+    @FXML
+    protected void onRegister() throws IOException {
+        Stage registerStage = new Stage();
+        registerStage.setTitle("Kaydol");
+        FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("SignupScreen.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 480, 360);
+        Main.setGradient(registerStage, scene);
     }
 }

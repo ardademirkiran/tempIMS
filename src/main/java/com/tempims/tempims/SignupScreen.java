@@ -1,6 +1,5 @@
 package com.tempims.tempims;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
@@ -29,7 +28,7 @@ public class SignupScreen {
     }
 
     public void signupButtonAction() throws IOException {
-        int flag = Session.checkSignUp(usernameField.getText(), passwordField.getText(), passwordField1.getText());
+        int flag = UserInteractions.checkSignUp(usernameField.getText(), passwordField.getText(), passwordField1.getText());
         if (flag == -2) {
             System.out.println("Bu kullanıcı adı zaten kullanılıyor.");
         } else if (flag == -1) {

@@ -4,9 +4,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Base64;
 
-public class Session {
+public class UserInteractions {
     public static User user;
 
     public static int checkLogin(String usernameInput, String passwordInput) throws IOException {
@@ -53,10 +54,6 @@ public class Session {
 
     }
 
-
-
-
-
     private static String hashPassword(String password) { //password hashing method
         byte[] bytesOfPassword = password.getBytes(StandardCharsets.UTF_8);
         byte[] md5Digest;
@@ -66,5 +63,23 @@ public class Session {
             return null;
         }
         return Base64.getEncoder().encodeToString(md5Digest);
+    }
+
+    public static ArrayList<User> getAllUsers() {
+        ArrayList<User> usersList = new ArrayList<>();
+        //sql part to get all users from USERS table
+        //fill the arraylist with new User(username, permissions)
+        return usersList;
+    }
+
+    public static void changePermissions(String username, String permissions) {
+        System.out.println(permissions);
+        //sql part to insert new permissions string to USERS db by using username
+    }
+    public static void changePassword(String username, String password){
+        //sql part to change password
+    }
+    public static void deleteUser(String username){
+        //sql part to delete user
     }
 }
