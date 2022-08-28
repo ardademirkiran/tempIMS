@@ -88,6 +88,7 @@ public class MainScreen {
     public TableColumn<LogObject, String> historyTableExplanation;
     public VBox appVbox;
     public Tab userTab;
+    public Button bitanebuton;
     CategoryAxis xAxis = new CategoryAxis();
     NumberAxis yAxis = new NumberAxis("TL", 0, 50, 5);
     public StackedBarChart<String, Number> stackedBarChart = new StackedBarChart<>(xAxis, yAxis);
@@ -136,9 +137,7 @@ public class MainScreen {
             System.out.println("bossatış");
         }
     }
-
     protected void editTabsForUsers(){
-        System.out.println(tabpane.getTabs().size());
             if (!Session.user.entryScreenPerm) {
                 tabpane.getTabs().remove(buyScreenTab);
             }
@@ -158,13 +157,12 @@ public class MainScreen {
                 tabpane.getTabs().remove(userTab);
             }
     }
-
     @FXML
-    protected void tabChanged() {
+    public void initialize(){
+        editTabsForUsers();
         changeActiveUser(username);
         init();
         setcontextmenu();
-
         ContextMenu contextMenu = setcontextmenu();
         sellScreenTable.setOnContextMenuRequested(contextMenuEvent -> {
             final int[] i = {0};
@@ -188,13 +186,10 @@ public class MainScreen {
                 }
             });
         });
-        if (!eventhandleradded) {
-            Main.globalStage.addEventHandler(KeyEvent.KEY_TYPED, this::sellScreenKeyTyped);
-            eventhandleradded = true;
-        }
-        editTabsForUsers();
-    }
+        Main.globalStage.addEventHandler(KeyEvent.KEY_TYPED, this::sellScreenKeyTyped);
+        eventhandleradded = true;
 
+    }
     @FXML
     protected void cancelButtonClicked() {
         sellScreenTable.getItems().removeAll(sellScreenTable.getItems());

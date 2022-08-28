@@ -19,7 +19,7 @@
         <Label fx:id="username" text="Kullanıcı : Enes Yaman (Admin)" />
     </HBox>
     <TabPane fx:id="tabpane" style="-fx-font-size: 15" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS">
-        <Tab fx:id="sellScreenTab" onSelectionChanged="#tabChanged" text="Satış Ekranı">
+        <Tab fx:id="sellScreenTab" text="Satış Ekranı">
             <AnchorPane>
                 <ComboBox layoutX="20.0" layoutY="20.0" promptText="Müşteri (Genel Müşteri)" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                 <TextField fx:id="barcodeField" layoutX="240.0" layoutY="20.0" onKeyTyped="#barcodeFieldKeyTyped" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="75.0" AnchorPane.topAnchor="10.0" />
@@ -270,7 +270,7 @@
                 <TextField layoutX="238.0" layoutY="338.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="150.0" />
                 <Button layoutX="150.0" layoutY="523.0" mnemonicParsing="false" text="Kayıt" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="150.0" />
                 <Button layoutX="720.0" layoutY="309.0" mnemonicParsing="false" text="Seçili Kullanıcıyı Sil" AnchorPane.bottomAnchor="250.0" AnchorPane.rightAnchor="10.0" />
-                <Button layoutX="720.0" layoutY="354.0" mnemonicParsing="false" text="Seçili Kullanıcının Şifresini Sıfırla" AnchorPane.bottomAnchor="200.0" AnchorPane.rightAnchor="10.0" />
+                <Button layoutX="720.0" layoutY="354.0" mnemonicParsing="false" text="Seçili Kullanıcının Şifresini Sıfırla" AnchorPane.bottomAnchor="200.0" AnchorPane.rightAnchor="10.0" fx:id="bitanebuton"/>
             </AnchorPane>
         </Tab>
     </TabPane>
