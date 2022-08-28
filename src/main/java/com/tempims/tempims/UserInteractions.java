@@ -73,7 +73,6 @@ public class UserInteractions {
     }
 
     public static void changePermissions(String username, String permissions) {
-        System.out.println(permissions);
         //sql part to insert new permissions string to USERS db by using username
     }
     public static void changePassword(String username, String password){
@@ -83,15 +82,5 @@ public class UserInteractions {
         //sql part to delete user
     }
 
-    public static String generatePermissionsString(User user){
-        String permissionsString = "";
 
-        permissionsString += user.checkBoxSellScreenPerm.isSelected() ? "1" : "0";
-        permissionsString += user.checkBoxEntryScreenPerm.isSelected() ? "1" : "0";
-        permissionsString += user.checkBoxHistoryScreenPerm.isSelected() ? "1" : "0";
-        permissionsString += user.checkBoxTrackStockScreenPerm.isSelected() ? "1" : "0";
-        permissionsString += user.checkBoxStatsScreenPerm.isSelected() ? "1" : "0";
-        permissionsString += user.checkBoxUsersScreenPerm.isSelected() ? "1" : "0";
-        return permissionsString;
-    }
 }

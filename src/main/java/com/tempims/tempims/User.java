@@ -14,6 +14,7 @@ public class User {
     public boolean trackStockScreenPerm;
     public boolean statsScreenPerm;
     public boolean usersScreenPerm;
+    public boolean isAdmin;
 
     public CheckBox checkBoxSellScreenPerm = new CheckBox();
     public CheckBox checkBoxEntryScreenPerm = new CheckBox();
@@ -31,23 +32,21 @@ public class User {
         statsScreenPerm = Character.toString(permissions.charAt(4)).equals("1");
         usersScreenPerm = Character.toString(permissions.charAt(5)).equals("1");
         checkBoxEntryScreenPerm.setSelected(entryScreenPerm);
-        checkBoxEntryScreenPerm.selectedProperty().addListener((observable -> UserInteractions.changePermissions(username,getpermissions())));
+        checkBoxEntryScreenPerm.selectedProperty().addListener((observable -> UserInteractions.changePermissions(username, generatePermissionsString())));
         checkBoxStatsScreenPerm.setSelected(statsScreenPerm);
-        checkBoxStatsScreenPerm.selectedProperty().addListener((observable -> UserInteractions.changePermissions(username,getpermissions())));
+        checkBoxStatsScreenPerm.selectedProperty().addListener((observable -> UserInteractions.changePermissions(username, generatePermissionsString())));
         checkBoxUsersScreenPerm.setSelected(usersScreenPerm);
-        checkBoxUsersScreenPerm.selectedProperty().addListener((observable -> UserInteractions.changePermissions(username,getpermissions())));
+        checkBoxUsersScreenPerm.selectedProperty().addListener((observable -> UserInteractions.changePermissions(username, generatePermissionsString())));
         checkBoxHistoryScreenPerm.setSelected(historyScreenPerm);
-        checkBoxHistoryScreenPerm.selectedProperty().addListener((observable -> UserInteractions.changePermissions(username,getpermissions())));
+        checkBoxHistoryScreenPerm.selectedProperty().addListener((observable -> UserInteractions.changePermissions(username, generatePermissionsString())));
         checkBoxSellScreenPerm.setSelected(sellScreenPerm);
-        checkBoxSellScreenPerm.selectedProperty().addListener((observable -> UserInteractions.changePermissions(username,getpermissions())));
+        checkBoxSellScreenPerm.selectedProperty().addListener((observable -> UserInteractions.changePermissions(username, generatePermissionsString())));
         checkBoxTrackStockScreenPerm.setSelected(trackStockScreenPerm);
-        checkBoxTrackStockScreenPerm.selectedProperty().addListener((observable -> UserInteractions.changePermissions(username,getpermissions())));
+        checkBoxTrackStockScreenPerm.selectedProperty().addListener((observable -> UserInteractions.changePermissions(username, generatePermissionsString())));
     }
 
 
-    public String getpermissions(){
-        return checkBoxSellScreenPerm.isSelected() +String.valueOf(checkBoxEntryScreenPerm.isSelected())+checkBoxHistoryScreenPerm.isSelected()+ checkBoxTrackStockScreenPerm.isSelected() +checkBoxStatsScreenPerm.isSelected()+checkBoxUsersScreenPerm.isSelected();
-    }
+
 
     private ObservableValue<CheckBox> getCheckBoxObservableValue(CheckBox checkBoxEntryScreenPerm) {
         return new ObservableValue<CheckBox>() {
@@ -103,6 +102,19 @@ public class User {
     }
     public SimpleStringProperty getUserName(){
         return new SimpleStringProperty(this.username);
+    }
+
+    public String generatePermissionsString(){
+        String permissionsString = "";
+
+        permissionsString += checkBoxSellScreenPerm.isSelected() ? "1" : "0";
+        permissionsString += checkBoxEntryScreenPerm.isSelected() ? "1" : "0";
+        permissionsString += checkBoxHistoryScreenPerm.isSelected() ? "1" : "0";
+        permissionsString += checkBoxTrackStockScreenPerm.isSelected() ? "1" : "0";
+        permissionsString += checkBoxStatsScreenPerm.isSelected() ? "1" : "0";
+        permissionsString += checkBoxUsersScreenPerm.isSelected() ? "1" : "0";
+        System.out.println(permissionsString);
+        return permissionsString;
     }
 
 
