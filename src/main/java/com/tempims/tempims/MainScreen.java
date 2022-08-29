@@ -662,7 +662,7 @@ public class MainScreen {
     }
     @FXML
     protected void removeUserButtonEvent(){
-        if (userTable.getSelectionModel().getSelectedItem()!=null){
+        if (userTable.getSelectionModel().getSelectedItem()!=null && !userTable.getSelectionModel().getSelectedItem().getUserName().getValue().equals(UserInteractions.user.getUserName().getValue())){
             UserInteractions.deleteUser(userTable.getSelectionModel().getSelectedItem().username);
             onUserTabOpened();
         }
