@@ -640,7 +640,9 @@ public class MainScreen {
             userTableStockControlScreenTabPerm.setCellValueFactory(userCheckBoxCellDataFeatures -> userCheckBoxCellDataFeatures.getValue().getCheckBoxTrackStockScreenPerm());
             userTableUsersScreenTabPerm.setCellValueFactory(userCheckBoxCellDataFeatures -> userCheckBoxCellDataFeatures.getValue().getCheckBoxUsersScreenPerm());
             ArrayList<User> users = UserInteractions.getAllUsers();
-            users.removeIf(user -> (user.usersScreenPerm && !(user.getUserName().getValue().equals(UserInteractions.user.getUserName().getValue()))));
+            if (!UserInteractions.user.isAdmin) {
+                users.removeIf(user -> (user.usersScreenPerm && !(user.getUserName().getValue().equals(UserInteractions.user.getUserName().getValue()))));
+            }
             for (User user: users) {
                 if (user.getUserName().getValue().equals(UserInteractions.user.getUserName().getValue())){
                     user.setNotEditable();

@@ -47,14 +47,14 @@ public class UserInteractions {
         }
 
         ProcessLogs.recordUserProcess(0, usernameInput);
-        DBAccess.insertUser(usernameInput, hashPassword(passwordInput1));// sql part to put new user to database and returns 1
+        DBAccess.insertUser(usernameInput, hashPassword(passwordInput1), "1111110");// sql part to put new user to database and returns 1
 
         return 1;
 
 
     }
 
-    private static String hashPassword(String password) { //password hashing method
+    public static String hashPassword(String password) { //password hashing method
         byte[] bytesOfPassword = password.getBytes(StandardCharsets.UTF_8);
         byte[] md5Digest;
         try {

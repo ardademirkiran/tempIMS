@@ -20,6 +20,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        DBAccess.insertUser("admin", UserInteractions.hashPassword("admin"), "1111111");
         ProcessLogs.setUpDate();
         globalStage = stage;
         FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("LoginScreen.fxml"));

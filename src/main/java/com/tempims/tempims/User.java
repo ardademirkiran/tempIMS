@@ -33,6 +33,7 @@ public class User {
         trackStockScreenPerm = Character.toString(permissions.charAt(3)).equals("1");
         statsScreenPerm = Character.toString(permissions.charAt(4)).equals("1");
         usersScreenPerm = Character.toString(permissions.charAt(5)).equals("1");
+        isAdmin = Character.toString(permissions.charAt(6)).equals("1");
         checkBoxEntryScreenPerm.setSelected(entryScreenPerm);
         checkBoxEntryScreenPerm.selectedProperty().addListener((observable -> UserInteractions.changePermissions(username, generatePermissionsString())));
         checkBoxStatsScreenPerm.setSelected(statsScreenPerm);
@@ -115,6 +116,7 @@ public class User {
         permissionsString += checkBoxTrackStockScreenPerm.isSelected() ? "1" : "0";
         permissionsString += checkBoxStatsScreenPerm.isSelected() ? "1" : "0";
         permissionsString += checkBoxUsersScreenPerm.isSelected() ? "1" : "0";
+        permissionsString += isAdmin ? "1" : "0";
         System.out.println(permissionsString);
         return permissionsString;
     }

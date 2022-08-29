@@ -147,14 +147,14 @@ public class DBAccess {
 
     }
 
-    protected static void insertUser(String userName, String password) {
+    protected static void insertUser(String userName, String password, String permissions) {
         Connection conn = connect();
         try {
             String sql = "INSERT INTO USERS (USERNAME, PASSWORD, PERMISSION) VALUES (?, ?, ?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, userName);
             pstmt.setString(2, password);
-            pstmt.setString(3, "111111");
+            pstmt.setString(3, permissions);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace(System.out);
