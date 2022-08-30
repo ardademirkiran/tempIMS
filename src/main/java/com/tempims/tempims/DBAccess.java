@@ -84,7 +84,7 @@ public class DBAccess {
                 pstmt.setString(3, nameInput);
                 pstmt.setInt(4, Integer.parseInt(numberInput));
                 pstmt.setInt(5, Integer.parseInt(taxInput));
-                pstmt.setDouble(6, Double.parseDouble(unitBuyPriceInput));
+                pstmt.setDouble(6, Double.parseDouble(unitBuyPriceInput.replace(",",".")));
                 pstmt.setDouble(7, Double.parseDouble(totalBuyPriceInput));
                 pstmt.setDouble(8, Double.parseDouble(sellPriceInput));
                 pstmt.executeUpdate();

@@ -24,14 +24,14 @@
                 <ComboBox layoutX="20.0" layoutY="20.0" promptText="Müşteri (Genel Müşteri)" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                 <TextField fx:id="barcodeField" layoutX="240.0" layoutY="20.0" onKeyTyped="#barcodeFieldKeyTyped" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="75.0" AnchorPane.topAnchor="10.0" />
                 <Button alignment="CENTER" layoutX="431.0" layoutY="20.0" mnemonicParsing="false" onAction="#cancelButtonClicked" text="İptal" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
-                <TableView fx:id="sellScreenTable" editable="true" layoutX="20.0" layoutY="64.0" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0">
+                <TableView fx:id="sellScreenTable" editable="true" layoutX="20.0" layoutY="64.0" stylesheets="@tableView.css" fixedCellSize="70" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0">
                     <columns>
                         <TableColumn fx:id="barcodeCollumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Barkod" />
                         <TableColumn fx:id="nameCollumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Ad" />
                         <TableColumn fx:id="amountCollumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Miktar" />
                         <TableColumn fx:id="kdvCollumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Kdv Oranı" />
-                        <TableColumn fx:id="percentageDiscountCollumn" prefWidth="75.0" text="İskonto %" />
-                        <TableColumn fx:id="discountCollumn" prefWidth="75.0" text="İskonto TL" />
+                        <TableColumn fx:id="percentageDiscountCollumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="İskonto %" />
+                        <TableColumn fx:id="discountCollumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="İskonto TL" />
                         <TableColumn fx:id="lastPriceCollumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Ara Toplam" />
                     </columns>
                     <columnResizePolicy>

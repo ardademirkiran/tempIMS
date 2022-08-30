@@ -21,7 +21,6 @@ public class Products {
     Double calculatedunitsellprice;
     Double sellpricedb;
     String name, barcode;
-
     Products(String barcode, String name, Integer tax, Double sellpricedb) {
         discount.setPromptText("0");
         discountper.setPromptText("0");
@@ -33,6 +32,10 @@ public class Products {
         this.tax = tax;
         this.amount = 1;
         this.calsellprice.setText(String.valueOf(sellpricedb));
+        discount.setStyle("-fx-font-size: 30");
+        discountper.setStyle("-fx-font-size: 30");
+        calsellprice.setStyle("-fx-font-size: 30");
+        init();
     }
 
     public ObservableValue<TextField> observableValuedisper() {
