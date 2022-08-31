@@ -134,10 +134,10 @@ public class MainScreen {
             totaldiscount += Double.parseDouble(discountCollumnstatic.getCellObservableValue(item).getValue().getText()) * item.amount;
             subtotal += Double.parseDouble(lastPriceCollumnstatic.getCellObservableValue(item).getValue().getText()) / (1 + kdvCollumnstatic.getCellObservableValue(item).getValue() / 100.0);
         }
-        totalPriceLabelstatic.setText(String.format("%.2f", totalprice));
-        subTotalLabelstatic.setText(String.format("%.2f", subtotal));
-        totalDiscountLabelstatic.setText(String.format("%.2f", totaldiscount));
-        totalTaxLabelstatic.setText(String.format("%.2f", totalprice - subtotal));
+        totalPriceLabelstatic.setText(String.format(Locale.ROOT,"%.2f", totalprice));
+        subTotalLabelstatic.setText(String.format(Locale.ROOT,"%.2f", subtotal));
+        totalDiscountLabelstatic.setText(String.format(Locale.ROOT,"%.2f", totaldiscount));
+        totalTaxLabelstatic.setText(String.format(Locale.ROOT,"%.2f", totalprice - subtotal));
     }
 
     @FXML
@@ -267,7 +267,7 @@ public class MainScreen {
     @FXML
     protected void productEntryLabelButtonOnClicked() throws IOException {
         ProcessLogs.recordStockEntryProcess(productEntryLabelBarcode.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText());
-        ProductInteractions.productEntry(productEntryLabelBarcode.getText(), productEntryLabelBrand.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText(), productEntryLabelTax.getText(), productEntryLabelBuyPrice.getText(), String.format("%.2f", Double.parseDouble(productEntryLabelBuyPrice.getText()) / Double.parseDouble(productEntryLabelPiece.getText())), productEntryLabelSellPrice.getText());
+        ProductInteractions.productEntry(productEntryLabelBarcode.getText(), productEntryLabelBrand.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText(), productEntryLabelTax.getText(), productEntryLabelBuyPrice.getText(), String.format(Locale.ROOT,"%.2f", Double.parseDouble(productEntryLabelBuyPrice.getText()) / Double.parseDouble(productEntryLabelPiece.getText())), productEntryLabelSellPrice.getText());
         productEntryLabelBarcode.setText("");
         productEntryLabelSellPrice.setText("");
         productEntryLabelTax.setText("");
@@ -289,7 +289,7 @@ public class MainScreen {
     @FXML
     protected void buyPriceKeyPressed() {
         try {
-            productEntryLabelPrice.setText(String.format("%.2f", Double.parseDouble(productEntryLabelBuyPrice.getText()) / Double.parseDouble(productEntryLabelPiece.getText())));
+            productEntryLabelPrice.setText(String.format(Locale.ROOT,"%.2f", Double.parseDouble(productEntryLabelBuyPrice.getText()) / Double.parseDouble(productEntryLabelPiece.getText())));
         } catch (NumberFormatException e) {
             productEntryLabelPrice.setText("0");
         }
@@ -522,7 +522,7 @@ public class MainScreen {
                 pieInfo.setVisible(true);
                 pieInfo.setTranslateX(e.getSceneX() + 5);
                 pieInfo.setTranslateY(e.getSceneY() - 90);
-                String text = String.format("%.1f%%", 100 * data.getPieValue() / total.get());
+                String text = String.format(Locale.ROOT,"%.1f%%", 100 * data.getPieValue() / total.get());
                 pieInfo.setText(text + "\n" + (int) data.getPieValue() + "TL");
             });
             data.getNode().addEventHandler(MouseEvent.MOUSE_EXITED, mouseEvent -> pieInfo.setVisible(false));

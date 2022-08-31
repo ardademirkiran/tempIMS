@@ -21,7 +21,7 @@ public class ProductInteractions {
         String[] productInfo = (DBAccess.newProductInfo(barcode)).split(":");
         String name = productInfo[0]; //sql part to get name
         int tax = Integer.parseInt(productInfo[1]); //sql part to get tax
-        double sellprice = Double.parseDouble(productInfo[2].replace(",", "."));//sql part to get sellprice
+        double sellprice = Double.parseDouble(productInfo[2]);//sql part to get sellprice
 
         return new Products(barcode, name, tax, sellprice);
     }
