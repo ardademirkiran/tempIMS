@@ -140,7 +140,6 @@ public class MainScreen {
             double totalProfit = 0;
             String midText = "";
             for (Products product : productsList) {
-                System.out.println("sıkıntı yok");
                 double profitToAdd = Stats.calculateProfit(product);
                 DBAccess.updateStock(product.barcode, -product.amount);
                 DBAccess.amendProfit(product.barcode, profitToAdd);
