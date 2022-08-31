@@ -32,9 +32,9 @@ public class Products {
         this.tax = tax;
         this.amount = 1;
         this.calsellprice.setText(String.valueOf(sellpricedb));
-        discount.setStyle("-fx-font-size: 30");
-        discountper.setStyle("-fx-font-size: 30");
-        calsellprice.setStyle("-fx-font-size: 30");
+        discount.setStyle("-fx-font-size: 25");
+        discountper.setStyle("-fx-font-size: 25");
+        calsellprice.setStyle("-fx-font-size: 25");
         init();
     }
 

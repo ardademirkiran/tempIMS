@@ -41,8 +41,8 @@ public class ProcessLogs {
 
    }
 
-   public static void setUpDate() throws IOException {
-      checkDateFile();
+   public static Boolean setUpDate() throws IOException {
+      Boolean returnValue = checkDateFile();
       currentDate = java.time.LocalDate.now();
       BufferedReader reader = new BufferedReader(new FileReader("date.txt"));
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -59,6 +59,7 @@ public class ProcessLogs {
       BufferedWriter writer = new BufferedWriter(new FileWriter("date.txt"));
       writer.write(currentDate.toString());
       writer.close();
+      return checkDateFile();
 
    }
    public static ArrayList<LogObject> getLogObjects() throws IOException {
@@ -88,12 +89,15 @@ public class ProcessLogs {
       return logObjects;
    }
 
-   public static void checkDateFile() throws IOException {
+   public static Boolean checkDateFile() throws IOException {
       File dateFile = new File("date.txt");
       if(dateFile.createNewFile()){
          BufferedWriter writer = new BufferedWriter(new FileWriter(dateFile));
          writer.write("1111-11-11");
          writer.close();
+         return true;
+      } else {
+         return false;
       }
    }
 }
