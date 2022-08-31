@@ -1,13 +1,13 @@
 .table-cell {
     -fx-padding: 0.5em;
     -fx-border-color: transparent -fx-box-border transparent transparent;
-    -fx-font: 30px "Arial";
+    -fx-font: 25px "Arial";
     -fx-text-fill: #212121;
 }
 
 .table-cell :focused {
     -fx-border-color: transparent -fx-box-border transparent transparent;
-    -fx-font: 30px "Arial";
+    -fx-font: 25px "Arial";
     -fx-text-fill: green;
 }
 
