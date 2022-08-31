@@ -59,7 +59,7 @@ public class ProcessLogs {
       BufferedWriter writer = new BufferedWriter(new FileWriter("date.txt"));
       writer.write(currentDate.toString());
       writer.close();
-      return checkDateFile();
+      return returnValue;
 
    }
    public static ArrayList<LogObject> getLogObjects() throws IOException {
