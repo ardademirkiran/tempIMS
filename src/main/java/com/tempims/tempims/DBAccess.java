@@ -72,7 +72,7 @@ public class DBAccess {
     protected static void insertProduct(String barcodeInput, String brandInput, String nameInput, String numberInput, String taxInput, String totalBuyPriceInput, String unitBuyPriceInput, String sellPriceInput) {
         Connection conn = connect();
         try {
-            String productCheck = String.format("SELECT * FROM PRODUCTS WHERE BARCODE = '%s'", barcodeInput);
+            String productCheck = String.format(Locale.ROOT,"SELECT * FROM PRODUCTS WHERE BARCODE = '%s'", barcodeInput);
             Statement checkStmt = conn.createStatement();
             ResultSet rs = checkStmt.executeQuery(productCheck);
             if (!rs.next()) { // Product doesn't exist, add new product to database
@@ -84,7 +84,7 @@ public class DBAccess {
                 pstmt.setString(3, nameInput);
                 pstmt.setInt(4, Integer.parseInt(numberInput));
                 pstmt.setInt(5, Integer.parseInt(taxInput));
-                pstmt.setDouble(6, Double.parseDouble(unitBuyPriceInput.replace(",",".")));
+                pstmt.setDouble(6, Double.parseDouble(unitBuyPriceInput));
                 pstmt.setDouble(7, Double.parseDouble(totalBuyPriceInput));
                 pstmt.setDouble(8, Double.parseDouble(sellPriceInput));
                 pstmt.executeUpdate();
@@ -112,7 +112,7 @@ public class DBAccess {
     protected static int getStock(String barcode) {
         Connection conn = connect();
         try {
-            String getCurrentStock = String.format("SELECT PRODUCT_NUMBER FROM PRODUCTS WHERE BARCODE = '%s'", barcode);
+            String getCurrentStock = String.format(Locale.ROOT,"SELECT PRODUCT_NUMBER FROM PRODUCTS WHERE BARCODE = '%s'", barcode);
             Statement currentStockStatement = conn.createStatement();
             ResultSet currentStockRS = currentStockStatement.executeQuery(getCurrentStock);
             return currentStockRS.getInt("PRODUCT_NUMBER");
@@ -132,7 +132,7 @@ public class DBAccess {
         Connection conn = connect();
         try {
             int updatedStock = stockChange + getStock(barcode);
-            String updateQuery = String.format("UPDATE PRODUCTS SET PRODUCT_NUMBER = '%d' WHERE BARCODE = '%s'", updatedStock, barcode);
+            String updateQuery = String.format(Locale.ROOT,"UPDATE PRODUCTS SET PRODUCT_NUMBER = '%d' WHERE BARCODE = '%s'", updatedStock, barcode);
             Statement updatedStockStatement = conn.createStatement();
             updatedStockStatement.executeUpdate(updateQuery);
         } catch (SQLException e) {
@@ -170,7 +170,7 @@ public class DBAccess {
     protected static String fetchPassword(String userName) {
         Connection conn = connect();
         try {
-            String sql = String.format("SELECT PASSWORD FROM USERS WHERE USERNAME = '%s'", userName);
+            String sql = String.format(Locale.ROOT,"SELECT PASSWORD FROM USERS WHERE USERNAME = '%s'", userName);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             String returnVal = rs.getString("PASSWORD");
@@ -191,7 +191,7 @@ public class DBAccess {
         int size = 0;
         Connection conn = connect();
         try {
-            String sql = String.format("SELECT * FROM USERS WHERE USERNAME = '%s'", userName);
+            String sql = String.format(Locale.ROOT,"SELECT * FROM USERS WHERE USERNAME = '%s'", userName);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             if (rs != null) {
@@ -214,10 +214,10 @@ public class DBAccess {
     protected static String newProductInfo(String barcode) {
         Connection conn = connect();
         try {
-            String sql = String.format("SELECT NAME, TAX, UNIT_SELLING_PRICE FROM PRODUCTS WHERE BARCODE = '%s'", barcode);
+            String sql = String.format(Locale.ROOT,"SELECT NAME, TAX, UNIT_SELLING_PRICE FROM PRODUCTS WHERE BARCODE = '%s'", barcode);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
-            String returnVal = String.format("%s:%d:%,.2f", rs.getString("NAME"), rs.getInt("TAX"), rs.getDouble("UNIT_SELLING_PRICE"));
+            String returnVal = String.format(Locale.ROOT,"%s:%d:%,.2f", rs.getString("NAME"), rs.getInt("TAX"), rs.getDouble("UNIT_SELLING_PRICE"));
             return returnVal;
         } catch (SQLException e) {
             e.printStackTrace(System.out);
@@ -264,7 +264,7 @@ public class DBAccess {
     protected static double fetchUnitBuyingPrice(String barcode){
         Connection conn = connect();
         try {
-            String sql = String.format("SELECT UNIT_BUYING_PRICE FROM PRODUCTS WHERE BARCODE = '%s'", barcode);
+            String sql = String.format(Locale.ROOT,"SELECT UNIT_BUYING_PRICE FROM PRODUCTS WHERE BARCODE = '%s'", barcode);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             return rs.getDouble("UNIT_BUYING_PRICE");
@@ -283,7 +283,7 @@ public class DBAccess {
     protected static void amendProfit(String barcode, double newProfit){
         Connection conn = connect();
         try{
-            String sql = String.format("UPDATE PRODUCTS SET PROFIT_RETURN = PROFIT_RETURN + '%,.2f', DAILY_PROFIT_RETURN = DAILY_PROFIT_RETURN + '%,.2f' WHERE BARCODE = '%s'",newProfit,newProfit,barcode);
+            String sql = String.format(Locale.ROOT,"UPDATE PRODUCTS SET PROFIT_RETURN = PROFIT_RETURN + '%,.2f', DAILY_PROFIT_RETURN = DAILY_PROFIT_RETURN + '%,.2f' WHERE BARCODE = '%s'",newProfit,newProfit,barcode);
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
         }
@@ -303,7 +303,7 @@ public class DBAccess {
     protected static void insertProfitRow(LocalDate date){
         Connection conn = connect();
         try{
-            String sql = String.format("SELECT * FROM PROFITS WHERE DATE = '%s'", date);
+            String sql = String.format(Locale.ROOT,"SELECT * FROM PROFITS WHERE DATE = '%s'", date);
             System.out.println(sql);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
@@ -331,7 +331,7 @@ public class DBAccess {
     protected static void updateDailyProfit(LocalDate date, double newDailyProfit){
         Connection conn = connect();
         try{
-            String sql = String.format("UPDATE PROFITS SET GROSS_PROFIT = GROSS_PROFIT + '%,.2f' WHERE DATE = '%s'",
+            String sql = String.format(Locale.ROOT,"UPDATE PROFITS SET GROSS_PROFIT = GROSS_PROFIT + '%,.2f' WHERE DATE = '%s'",
                     newDailyProfit, date); // might create a problem later, should test and see (using date without parsing) !!!
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
@@ -352,7 +352,7 @@ public class DBAccess {
     protected static void updatePriceInfo(double newUnitPrice, double newSellingPrice, double newBuyingPrice, String barcode){
         Connection conn = connect();
         try{
-            String sql = String.format("UPDATE PRODUCTS SET UNIT_BUYING_PRICE = '%,.2f', UNIT_SELLING_PRICE = '%,.2f', TOTAL_BUYING_PRICE = TOTAL_BUYING_PRICE + '%,.2f' WHERE BARCODE = '%s'",
+            String sql = String.format(Locale.ROOT,"UPDATE PRODUCTS SET UNIT_BUYING_PRICE = '%,.2f', UNIT_SELLING_PRICE = '%,.2f', TOTAL_BUYING_PRICE = TOTAL_BUYING_PRICE + '%,.2f' WHERE BARCODE = '%s'",
                     newUnitPrice, newSellingPrice, newBuyingPrice, barcode);
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
@@ -419,7 +419,7 @@ public class DBAccess {
     protected static void changePassword(String userName, String newPassword){
         Connection conn = connect();
         try{
-            String sql = String.format("UPDATE USERS SET PASSWORD = '%s' WHERE USERNAME = '%s'",newPassword, userName);
+            String sql = String.format(Locale.ROOT,"UPDATE USERS SET PASSWORD = '%s' WHERE USERNAME = '%s'",newPassword, userName);
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
         }
@@ -439,7 +439,7 @@ public class DBAccess {
     protected static void removeUser(String userName){
         Connection conn = connect();
         try{
-            String sql = String.format("DELETE FROM USERS WHERE USERNAME = '%s'", userName);
+            String sql = String.format(Locale.ROOT,"DELETE FROM USERS WHERE USERNAME = '%s'", userName);
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
         }
@@ -486,7 +486,7 @@ public class DBAccess {
         Connection conn = connect();
         String userPermission = "";
         try{
-            String sql = String.format("SELECT PERMISSION FROM USERS WHERE USERNAME = '%s'", userName);
+            String sql = String.format(Locale.ROOT,"SELECT PERMISSION FROM USERS WHERE USERNAME = '%s'", userName);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             userPermission = rs.getString("PERMISSION");
@@ -509,7 +509,7 @@ public class DBAccess {
     protected static void setUserPermission(String userName, String permission){
         Connection conn = connect();
         try{
-            String sql = String.format("UPDATE USERS SET PERMISSION = '%s' WHERE USERNAME = '%s'",permission, userName);
+            String sql = String.format(Locale.ROOT,"UPDATE USERS SET PERMISSION = '%s' WHERE USERNAME = '%s'",permission, userName);
             Statement stmt = conn.createStatement();
             stmt.execute(sql);
         }
@@ -530,7 +530,7 @@ public class DBAccess {
     protected static void clearDailyProfits(){
         Connection conn = connect();
         try{
-            String sql = String.format("UPDATE PRODUCTS SET DAILY_PROFIT_RETURN = '%.2f'",0.00);
+            String sql = String.format(Locale.ROOT,"UPDATE PRODUCTS SET DAILY_PROFIT_RETURN = '%.2f'",0.00);
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
         }

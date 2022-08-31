@@ -10,6 +10,7 @@ import javafx.scene.paint.Stop;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Locale;
 
 public class Main extends Application {
     static Stage globalStage;
