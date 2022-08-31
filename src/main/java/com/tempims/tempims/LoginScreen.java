@@ -31,8 +31,7 @@ public class LoginScreen {
             invalidInputAction(textFields);
         } else {
             if (Main.isFirstExec){
-                SignupScreen.username = "admin";
-                FXMLLoader fxmlLoader = new FXMLLoader(SignupScreen.class.getResource("SignupScreen.fxml"));
+                FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("FirstOpenScreen.fxml"));
                 Scene scene = new Scene(fxmlLoader.load());
                 Main.globalStage.setScene(scene);
             }else {

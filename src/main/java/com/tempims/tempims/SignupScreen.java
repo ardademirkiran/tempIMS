@@ -24,11 +24,6 @@ public class SignupScreen {
             signupButton.setText("Kaydol");
             usernameField.setFocusTraversable(true);
             usernameField.setEditable(true);
-        }else if (Main.isFirstExec){
-            usernameField.setText("");
-            usernameField.setEditable(true);
-            usernameField.setFocusTraversable(true);
-            signupButton.setText("Kullanıcı Adı ve Şifreyi Yenile");
         }
         else {
             usernameField.setText(username);
@@ -50,24 +45,7 @@ public class SignupScreen {
             } else {
                 System.out.println("Yeni kullanıcı oluşturuldu.");
             }
-        }else if (Main.isFirstExec){
-            int flag = UserInteractions.checkSignUp(usernameField.getText(), passwordField.getText(), passwordField1.getText(), "1111111");
-            if (flag == -2) {
-                System.out.println("Bu kullanıcı adı zaten kullanılıyor.");
-            } else if (flag == -1) {
-                System.out.println("Kullanıcı adı ya da şifre boş olamaz.");
-            } else if (flag == 0) {
-                System.out.println("Şifre ve şifre onayı birbiriyle eşleşmiyor.");
-            } else {
-                System.out.println("Yeni kullanıcı oluşturuldu.");
-                UserInteractions.deleteUser("admin");
-                UserInteractions.checkLogin(usernameField.getText(),passwordField.getText());
-                FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("MainScreen.fxml"));
-                Scene scene = new Scene(fxmlLoader.load());
-                Main.globalStage.setMaximized(true);
-                Main.globalStage.setScene(scene);
-            }
-        }else {
+        } else {
             if (passwordField.getText().equals("") || passwordField1.getText().equals("") || usernameField.getText().equals("")) {
                 System.out.println("Kullanıcı adı ya da şifre boş olamaz.");
             }

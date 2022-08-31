@@ -11,7 +11,7 @@
         <VBox.margin>
             <Insets />
         </VBox.margin>
-        <Label text="Şirket : Hacettepe Üniversitesi">
+        <Label fx:id="companyNameLabel" text="Şirket : Hacettepe Üniversitesi">
             <HBox.margin>
                 <Insets right="100.0" />
             </HBox.margin>
@@ -24,7 +24,7 @@
                 <ComboBox layoutX="20.0" layoutY="20.0" promptText="Müşteri (Genel Müşteri)" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                 <TextField fx:id="barcodeField" layoutX="240.0" layoutY="20.0" onKeyTyped="#barcodeFieldKeyTyped" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="75.0" AnchorPane.topAnchor="10.0" />
                 <Button alignment="CENTER" layoutX="431.0" layoutY="20.0" mnemonicParsing="false" onAction="#cancelButtonClicked" text="İptal" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
-                <TableView fx:id="sellScreenTable" editable="true" layoutX="20.0" layoutY="64.0" stylesheets="@tableView.css" fixedCellSize="70" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0">
+                <TableView fx:id="sellScreenTable" editable="true" fixedCellSize="70" layoutX="20.0" layoutY="64.0" stylesheets="@tableView.css" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0">
                     <columns>
                         <TableColumn fx:id="barcodeCollumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Barkod" />
                         <TableColumn fx:id="nameCollumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Ad" />
@@ -195,9 +195,9 @@
                 </TableView>
             </AnchorPane>
         </Tab>
-        <Tab fx:id="stockControlTab" onSelectionChanged="#onstockcontrolopened" text="Stok Kontrol Ekranı">
+        <Tab fx:id="stockControlTab" onSelectionChanged="#onStockControlOpened" text="Stok Kontrol Ekranı">
             <AnchorPane fx:id="stockControlPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                <TableView fx:id="stockTable" layoutX="141.0" layoutY="66.0" onMouseClicked="#stockControlClicked" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="55.0">
+                <TableView fx:id="stockTable" layoutX="141.0" layoutY="66.0" onMouseClicked="#stockDisplayDoubleClick" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="55.0">
                     <columns>
                         <TableColumn fx:id="stockCollumnBarcode" prefWidth="105.0" style="-fx-alignment: CENTER;" text="Barkod" />
                         <TableColumn fx:id="stockCollumnBrand" prefWidth="98.0" style="-fx-alignment: CENTER;" text="Marka" />

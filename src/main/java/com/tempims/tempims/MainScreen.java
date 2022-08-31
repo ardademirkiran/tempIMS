@@ -40,6 +40,7 @@ public class MainScreen {
     public static Label totalPriceLabelstatic;
     public static Label totalTaxLabelstatic;
     public static Label subTotalLabelstatic;
+    static String companyName;
     public AnchorPane statisticAnchorPane;
     public Tab statisticsTab;
     public PieChart pieChart;
@@ -89,27 +90,26 @@ public class MainScreen {
     public TableColumn<LogObject, String> historyTableExplanation;
     public VBox appVbox;
     public Tab userTab;
-    public TableColumn<User,String> userTableUserName;
-    public TableColumn<User,CheckBox> userTableSellScreenTabPerm;
-    public TableColumn<User,CheckBox> userTableEntryScreenTabPerm;
-    public TableColumn<User,CheckBox> userTableHistoryScreenTabPerm;
-    public TableColumn<User,CheckBox> userTableStockControlScreenTabPerm;
-    public TableColumn<User,CheckBox> userTableStatisticsScreenTabPerm;
+    public TableColumn<User, String> userTableUserName;
+    public TableColumn<User, CheckBox> userTableSellScreenTabPerm;
+    public TableColumn<User, CheckBox> userTableEntryScreenTabPerm;
+    public TableColumn<User, CheckBox> userTableHistoryScreenTabPerm;
+    public TableColumn<User, CheckBox> userTableStockControlScreenTabPerm;
+    public TableColumn<User, CheckBox> userTableStatisticsScreenTabPerm;
     public TableView<User> userTable;
-    public TableColumn<User,CheckBox> userTableUsersScreenTabPerm;
-    CategoryAxis xAxis = new CategoryAxis();
-    NumberAxis yAxis = new NumberAxis("TL", 0, 50, 5);
+    public TableColumn<User, CheckBox> userTableUsersScreenTabPerm;
+    public Label companyNameLabel;
+    public GridPane switchPane;
+    public CategoryAxis xAxis = new CategoryAxis();
+    public NumberAxis yAxis = new NumberAxis("TL", 0, 50, 5);
     public StackedBarChart<String, Number> stackedBarChart = new StackedBarChart<>(xAxis, yAxis);
-    boolean eventhandleradded = false;
-    String barcodeeverwritten = "";
-    ContextMenu productEntryBarcodeContextMenu = new ContextMenu();
-    boolean stockControlSwitchAdded = false;
-    ToggleSwitch toggleSwitchStock = new ToggleSwitch("Sipariş Listesi", "Stok Kontrol");
-    boolean switchadded = false;
-    @FXML
-    GridPane switchPane;
-    @FXML
-    ToggleSwitch toggleSwitchStatics = new ToggleSwitch("Günlük", "Aylık");
+    public boolean eventhandleradded = false;
+    public String barcodeeverwritten = "";
+    public ContextMenu productEntryBarcodeContextMenu = new ContextMenu();
+    public boolean stockControlSwitchAdded = false;
+    public ToggleSwitch toggleSwitchStock = new ToggleSwitch("Sipariş Listesi", "Stok Kontrol");
+    public boolean switchadded = false;
+    public ToggleSwitch toggleSwitchStatics = new ToggleSwitch("Günlük", "Aylık");
 
     public static void setLabelDisplay() {
         double totalprice = 0;
@@ -125,54 +125,59 @@ public class MainScreen {
             totaldiscount += Double.parseDouble(discountCollumnstatic.getCellObservableValue(item).getValue().getText()) * item.amount;
             subtotal += Double.parseDouble(lastPriceCollumnstatic.getCellObservableValue(item).getValue().getText()) / (1 + kdvCollumnstatic.getCellObservableValue(item).getValue() / 100.0);
         }
-        totalPriceLabelstatic.setText(String.format(Locale.ROOT,"%.2f", totalprice));
-        subTotalLabelstatic.setText(String.format(Locale.ROOT,"%.2f", subtotal));
-        totalDiscountLabelstatic.setText(String.format(Locale.ROOT,"%.2f", totaldiscount));
-        totalTaxLabelstatic.setText(String.format(Locale.ROOT,"%.2f", totalprice - subtotal));
+        totalPriceLabelstatic.setText(String.format(Locale.ROOT, "%.2f", totalprice));
+        subTotalLabelstatic.setText(String.format(Locale.ROOT, "%.2f", subtotal));
+        totalDiscountLabelstatic.setText(String.format(Locale.ROOT, "%.2f", totaldiscount));
+        totalTaxLabelstatic.setText(String.format(Locale.ROOT, "%.2f", totalprice - subtotal));
     }
 
     @FXML
     protected void sellButtonClicked() throws IOException {
-        ObservableList<Products> productsList = sellScreenTable.getItems();
-        if (productsList.size() > 0) {
+        String totalpricelabeltext = totalPriceLabel.getText();
+        if (sellScreenTable.getItems().size() > 0) {
+            Products[] productsList = sellScreenTable.getItems().toArray(new Products[0]);
+            cancelButtonClicked();
             double totalProfit = 0;
             String midText = "";
             for (Products product : productsList) {
+                System.out.println("sıkıntı yok");
                 double profitToAdd = Stats.calculateProfit(product);
                 DBAccess.updateStock(product.barcode, -product.amount);
                 DBAccess.amendProfit(product.barcode, profitToAdd);
                 midText += product.amount + "x" + product.name + "/-";
                 totalProfit += profitToAdd;
             }
-            ProcessLogs.recordSalesProcess(midText, Double.parseDouble(totalPriceLabel.getText()));
+            ProcessLogs.recordSalesProcess(midText, Double.parseDouble(totalpricelabeltext));
             DBAccess.updateDailyProfit(ProcessLogs.currentDate, totalProfit);
-            cancelButtonClicked();
         } else {
             System.out.println("bossatış");
         }
     }
-    protected void editTabsForUsers(){
-            if (!UserInteractions.user.entryScreenPerm) {
-                tabpane.getTabs().remove(buyScreenTab);
-            }
-            if (!UserInteractions.user.historyScreenPerm) {
-                tabpane.getTabs().remove(logTab);
-            }
-            if (!UserInteractions.user.sellScreenPerm) {
-                tabpane.getTabs().remove(sellScreenTab);
-            }
-            if (!UserInteractions.user.statsScreenPerm) {
-                tabpane.getTabs().remove(statisticsTab);
-            }
-            if (!UserInteractions.user.trackStockScreenPerm) {
-                tabpane.getTabs().remove(stockControlTab);
-            }
-            if (!UserInteractions.user.usersScreenPerm) {
-                tabpane.getTabs().remove(userTab);
-            }
+
+    protected void editTabsForUsers() {
+        if (!UserInteractions.user.entryScreenPerm) {
+            tabpane.getTabs().remove(buyScreenTab);
+        }
+        if (!UserInteractions.user.historyScreenPerm) {
+            tabpane.getTabs().remove(logTab);
+        }
+        if (!UserInteractions.user.sellScreenPerm) {
+            tabpane.getTabs().remove(sellScreenTab);
+        }
+        if (!UserInteractions.user.statsScreenPerm) {
+            tabpane.getTabs().remove(statisticsTab);
+        }
+        if (!UserInteractions.user.trackStockScreenPerm) {
+            tabpane.getTabs().remove(stockControlTab);
+        }
+        if (!UserInteractions.user.usersScreenPerm) {
+            tabpane.getTabs().remove(userTab);
+        }
     }
+
     @FXML
-    public void initialize(){
+    public void initialize() {
+        companyNameLabel.setText("Şirket: " + companyName);
         editTabsForUsers();
         changeActiveUser(username);
         init();
@@ -204,6 +209,7 @@ public class MainScreen {
         eventhandleradded = true;
 
     }
+
     @FXML
     protected void cancelButtonClicked() {
         sellScreenTable.getItems().removeAll(sellScreenTable.getItems());
@@ -264,7 +270,7 @@ public class MainScreen {
     @FXML
     protected void productEntryLabelButtonOnClicked() throws IOException {
         ProcessLogs.recordStockEntryProcess(productEntryLabelBarcode.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText());
-        ProductInteractions.productEntry(productEntryLabelBarcode.getText(), productEntryLabelBrand.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText(), productEntryLabelTax.getText(), productEntryLabelBuyPrice.getText(), String.format(Locale.ROOT,"%.2f", Double.parseDouble(productEntryLabelBuyPrice.getText()) / Double.parseDouble(productEntryLabelPiece.getText())), productEntryLabelSellPrice.getText());
+        ProductInteractions.productEntry(productEntryLabelBarcode.getText(), productEntryLabelBrand.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText(), productEntryLabelTax.getText(), productEntryLabelBuyPrice.getText(), String.format(Locale.ROOT, "%.2f", Double.parseDouble(productEntryLabelBuyPrice.getText()) / Double.parseDouble(productEntryLabelPiece.getText())), productEntryLabelSellPrice.getText());
         productEntryLabelBarcode.setText("");
         productEntryLabelSellPrice.setText("");
         productEntryLabelTax.setText("");
@@ -286,14 +292,17 @@ public class MainScreen {
     @FXML
     protected void buyPriceKeyPressed() {
         try {
-            productEntryLabelPrice.setText(String.format(Locale.ROOT,"%.2f", Double.parseDouble(productEntryLabelBuyPrice.getText()) / Double.parseDouble(productEntryLabelPiece.getText())));
+            productEntryLabelPrice.setText(String.format(Locale.ROOT, "%.2f", Double.parseDouble(productEntryLabelBuyPrice.getText()) / Double.parseDouble(productEntryLabelPiece.getText())));
         } catch (NumberFormatException e) {
             productEntryLabelPrice.setText("0");
         }
     }
 
     protected void changeActiveUser(Label label) {
-        label.setText("Kullanıcı: " + UserInteractions.user.username);
+        if (UserInteractions.user.isAdmin){
+            label.setText("Kullanıcı: " + UserInteractions.user.username + "    (Yönetici)");
+        }else{
+        label.setText("Kullanıcı: " + UserInteractions.user.username);}
     }
 
     public void init() {
@@ -516,7 +525,7 @@ public class MainScreen {
                 pieInfo.setVisible(true);
                 pieInfo.setTranslateX(e.getSceneX() + 5);
                 pieInfo.setTranslateY(e.getSceneY() - 90);
-                String text = String.format(Locale.ROOT,"%.1f%%", 100 * data.getPieValue() / total.get());
+                String text = String.format(Locale.ROOT, "%.1f%%", 100 * data.getPieValue() / total.get());
                 pieInfo.setText(text + "\n" + (int) data.getPieValue() + "TL");
             });
             data.getNode().addEventHandler(MouseEvent.MOUSE_EXITED, mouseEvent -> pieInfo.setVisible(false));
@@ -577,8 +586,7 @@ public class MainScreen {
                 @Override
                 protected void updateItem(LogObject item, boolean empty) {
                     super.updateItem(item, empty);
-                    if (item != null && item.type.equals("SATIŞ"))
-                        setStyle("-fx-background-color: #79cc79");
+                    if (item != null && item.type.equals("SATIŞ")) setStyle("-fx-background-color: #79cc79");
                     else {
                         setStyle("");
                     }
@@ -624,9 +632,10 @@ public class MainScreen {
         });
         return detailsPane;
     }
+
     @FXML
-    protected void onUserTabOpened(){
-        if (tabpane.getSelectionModel().getSelectedItem().equals(userTab)){
+    protected void onUserTabOpened() {
+        if (tabpane.getSelectionModel().getSelectedItem().equals(userTab)) {
             userTable.getItems().removeAll(userTable.getItems());
             userTableUserName.setCellValueFactory(userCheckBoxCellDataFeatures -> userCheckBoxCellDataFeatures.getValue().getUserName());
             userTableEntryScreenTabPerm.setCellValueFactory(userCheckBoxCellDataFeatures -> userCheckBoxCellDataFeatures.getValue().getCheckBoxEntryScreenPerm());
@@ -639,14 +648,15 @@ public class MainScreen {
             if (!UserInteractions.user.isAdmin) {
                 users.removeIf(user -> (user.usersScreenPerm && !(user.getUserName().getValue().equals(UserInteractions.user.getUserName().getValue()))));
             }
-            for (User user: users) {
-                if (user.getUserName().getValue().equals(UserInteractions.user.getUserName().getValue())){
+            for (User user : users) {
+                if (user.getUserName().getValue().equals(UserInteractions.user.getUserName().getValue())) {
                     user.setNotEditable();
                 }
             }
             userTable.getItems().addAll(users);
         }
     }
+
     @FXML
     protected void onRegister() throws IOException {
         Stage registerStage = new Stage();
@@ -658,16 +668,18 @@ public class MainScreen {
         Main.setGradient(registerStage, scene);
         registerStage.setOnCloseRequest(windowEvent -> onUserTabOpened());
     }
+
     @FXML
-    protected void removeUserButtonEvent(){
-        if (userTable.getSelectionModel().getSelectedItem()!=null && !userTable.getSelectionModel().getSelectedItem().getUserName().getValue().equals(UserInteractions.user.getUserName().getValue())){
+    protected void removeUserButtonEvent() {
+        if (userTable.getSelectionModel().getSelectedItem() != null && !userTable.getSelectionModel().getSelectedItem().getUserName().getValue().equals(UserInteractions.user.getUserName().getValue())) {
             UserInteractions.deleteUser(userTable.getSelectionModel().getSelectedItem().username);
             onUserTabOpened();
         }
     }
+
     @FXML
     protected void changePasswordButtonAction() throws IOException {
-        if (userTable.getSelectionModel().getSelectedItem()!=null){
+        if (userTable.getSelectionModel().getSelectedItem() != null) {
             System.out.println(userTable.getSelectionModel().getSelectedItem().username);
             Stage changePassStage = new Stage();
             changePassStage.setTitle("Şifre Değiştir");
