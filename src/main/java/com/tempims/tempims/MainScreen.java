@@ -97,7 +97,6 @@ public class MainScreen {
     public TableColumn<LogObject, String> historyTableExplanation;
     public VBox appVbox;
     public Tab userTab;
-    public Button bitanebuton;
     public TableColumn<User,String> userTableUserName;
     public TableColumn<User,CheckBox> userTableSellScreenTabPerm;
     public TableColumn<User,CheckBox> userTableEntryScreenTabPerm;

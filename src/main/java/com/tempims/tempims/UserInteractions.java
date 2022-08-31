@@ -30,7 +30,7 @@ public class UserInteractions {
         }
     }
 
-    public static int checkSignUp(String usernameInput, String passwordInput1, String passwordInput2) throws IOException {
+    public static int checkSignUp(String usernameInput, String passwordInput1, String passwordInput2, String permissions) throws IOException {
 
         if (DBAccess.checkUsername(usernameInput) > 0) {
             return -2;//sql part to check username and  return -2 if username already exists
@@ -47,7 +47,7 @@ public class UserInteractions {
         }
 
         ProcessLogs.recordUserProcess(0, usernameInput);
-        DBAccess.insertUser(usernameInput, hashPassword(passwordInput1), "1111110");// sql part to put new user to database and returns 1
+        DBAccess.insertUser(usernameInput, hashPassword(passwordInput1), permissions);// sql part to put new user to database and returns 1
 
         return 1;
 

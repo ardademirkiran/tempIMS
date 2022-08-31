@@ -14,21 +14,21 @@ import java.util.Locale;
 
 public class Main extends Application {
     static Stage globalStage;
-
+    static Boolean isFirstExec;
     public static void main(String[] args) {
         launch();
     }
 
     @Override
     public void start(Stage stage) throws IOException {
-        Boolean isFirstExec = ProcessLogs.setUpDate();
+        globalStage = stage;
+        isFirstExec = ProcessLogs.setUpDate();
+        isFirstExec = true;
         if (isFirstExec){
-            System.out.println("Program ilk defa çalışıyor.");
+            DBAccess.insertUser("admin", UserInteractions.hashPassword("admin"), "1111111");
         } else {
             System.out.println("Bu programın ilk açılışı değil");
         }
-        DBAccess.insertUser("admin", UserInteractions.hashPassword("admin"), "1111111");
-        globalStage = stage;
         FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("LoginScreen.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 480, 360);
         stage.setTitle("tempIMS");

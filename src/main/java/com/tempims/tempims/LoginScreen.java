@@ -30,10 +30,17 @@ public class LoginScreen {
             TextField[] textFields = {passwordField};
             invalidInputAction(textFields);
         } else {
-            FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("MainScreen.fxml"));
-            Scene scene = new Scene(fxmlLoader.load());
-            Main.globalStage.setMaximized(true);
-            Main.globalStage.setScene(scene);
+            if (Main.isFirstExec){
+                SignupScreen.username = "admin";
+                FXMLLoader fxmlLoader = new FXMLLoader(SignupScreen.class.getResource("SignupScreen.fxml"));
+                Scene scene = new Scene(fxmlLoader.load());
+                Main.globalStage.setScene(scene);
+            }else {
+                FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("MainScreen.fxml"));
+                Scene scene = new Scene(fxmlLoader.load());
+                Main.globalStage.setMaximized(true);
+                Main.globalStage.setScene(scene);
+            }
         }
 
     }

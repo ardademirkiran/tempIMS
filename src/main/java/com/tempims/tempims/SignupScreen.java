@@ -1,6 +1,8 @@
 package com.tempims.tempims;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -22,7 +24,13 @@ public class SignupScreen {
             signupButton.setText("Kaydol");
             usernameField.setFocusTraversable(true);
             usernameField.setEditable(true);
-        }else {
+        }else if (Main.isFirstExec){
+            usernameField.setText("");
+            usernameField.setEditable(true);
+            usernameField.setFocusTraversable(true);
+            signupButton.setText("Kullanıcı Adı ve Şifreyi Yenile");
+        }
+        else {
             usernameField.setText(username);
             usernameField.setEditable(false);
             usernameField.setFocusTraversable(false);
@@ -32,7 +40,7 @@ public class SignupScreen {
     @FXML
     public void signupButtonAction() throws IOException {
         if (username.isEmpty()){
-            int flag = UserInteractions.checkSignUp(usernameField.getText(), passwordField.getText(), passwordField1.getText());
+            int flag = UserInteractions.checkSignUp(usernameField.getText(), passwordField.getText(), passwordField1.getText(), "1111110");
              if (flag == -2) {
                 System.out.println("Bu kullanıcı adı zaten kullanılıyor.");
             } else if (flag == -1) {
@@ -41,6 +49,23 @@ public class SignupScreen {
                 System.out.println("Şifre ve şifre onayı birbiriyle eşleşmiyor.");
             } else {
                 System.out.println("Yeni kullanıcı oluşturuldu.");
+            }
+        }else if (Main.isFirstExec){
+            int flag = UserInteractions.checkSignUp(usernameField.getText(), passwordField.getText(), passwordField1.getText(), "1111111");
+            if (flag == -2) {
+                System.out.println("Bu kullanıcı adı zaten kullanılıyor.");
+            } else if (flag == -1) {
+                System.out.println("Kullanıcı adı ya da şifre boş olamaz.");
+            } else if (flag == 0) {
+                System.out.println("Şifre ve şifre onayı birbiriyle eşleşmiyor.");
+            } else {
+                System.out.println("Yeni kullanıcı oluşturuldu.");
+                UserInteractions.deleteUser("admin");
+                UserInteractions.checkLogin(usernameField.getText(),passwordField.getText());
+                FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("MainScreen.fxml"));
+                Scene scene = new Scene(fxmlLoader.load());
+                Main.globalStage.setMaximized(true);
+                Main.globalStage.setScene(scene);
             }
         }else {
             if (passwordField.getText().equals("") || passwordField1.getText().equals("") || usernameField.getText().equals("")) {
