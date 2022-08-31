@@ -13,33 +13,33 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class Products {
-    TextField discountper = new TextField("0");
+    TextField discountPercentage = new TextField("0");
     TextField discount = new TextField("0");
-    Label calsellprice = new Label("");
+    Label sellPriceLabel = new Label("");
     int amount, tax;
-    Double unitsellprice;
-    Double calculatedunitsellprice;
-    Double sellpricedb;
+    Double unitSellPrice;
+    Double calculatedUnitSellPrice;
+    Double sellPriceDB;
     String name, barcode;
     Products(String barcode, String name, Integer tax, Double sellpricedb) {
         discount.setPromptText("0");
-        discountper.setPromptText("0");
+        discountPercentage.setPromptText("0");
         this.name = name;
         this.barcode = barcode;
-        this.unitsellprice = sellpricedb;
-        this.sellpricedb = sellpricedb;
-        this.calculatedunitsellprice = sellpricedb;
+        this.unitSellPrice = sellpricedb;
+        this.sellPriceDB = sellpricedb;
+        this.calculatedUnitSellPrice = sellpricedb;
         this.tax = tax;
         this.amount = 1;
-        this.calsellprice.setText(String.valueOf(sellpricedb));
+        this.sellPriceLabel.setText(String.valueOf(sellpricedb));
         discount.setStyle("-fx-font-size: 25");
-        discountper.setStyle("-fx-font-size: 25");
-        calsellprice.setStyle("-fx-font-size: 25");
+        discountPercentage.setStyle("-fx-font-size: 25");
+        sellPriceLabel.setStyle("-fx-font-size: 25");
         init();
     }
 
-    public ObservableValue<TextField> observableValuedisper() {
-        return getObservableValue(discountper);
+    public ObservableValue<TextField> getObservableDiscountPercentage() {
+        return getObservableValue(discountPercentage);
     }
 
     private ObservableValue<TextField> getObservableValue(TextField a) {
@@ -71,11 +71,11 @@ public class Products {
         };
     }
 
-    public ObservableValue<TextField> observableValuedis() {
+    public ObservableValue<TextField> getObservableDiscount() {
         return getObservableValue(discount);
     }
 
-    public ObservableValue<Label> observableValueprice() {
+    public ObservableValue<Label> getObservablePrice() {
         return new ObservableValue<>() {
             @Override
             public void addListener(ChangeListener<? super Label> changeListener) {
@@ -89,7 +89,7 @@ public class Products {
 
             @Override
             public Label getValue() {
-                return calsellprice;
+                return sellPriceLabel;
             }
 
             @Override
@@ -104,45 +104,45 @@ public class Products {
         };
     }
 
-    public ObservableValue<String> getbarcode() {
+    public ObservableValue<String> getBarcode() {
         return new SimpleStringProperty(barcode);
     }
 
-    public StringProperty getname() {
+    public StringProperty getName() {
         return new SimpleStringProperty(name);
     }
 
-    public ObservableValue<Integer> gettax() {
+    public ObservableValue<Integer> getTax() {
         return new SimpleIntegerProperty(tax).asObject();
     }
 
-    public ObservableValue<Integer> getamount() {
+    public ObservableValue<Integer> getAmount() {
         return new SimpleIntegerProperty(amount).asObject();
     }
 
-    private Double calculateperdis() {
+    private Double calculateDiscountPercentage() {
         if (this.discount.getText().isEmpty()){
             return 0.0;
         }
-        return ((Double.parseDouble(this.discount.getText()) * 100) / this.unitsellprice);
+        return ((Double.parseDouble(this.discount.getText()) * 100) / this.unitSellPrice);
     }
 
-    private Double calculatedis() {
-        if (this.discountper.getText().isEmpty()){
+    private Double calculateDiscount() {
+        if (this.discountPercentage.getText().isEmpty()){
             return 0.0;
         }
-        return (Double.parseDouble(this.discountper.getText()) * this.unitsellprice) / 100;
+        return (Double.parseDouble(this.discountPercentage.getText()) * this.unitSellPrice) / 100;
     }
     public void init(){
-        discountper.setOnKeyTyped(keyEvent -> {
+        discountPercentage.setOnKeyTyped(keyEvent -> {
             try {
-                calculatedunitsellprice = (sellpricedb - calculatedis());
-                discount.setText(String.valueOf(calculatedis()));
-                calsellprice.setText(String.valueOf((unitsellprice - Double.parseDouble(discount.getText())) * amount));
-                MainScreen.changetotaldata();
+                calculatedUnitSellPrice = (sellPriceDB - calculateDiscount());
+                discount.setText(String.valueOf(calculateDiscount()));
+                sellPriceLabel.setText(String.valueOf((unitSellPrice - Double.parseDouble(discount.getText())) * amount));
+                MainScreen.setLabelDisplay();
             }catch (NumberFormatException e){
                 discount.setText("");
-                calsellprice.setText(String.valueOf(sellpricedb));
+                sellPriceLabel.setText(String.valueOf(sellPriceDB));
             }
 
         });
@@ -151,23 +151,23 @@ public class Products {
                 String[] strings = new String[]{"8"};
                 if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(strings)) && discount.getText().isEmpty()){
                     if (discount.getText().isEmpty()){
-                        discountper.setText("0");
-                        calsellprice.setText(String.valueOf(sellpricedb));
+                        discountPercentage.setText("0");
+                        sellPriceLabel.setText(String.valueOf(sellPriceDB));
                     }
                 }
                 else {
-                    calculatedunitsellprice = (sellpricedb - Double.parseDouble(discount.getText()));
-                    discountper.setText(String.valueOf(calculateperdis()));
-                    calsellprice.setText(String.valueOf((unitsellprice - Double.parseDouble(discount.getText())) * amount));}
-                MainScreen.changetotaldata();
+                    calculatedUnitSellPrice = (sellPriceDB - Double.parseDouble(discount.getText()));
+                    discountPercentage.setText(String.valueOf(calculateDiscountPercentage()));
+                    sellPriceLabel.setText(String.valueOf((unitSellPrice - Double.parseDouble(discount.getText())) * amount));}
+                MainScreen.setLabelDisplay();
             }
 
 
             catch (NumberFormatException e){
                 discount.setText("");
-                calsellprice.setText(String.valueOf(sellpricedb));
+                sellPriceLabel.setText(String.valueOf(sellPriceDB));
             }
         });
-        calsellprice.setText(String.valueOf((unitsellprice - Double.parseDouble(discount.getText())) * amount));
+        sellPriceLabel.setText(String.valueOf((unitSellPrice - Double.parseDouble(discount.getText())) * amount));
     }
 }

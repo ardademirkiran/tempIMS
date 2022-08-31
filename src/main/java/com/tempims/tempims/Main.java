@@ -27,8 +27,7 @@ public class Main extends Application {
             DBAccess.insertUser("admin", UserInteractions.hashPassword("admin"), "1111111");
         } else {
             System.out.println("Bu programın ilk açılışı değil");
-        }
-        FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("LoginScreen.fxml"));
+        }FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("LoginScreen.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 480, 360);
         stage.setTitle("tempIMS");
         setGradient(stage, scene);

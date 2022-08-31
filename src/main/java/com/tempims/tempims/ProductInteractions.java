@@ -11,11 +11,6 @@ public class ProductInteractions {
 
     }
 
-    public static void sellProduct(String barcode, int amountInput) {
-
-        DBAccess.updateStock(barcode, -amountInput); //sql part to put remaining amount to DB
-
-    }
 
     public static Products getProduct(String barcode) {
         String[] productInfo = (DBAccess.newProductInfo(barcode)).split(":");

@@ -1,7 +1,5 @@
 package com.tempims.tempims;
 
-import javafx.collections.ObservableList;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -35,21 +33,13 @@ public class Stats {
 
     }
 
-
-    public static void updateProfit(ObservableList<Products> soldProducts) {
-        double totalProfit = 0;
-        for(Products product : soldProducts){
-            double unitBuyPrice = DBAccess.fetchUnitBuyingPrice(product.barcode); //sql part to get buyPrice per unit by using "product.barcode"
-            double profitToAdd = product.amount * (product.calculatedunitsellprice - unitBuyPrice);
-            totalProfit += profitToAdd;
-            DBAccess.amendProfit(product.barcode, profitToAdd); //update profit on database
-            //sql part to update DAILYPROFIT on PRODUCTS table it may be handled internally in amendProfit()
-            //handled internally in amendProfit()
-        }
-
-        DBAccess.updateDailyProfit(currentDate, totalProfit);//sql part to update current daily profit with "current daily profit + totalProfit" by using "currentDate"
+    public static double calculateProfit(Products product){
+        double unitBuyPrice = DBAccess.fetchUnitBuyingPrice(product.barcode); //sql part to get buyPrice per unit by using "product.barcode"
+        double profitToAdd = product.amount * (product.calculatedUnitSellPrice - unitBuyPrice);
+        return profitToAdd;
 
     }
+
 
     public static LinkedHashMap<String, Double> calculateMonthlyProfits(LinkedHashMap<String, Double> datesAndProfits){
         LinkedHashMap<String, Double> monthsAndProfits = new LinkedHashMap<>();

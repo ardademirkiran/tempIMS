@@ -547,6 +547,26 @@ public class DBAccess {
         }
     }
 
+    protected static void clearMonthlyProfits(){
+        Connection conn = connect();
+        try{
+            String sql = String.format(Locale.ROOT,"UPDATE PRODUCTS SET PROFIT_RETURN = '%.2f'",0.00);
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+        }
+        catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+        finally{
+            try{
+                conn.close();
+            }
+            catch(SQLException e){
+                e.printStackTrace(System.out);
+            }
+        }
+    }
+
     protected static HashMap<String, Number> dailyPieChartInfo(){
         HashMap<String, Number> info = new HashMap<>();
         Connection conn = connect();

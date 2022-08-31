@@ -10,13 +10,9 @@ import java.util.ArrayList;
 public class ProcessLogs {
    static LocalDate currentDate;
 
-   public static void recordSalesProcess(ObservableList<Products> soldProducts, double totalSellPrice) throws IOException {
+   public static void recordSalesProcess(String midText, double totalSellPrice) throws IOException {
       FileWriter logsFile = new FileWriter("logs.txt", true);
       BufferedWriter writer = new BufferedWriter(logsFile);
-      String midText = "";
-      for (Products product : soldProducts){
-         midText += product.amount + "x" + product.name + "/-";
-      }
       writer.write("SATIŞ//" + java.time.LocalDate.now() + "||" +  java.time.LocalTime.now() + "//" + midText + "//" + totalSellPrice + "//" + UserInteractions.user.username + "\n");
       writer.close();
 
@@ -49,6 +45,7 @@ public class ProcessLogs {
       LocalDate lastLoggedDate = LocalDate.parse(reader.readLine(), formatter);
       if (lastLoggedDate.getMonthValue() != currentDate.getMonthValue() || lastLoggedDate.getYear() != currentDate.getYear()){
          DBAccess.clearProfitTable();
+         DBAccess.clearMonthlyProfits();
       }
 
       if (!lastLoggedDate.toString().equals(currentDate.toString())){
