@@ -222,32 +222,41 @@
         </Tab>
         <Tab fx:id="statisticsTab" onSelectionChanged="#statisticsTabOpened" text="İstatistik Ekranı">
             <AnchorPane fx:id="statisticAnchorPane">
-            <GridPane fx:id="switchPane" prefHeight="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
-              </rowConstraints>
-            </GridPane>
-                <GridPane alignment="CENTER" layoutX="10.0" layoutY="60.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0">
+                <HBox alignment="CENTER" maxHeight="50.0" prefHeight="50.0" prefWidth="200.0" spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <opaqueInsets>
+                        <Insets />
+                    </opaqueInsets>
+                    <Label layoutX="122.0" layoutY="10.0" onMouseClicked="#decreaseMonthButtonAction" text="&lt;">
+                  <font>
+                     <Font name="System Bold" size="20.0" />
+                  </font></Label>
+                    <Label onMouseClicked="#decreaseDayButtonAction" text="&lt;" />
+                    <Label fx:id="dateLabel" text="1 Eylül 2022" />
+                    <Label layoutX="10.0" layoutY="10.0" onMouseClicked="#increaseDayButtonAction" text="&gt;" />
+                    <Label layoutX="10.0" layoutY="10.0" onMouseClicked="#increaseMonthButtonAction" text="&gt;">
+                  <font>
+                     <Font size="20.0" />
+                  </font></Label>
+                </HBox>
+                <GridPane fx:id="statisticsGridPane" alignment="CENTER" layoutX="10.0" layoutY="60.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0">
                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="40.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="40.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                     </rowConstraints>
-                    <PieChart fx:id="pieChart" GridPane.hgrow="NEVER" />
-                    <StackedBarChart fx:id="stackedBarChart" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS">
-                        <xAxis>
-                            <CategoryAxis side="BOTTOM" />
-                        </xAxis>
-                        <yAxis>
-                            <NumberAxis side="LEFT" />
-                        </yAxis>
-                    </StackedBarChart>
+                    <PieChart fx:id="pieChart" GridPane.columnIndex="1" GridPane.hgrow="NEVER" />
+               <LineChart fx:id="stackedBarChart" GridPane.columnIndex="2">
+                 <xAxis>
+                   <CategoryAxis side="BOTTOM" />
+                 </xAxis>
+                 <yAxis>
+                   <NumberAxis side="LEFT" />
+                 </yAxis>
+               </LineChart>
                 </GridPane>
             </AnchorPane>
         </Tab>

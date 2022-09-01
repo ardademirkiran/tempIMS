@@ -16,10 +16,7 @@ import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -99,17 +96,17 @@ public class MainScreen {
     public TableView<User> userTable;
     public TableColumn<User, CheckBox> userTableUsersScreenTabPerm;
     public Label companyNameLabel;
-    public GridPane switchPane;
     public CategoryAxis xAxis = new CategoryAxis();
     public NumberAxis yAxis = new NumberAxis("TL", 0, 50, 5);
-    public StackedBarChart<String, Number> stackedBarChart = new StackedBarChart<>(xAxis, yAxis);
+    public LineChart<String, Number> stackedBarChart = new LineChart<>(xAxis, yAxis);
     public boolean eventhandleradded = false;
     public String barcodeeverwritten = "";
     public ContextMenu productEntryBarcodeContextMenu = new ContextMenu();
     public boolean stockControlSwitchAdded = false;
     public ToggleSwitch toggleSwitchStock = new ToggleSwitch("Sipariş Listesi", "Stok Kontrol");
     public boolean switchadded = false;
-    public ToggleSwitch toggleSwitchStatics = new ToggleSwitch("Günlük", "Aylık");
+    public GridPane statisticsGridPane;
+    public Label dateLabel;
 
     public static void setLabelDisplay() {
         double totalprice = 0;
@@ -455,34 +452,44 @@ public class MainScreen {
         setLabelDisplay();
         barcodeField.setText("");
     }
-
+    ToggleSwitch lineToggleSwitch = new ToggleSwitch("Aylık", "Yıllık");
+    ToggleSwitch pieToggleSwitch = new ToggleSwitch("Günlük", "Aylık");
     public void statisticsTabOpened() {
+        dateLabel.setText(LocalDate.now().toString());
         if (tabpane.getSelectionModel().getSelectedItem().equals(statisticsTab)) {
             if (!switchadded) {
-                Label dateLabel = new Label(LocalDate.now().getMonth().toString());
                 switchadded = true;
-                ToggleSwitch finalToggleSwitch = toggleSwitchStatics;
-                toggleSwitchStatics.switchOnProperty().addListener((a, b, c) -> {
+                pieToggleSwitch.switchOnProperty().addListener((a, b, c) -> {
                     if (c) {
-                        initBarData(finalToggleSwitch.switchOnProperty().getValue());
-                        initPieData(finalToggleSwitch.switchOnProperty().getValue());
-                        dateLabel.setText(LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)) + " " + LocalDate.now().getDayOfWeek());
+                        initPieData(pieToggleSwitch.switchOnProperty().getValue());
                     } else {
-                        initBarData(finalToggleSwitch.switchOnProperty().getValue());
-                        initPieData(finalToggleSwitch.switchOnProperty().getValue());
-                        dateLabel.setText(LocalDate.now().getMonth().toString());
+                        initPieData(pieToggleSwitch.switchOnProperty().getValue());
                     }
                 });
-                toggleSwitchStatics.setMaxWidth(200);
-                toggleSwitchStatics.setAlignment(Pos.CENTER);
-                GridPane.setHalignment(toggleSwitchStatics, HPos.CENTER);
-                GridPane.setHalignment(dateLabel, HPos.CENTER);
-                switchPane.add(toggleSwitchStatics, 0, 0, 1, 1);
-                switchPane.add(dateLabel, 0, 1, 1, 1);
-                switchPane.setPrefWidth(200);
+                pieToggleSwitch.setMaxWidth(400);
+                pieToggleSwitch.setRotate(-90);
+                pieToggleSwitch.setMaxHeight(40);
+                pieToggleSwitch.setAlignment(Pos.CENTER);
+                GridPane.setHalignment(pieToggleSwitch, HPos.CENTER);
+                statisticsGridPane.add(pieToggleSwitch,0,0,1,1);
+
+                lineToggleSwitch.switchOnProperty().addListener((a, b, c) -> {
+                    if (c) {
+                        initBarData(lineToggleSwitch.switchOnProperty().getValue());
+                    } else {
+                        initBarData(lineToggleSwitch.switchOnProperty().getValue());
+                    }
+                });
+                lineToggleSwitch.setMaxWidth(400);
+                lineToggleSwitch.setRotate(+90);
+                lineToggleSwitch.setMaxHeight(40);
+                lineToggleSwitch.setAlignment(Pos.CENTER);
+                GridPane.setHalignment(lineToggleSwitch, HPos.CENTER);
+                statisticsGridPane.add(lineToggleSwitch,3,0,1,1);
+
             }
-            initPieData(toggleSwitchStatics.switchOnProperty().getValue());
-            initBarData(toggleSwitchStatics.switchOnProperty().getValue());
+            initPieData(pieToggleSwitch.switchOnProperty().getValue());
+            initBarData(lineToggleSwitch.switchOnProperty().getValue());
         }
         tabpane.getSelectionModel().selectedItemProperty().addListener((ov, oldTab, newTab) -> {
             if (oldTab.equals(statisticsTab)) {
@@ -491,6 +498,27 @@ public class MainScreen {
                 }
             }
         });
+    }
+
+    @FXML
+    public void decreaseMonthButtonAction(){
+        LocalDate localDate= LocalDate.parse(dateLabel.getText());
+        dateLabel.setText(String.valueOf(localDate.minusMonths(1)));
+    }
+    @FXML
+    public void decreaseDayButtonAction(){
+        LocalDate localDate= LocalDate.parse(dateLabel.getText());
+        dateLabel.setText(String.valueOf(localDate.minusDays(1)));
+    }
+    @FXML
+    public void increaseDayButtonAction(){
+        LocalDate localDate= LocalDate.parse(dateLabel.getText());
+        dateLabel.setText(String.valueOf(localDate.plusDays(1)));
+    }
+    @FXML
+    public void increaseMonthButtonAction(){
+        LocalDate localDate= LocalDate.parse(dateLabel.getText());
+        dateLabel.setText(String.valueOf(localDate.plusMonths(1)));
     }
 
     public void initPieData(Boolean isdaily) {
