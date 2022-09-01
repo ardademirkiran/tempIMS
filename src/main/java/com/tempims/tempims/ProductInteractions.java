@@ -15,10 +15,11 @@ public class ProductInteractions {
     public static Products getProduct(String barcode) {
         String[] productInfo = (DBAccess.newProductInfo(barcode)).split(":");
         String name = productInfo[0]; //sql part to get name
-        int tax = Integer.parseInt(productInfo[1]); //sql part to get tax
-        double sellprice = Double.parseDouble(productInfo[2]);//sql part to get sellprice
+        String brand = productInfo[1];
+        int tax = Integer.parseInt(productInfo[2]); //sql part to get tax
+        double sellprice = Double.parseDouble(productInfo[3]);//sql part to get sellprice
 
-        return new Products(barcode, name, tax, sellprice);
+        return new Products(barcode, name, brand,tax, sellprice);
     }
     public static ArrayList<AllProducts> createAllProducts(){
         ArrayList<AllProducts> allProducts = new ArrayList<>();

@@ -21,10 +21,10 @@ public class Products {
     Double calculatedUnitSellPrice;
     Double sellPriceDB;
     String name, barcode;
-    Products(String barcode, String name, Integer tax, Double sellpricedb) {
+    Products(String barcode, String name, String brand,Integer tax, Double sellpricedb) {
         discount.setPromptText("0");
         discountPercentage.setPromptText("0");
-        this.name = name;
+        this.name = brand + " " + name;
         this.barcode = barcode;
         this.unitSellPrice = sellpricedb;
         this.sellPriceDB = sellpricedb;

@@ -152,6 +152,10 @@ public class MainScreen {
             System.out.println("bossatış");
         }
     }
+    @FXML
+    protected void returnButtonClicked(){
+        // iade butonu
+    }
 
     protected void editTabsForUsers() {
         if (!UserInteractions.user.entryScreenPerm) {
@@ -430,9 +434,8 @@ public class MainScreen {
     }
 
     private void keyTypedAlgorithm() {
-        boolean add = false;
         boolean find = false;
-        Products productdb = null;
+        Products productdb;
         if (sellScreenTable.getItems().size() > 0) {
             for (Products pro : sellScreenTable.getItems()) {
                 if (Objects.equals(pro.barcode, barcodeField.getText())) {

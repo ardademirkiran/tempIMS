@@ -214,10 +214,10 @@ public class DBAccess {
     protected static String newProductInfo(String barcode) {
         Connection conn = connect();
         try {
-            String sql = String.format(Locale.ROOT,"SELECT NAME, TAX, UNIT_SELLING_PRICE FROM PRODUCTS WHERE BARCODE = '%s'", barcode);
+            String sql = String.format(Locale.ROOT,"SELECT NAME, TAX, BRAND, UNIT_SELLING_PRICE FROM PRODUCTS WHERE BARCODE = '%s'", barcode);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
-            String returnVal = String.format(Locale.ROOT,"%s:%d:%,.2f", rs.getString("NAME"), rs.getInt("TAX"), rs.getDouble("UNIT_SELLING_PRICE"));
+            String returnVal = String.format(Locale.ROOT,"%s:%s:%d:%,.2f", rs.getString("NAME"), rs.getString("BRAND") ,rs.getInt("TAX"), rs.getDouble("UNIT_SELLING_PRICE"));
             return returnVal;
         } catch (SQLException e) {
             e.printStackTrace(System.out);
