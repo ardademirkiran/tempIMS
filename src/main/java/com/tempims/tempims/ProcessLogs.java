@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class ProcessLogs {
-   static LocalDate currentDate;
+   static LocalDate currentDate = java.time.LocalDate.now();
 
    public static void recordSalesProcess(String midText, double totalSellPrice) throws IOException {
       FileWriter logsFile = new FileWriter("logs.txt", true);

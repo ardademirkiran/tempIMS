@@ -10,6 +10,9 @@ import javafx.scene.paint.Stop;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class Main extends Application {
@@ -22,7 +25,6 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         globalStage = stage;
-        isFirstExec = ProcessLogs.setUpDate();
         if (isFirstExec){
             DBAccess.insertUser("admin", UserInteractions.hashPassword("admin"), "1111111");
         } else {
