@@ -3,7 +3,6 @@ package com.tempims.tempims;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
@@ -16,15 +15,16 @@ import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.*;
 
 public class MainScreen {
@@ -99,14 +99,13 @@ public class MainScreen {
     public CategoryAxis xAxis = new CategoryAxis();
     public NumberAxis yAxis = new NumberAxis("TL", 0, 50, 5);
     public LineChart<String, Number> stackedBarChart = new LineChart<>(xAxis, yAxis);
-    public boolean eventhandleradded = false;
     public String barcodeeverwritten = "";
     public ContextMenu productEntryBarcodeContextMenu = new ContextMenu();
-    public boolean stockControlSwitchAdded = false;
     public ToggleSwitch toggleSwitchStock = new ToggleSwitch("Sipariş Listesi", "Stok Kontrol");
-    public boolean switchadded = false;
     public GridPane statisticsGridPane;
     public Label dateLabel;
+    public ToggleSwitch lineToggleSwitch = new ToggleSwitch("Aylık", "Yıllık");
+    public ToggleSwitch pieToggleSwitch = new ToggleSwitch("Günlük", "Aylık");
 
     public static void setLabelDisplay() {
         double totalprice = 0;
@@ -145,13 +144,12 @@ public class MainScreen {
             }
             ProcessLogs.recordSalesProcess(midText, Double.parseDouble(totalpricelabeltext));
             DBAccess.updateDailyProfit(ProcessLogs.currentDate, totalProfit);
-        } else {
-            System.out.println("bossatış");
         }
     }
+
     @FXML
-    protected void returnButtonClicked(){
-        // iade butonu
+    protected void returnButtonClicked() {
+        // FIXME: 2.09.2022
     }
 
     protected void editTabsForUsers() {
@@ -177,11 +175,14 @@ public class MainScreen {
 
     @FXML
     public void initialize() {
+        sellScreenTable.setPlaceholder(new Label("Bir ürün eklemeden satış veya iade yapamazsınız"));
+        stockTable.setPlaceholder(new Label("Henüz bir ürün kaydı oluşturulmadı"));
         companyNameLabel.setText("Şirket: " + companyName);
-        editTabsForUsers();
+        editTabsForUsers(); // user permissions for tabs
         changeActiveUser(username);
-        init();
-        setContextMenu();
+        init(); // an initialization for static variables
+
+        setContextMenu(); //sellscreentable contextmenu
         ContextMenu contextMenu = setContextMenu();
         sellScreenTable.setOnContextMenuRequested(contextMenuEvent -> {
             final int[] i = {0};
@@ -205,8 +206,55 @@ public class MainScreen {
                 }
             });
         });
-        Main.globalStage.addEventHandler(KeyEvent.KEY_TYPED, this::sellScreenKeyTyped);
-        eventhandleradded = true;
+
+        Main.globalStage.addEventHandler(KeyEvent.KEY_TYPED, this::sellScreenKeyTyped); //sell screen key event handler
+
+        stockTable.getItems().removeAll(stockTable.getItems()); // stock control switch and addlist
+        stockTable.getItems().addAll(ProductInteractions.createAllProducts());
+        stockControlPane.getChildren().add(toggleSwitchStock);
+        toggleSwitchStock.setMinWidth(500);
+        AnchorPane.setLeftAnchor(toggleSwitchStock, 500.0);
+        AnchorPane.setRightAnchor(toggleSwitchStock, 500.0);
+        toggleSwitchStock.switchOnProperty().addListener((a, b, c) -> {
+            if (c) {
+                stockTable.getItems().removeAll(stockTable.getItems());
+                stockTable.getItems().addAll(AllProducts.buyArray);
+                stockCollumnAddList.setVisible(false);
+            } else {
+                stockTable.getItems().removeAll(stockTable.getItems());
+                stockTable.getItems().addAll(ProductInteractions.createAllProducts());
+                stockCollumnAddList.setVisible(true);
+            }
+        });
+
+        pieToggleSwitch.switchOnProperty().addListener((a, b, c) -> { // pieChart initializations
+            if (c) {
+                initPieData(pieToggleSwitch.switchOnProperty().getValue());
+            } else {
+                initPieData(pieToggleSwitch.switchOnProperty().getValue());
+            }
+        });
+        pieToggleSwitch.setMaxWidth(400);
+        pieToggleSwitch.setRotate(-90);
+        pieToggleSwitch.setMaxHeight(40);
+        pieToggleSwitch.setAlignment(Pos.CENTER);
+        GridPane.setHalignment(pieToggleSwitch, HPos.CENTER);
+        statisticsGridPane.add(pieToggleSwitch, 0, 0, 1, 1);
+
+        lineToggleSwitch.switchOnProperty().addListener((a, b, c) -> { // lineChart initializations
+            if (c) {
+                initBarData(lineToggleSwitch.switchOnProperty().getValue());
+            } else {
+                initBarData(lineToggleSwitch.switchOnProperty().getValue());
+            }
+        });
+        lineToggleSwitch.setMaxWidth(400);
+        lineToggleSwitch.setRotate(+90);
+        lineToggleSwitch.setMaxHeight(40);
+        lineToggleSwitch.setAlignment(Pos.CENTER);
+        GridPane.setHalignment(lineToggleSwitch, HPos.CENTER);
+        statisticsGridPane.add(lineToggleSwitch, 3, 0, 1, 1);
+
 
     }
 
@@ -269,6 +317,7 @@ public class MainScreen {
 
     @FXML
     protected void productEntryLabelButtonOnClicked() throws IOException {
+
         ProcessLogs.recordStockEntryProcess(productEntryLabelBarcode.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText());
         ProductInteractions.productEntry(productEntryLabelBarcode.getText(), productEntryLabelBrand.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText(), productEntryLabelTax.getText(), productEntryLabelBuyPrice.getText(), String.format(Locale.ROOT, "%.2f", Double.parseDouble(productEntryLabelBuyPrice.getText()) / Double.parseDouble(productEntryLabelPiece.getText())), productEntryLabelSellPrice.getText());
         productEntryLabelBarcode.setText("");
@@ -299,10 +348,11 @@ public class MainScreen {
     }
 
     protected void changeActiveUser(Label label) {
-        if (UserInteractions.user.isAdmin){
+        if (UserInteractions.user.isAdmin) {
             label.setText("Kullanıcı: " + UserInteractions.user.username + "    (Yönetici)");
-        }else{
-        label.setText("Kullanıcı: " + UserInteractions.user.username);}
+        } else {
+            label.setText("Kullanıcı: " + UserInteractions.user.username);
+        }
     }
 
     public void init() {
@@ -375,26 +425,6 @@ public class MainScreen {
             stockCollumnAddList.setCellValueFactory(allProductsButtonCellDataFeatures -> allProductsButtonCellDataFeatures.getValue().getButton());
             stockTable.getItems().removeAll(stockTable.getItems());
             stockTable.getItems().addAll(ProductInteractions.createAllProducts());
-            if (!stockControlSwitchAdded) {
-                stockTable.getItems().removeAll(stockTable.getItems());
-                stockTable.getItems().addAll(ProductInteractions.createAllProducts());
-                stockControlSwitchAdded = true;
-                stockControlPane.getChildren().add(toggleSwitchStock);
-                toggleSwitchStock.setMinWidth(500);
-                AnchorPane.setLeftAnchor(toggleSwitchStock, 500.0);
-                AnchorPane.setRightAnchor(toggleSwitchStock, 500.0);
-                toggleSwitchStock.switchOnProperty().addListener((a, b, c) -> {
-                    if (c) {
-                        stockTable.getItems().removeAll(stockTable.getItems());
-                        stockTable.getItems().addAll(AllProducts.buyArray);
-                        stockCollumnAddList.setVisible(false);
-                    } else {
-                        stockTable.getItems().removeAll(stockTable.getItems());
-                        stockTable.getItems().addAll(ProductInteractions.createAllProducts());
-                        stockCollumnAddList.setVisible(true);
-                    }
-                });
-            }
         }
     }
 
@@ -452,42 +482,10 @@ public class MainScreen {
         setLabelDisplay();
         barcodeField.setText("");
     }
-    ToggleSwitch lineToggleSwitch = new ToggleSwitch("Aylık", "Yıllık");
-    ToggleSwitch pieToggleSwitch = new ToggleSwitch("Günlük", "Aylık");
+
     public void statisticsTabOpened() {
         dateLabel.setText(LocalDate.now().toString());
         if (tabpane.getSelectionModel().getSelectedItem().equals(statisticsTab)) {
-            if (!switchadded) {
-                switchadded = true;
-                pieToggleSwitch.switchOnProperty().addListener((a, b, c) -> {
-                    if (c) {
-                        initPieData(pieToggleSwitch.switchOnProperty().getValue());
-                    } else {
-                        initPieData(pieToggleSwitch.switchOnProperty().getValue());
-                    }
-                });
-                pieToggleSwitch.setMaxWidth(400);
-                pieToggleSwitch.setRotate(-90);
-                pieToggleSwitch.setMaxHeight(40);
-                pieToggleSwitch.setAlignment(Pos.CENTER);
-                GridPane.setHalignment(pieToggleSwitch, HPos.CENTER);
-                statisticsGridPane.add(pieToggleSwitch,0,0,1,1);
-
-                lineToggleSwitch.switchOnProperty().addListener((a, b, c) -> {
-                    if (c) {
-                        initBarData(lineToggleSwitch.switchOnProperty().getValue());
-                    } else {
-                        initBarData(lineToggleSwitch.switchOnProperty().getValue());
-                    }
-                });
-                lineToggleSwitch.setMaxWidth(400);
-                lineToggleSwitch.setRotate(+90);
-                lineToggleSwitch.setMaxHeight(40);
-                lineToggleSwitch.setAlignment(Pos.CENTER);
-                GridPane.setHalignment(lineToggleSwitch, HPos.CENTER);
-                statisticsGridPane.add(lineToggleSwitch,3,0,1,1);
-
-            }
             initPieData(pieToggleSwitch.switchOnProperty().getValue());
             initBarData(lineToggleSwitch.switchOnProperty().getValue());
         }
@@ -501,23 +499,26 @@ public class MainScreen {
     }
 
     @FXML
-    public void decreaseMonthButtonAction(){
-        LocalDate localDate= LocalDate.parse(dateLabel.getText());
+    public void decreaseMonthButtonAction() {
+        LocalDate localDate = LocalDate.parse(dateLabel.getText());
         dateLabel.setText(String.valueOf(localDate.minusMonths(1)));
     }
+
     @FXML
-    public void decreaseDayButtonAction(){
-        LocalDate localDate= LocalDate.parse(dateLabel.getText());
+    public void decreaseDayButtonAction() {
+        LocalDate localDate = LocalDate.parse(dateLabel.getText());
         dateLabel.setText(String.valueOf(localDate.minusDays(1)));
     }
+
     @FXML
-    public void increaseDayButtonAction(){
-        LocalDate localDate= LocalDate.parse(dateLabel.getText());
+    public void increaseDayButtonAction() {
+        LocalDate localDate = LocalDate.parse(dateLabel.getText());
         dateLabel.setText(String.valueOf(localDate.plusDays(1)));
     }
+
     @FXML
-    public void increaseMonthButtonAction(){
-        LocalDate localDate= LocalDate.parse(dateLabel.getText());
+    public void increaseMonthButtonAction() {
+        LocalDate localDate = LocalDate.parse(dateLabel.getText());
         dateLabel.setText(String.valueOf(localDate.plusMonths(1)));
     }
 
@@ -710,7 +711,6 @@ public class MainScreen {
     @FXML
     protected void changePasswordButtonAction() throws IOException {
         if (userTable.getSelectionModel().getSelectedItem() != null) {
-            System.out.println(userTable.getSelectionModel().getSelectedItem().username);
             Stage changePassStage = new Stage();
             changePassStage.setTitle("Şifre Değiştir");
             SignupScreen.username = userTable.getSelectionModel().getSelectedItem().username;

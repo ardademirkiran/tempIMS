@@ -75,7 +75,7 @@ public class ProcessLogs {
             logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Satış Fiyatı:\t" + splittedLine[3], detailsString, splittedLine[4]));
          } else if(splittedLine[0].equals("STOK TANIMI")){
             String explanationString = splittedLine[4] + " adet " + splittedLine[3];
-            logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Ürün İsmi:\t" + explanationString, "Barkod: " + splittedLine[2], splittedLine[5]));
+            logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Ürün İsmi:\t" + explanationString, "Barkod: \n" + splittedLine[2], splittedLine[5]));
 
          } else if (splittedLine[0].equals("GİRİŞ")){
             logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Kullanıcı adı:\t" + splittedLine[2], "", splittedLine[2]));
