@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.AccessibleRole;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
@@ -22,8 +23,6 @@ public class Products {
     Double sellPriceDB;
     String name, barcode;
     Products(String barcode, String name, String brand,Integer tax, Double sellpricedb) {
-        discount.setPromptText("0");
-        discountPercentage.setPromptText("0");
         this.name = brand + " " + name;
         this.barcode = barcode;
         this.unitSellPrice = sellpricedb;
@@ -32,10 +31,12 @@ public class Products {
         this.tax = tax;
         this.amount = 1;
         this.sellPriceLabel.setText(String.valueOf(sellpricedb));
+        init();
+        discount.setPromptText("0");
+        discountPercentage.setPromptText("0");
         discount.setStyle("-fx-font-size: 25");
         discountPercentage.setStyle("-fx-font-size: 25");
         sellPriceLabel.setStyle("-fx-font-size: 25");
-        init();
     }
 
     public ObservableValue<TextField> getObservableDiscountPercentage() {
@@ -134,6 +135,25 @@ public class Products {
         return (Double.parseDouble(this.discountPercentage.getText()) * this.unitSellPrice) / 100;
     }
     public void init(){
+        // FIXME: 2.09.2022 Aga ben halletcem burayı ellemeyin şimdilik iskontolara
+        discount.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("^[+-]?[0-9]{1,9}(?:\\.[0-9]{1,2})?$")) {
+                if (newValue.charAt(newValue.length()-1) == '.'){
+                    discount.setText(newValue);
+                }else {
+                    discount.setText("");
+                }
+            }
+        });
+        discountPercentage.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("^[+-]?[0-9]{1,9}(?:\\.[0-9]{1,2})?$")) {
+                if (newValue.charAt(newValue.length()-1) == '.'){
+                    discountPercentage.setText(newValue);
+                }else {
+                    discountPercentage.setText("");
+                }
+            }
+        });
         discountPercentage.setOnKeyTyped(keyEvent -> {
             try {
                 calculatedUnitSellPrice = (sellPriceDB - calculateDiscount());
@@ -144,25 +164,14 @@ public class Products {
                 discount.setText("");
                 sellPriceLabel.setText(String.valueOf(sellPriceDB));
             }
-
         });
         discount.setOnKeyTyped(keyEvent -> {
             try {
-                String[] strings = new String[]{"8"};
-                if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(strings)) && discount.getText().isEmpty()){
-                    if (discount.getText().isEmpty()){
-                        discountPercentage.setText("0");
-                        sellPriceLabel.setText(String.valueOf(sellPriceDB));
-                    }
-                }
-                else {
-                    calculatedUnitSellPrice = (sellPriceDB - Double.parseDouble(discount.getText()));
-                    discountPercentage.setText(String.valueOf(calculateDiscountPercentage()));
-                    sellPriceLabel.setText(String.valueOf((unitSellPrice - Double.parseDouble(discount.getText())) * amount));}
+                calculatedUnitSellPrice = (sellPriceDB - Double.parseDouble(discount.getText()));
+                discountPercentage.setText(String.valueOf(calculateDiscountPercentage()));
+                sellPriceLabel.setText(String.valueOf((unitSellPrice - Double.parseDouble(discount.getText())) * amount));
                 MainScreen.setLabelDisplay();
             }
-
-
             catch (NumberFormatException e){
                 discount.setText("");
                 sellPriceLabel.setText(String.valueOf(sellPriceDB));
