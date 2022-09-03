@@ -1,14 +1,16 @@
 package com.tempims.tempims;
 
-import javafx.collections.ObservableList;
-
 import java.io.*;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class ProcessLogs {
    static LocalDate currentDate = java.time.LocalDate.now();
+
+   public static boolean checkLogsFile() throws IOException {
+      File logFile = new File("logs.txt");
+      return logFile.createNewFile();
+   }
 
    public static void recordSalesProcess(String midText, double totalSellPrice) throws IOException {
       FileWriter logsFile = new FileWriter("logs.txt", true);
@@ -37,28 +39,6 @@ public class ProcessLogs {
 
    }
 
-   public static Boolean setUpDate() throws IOException {
-      Boolean returnValue = checkDateFile();
-      currentDate = java.time.LocalDate.now();
-      BufferedReader reader = new BufferedReader(new FileReader("date.txt"));
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-      LocalDate lastLoggedDate = LocalDate.parse(reader.readLine(), formatter);
-      if (lastLoggedDate.getMonthValue() != currentDate.getMonthValue() || lastLoggedDate.getYear() != currentDate.getYear()){
-         DBAccess.clearProfitTable();
-         DBAccess.clearMonthlyProfits();
-      }
-
-      if (!lastLoggedDate.toString().equals(currentDate.toString())){
-         DBAccess.insertProfitRow(currentDate);
-         DBAccess.clearDailyProfits();//sql part to clear daily profit columns at "PRODUCTS" table
-      }
-
-      BufferedWriter writer = new BufferedWriter(new FileWriter("date.txt"));
-      writer.write(currentDate.toString());
-      writer.close();
-      return returnValue;
-
-   }
    public static ArrayList<LogObject> getLogObjects() throws IOException {
       ArrayList<LogObject> logObjects = new ArrayList<>();
       BufferedReader reader = new BufferedReader(new FileReader("logs.txt"));
@@ -84,17 +64,5 @@ public class ProcessLogs {
          }
       }
       return logObjects;
-   }
-
-   public static Boolean checkDateFile() throws IOException {
-      File dateFile = new File("date.txt");
-      if(dateFile.createNewFile()){
-         BufferedWriter writer = new BufferedWriter(new FileWriter(dateFile));
-         writer.write("1111-11-11");
-         writer.close();
-         return true;
-      } else {
-         return false;
-      }
    }
 }

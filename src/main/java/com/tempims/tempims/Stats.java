@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class Stats {
-    //static HashMap<String, Number> productChartInfo= new HashMap<>();
-    static LocalDate currentDate = java.time.LocalDate.now();
 
     public static HashMap<String, Double> createPieChartData(ArrayList<SalesObject> salesObjects){
         HashMap<String, Double> pieChartDataMap = new HashMap<>();
@@ -27,7 +25,7 @@ public class Stats {
         return pieChartDataMap;
     }
 
-    public static LinkedHashMap<String, Double> createBarChartData(ArrayList<SalesObject> salesObjects, boolean isMonthly){
+    public static LinkedHashMap<String, Double> createLineChartData(ArrayList<SalesObject> salesObjects, boolean isMonthly){
         LinkedHashMap<String, Double> barChartDataMap = new LinkedHashMap<>();
         String dateKey;
         for (SalesObject salesObject : salesObjects){

@@ -25,6 +25,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class MainScreen {
@@ -243,9 +244,10 @@ public class MainScreen {
 
         lineToggleSwitch.switchOnProperty().addListener((a, b, c) -> { // lineChart initializations
             if (c) {
-                initBarData(lineToggleSwitch.switchOnProperty().getValue());
+                System.out.println("aylık");
+                initLineData(lineToggleSwitch.switchOnProperty().getValue());
             } else {
-                initBarData(lineToggleSwitch.switchOnProperty().getValue());
+                initLineData(lineToggleSwitch.switchOnProperty().getValue());
             }
         });
         lineToggleSwitch.setMaxWidth(400);
@@ -487,7 +489,7 @@ public class MainScreen {
         dateLabel.setText(LocalDate.now().toString());
         if (tabpane.getSelectionModel().getSelectedItem().equals(statisticsTab)) {
             initPieData(pieToggleSwitch.switchOnProperty().getValue());
-            initBarData(lineToggleSwitch.switchOnProperty().getValue());
+            initLineData(lineToggleSwitch.switchOnProperty().getValue());
         }
         tabpane.getSelectionModel().selectedItemProperty().addListener((ov, oldTab, newTab) -> {
             if (oldTab.equals(statisticsTab)) {
@@ -524,19 +526,33 @@ public class MainScreen {
 
     public void initPieData(Boolean isdaily) {
         pieChart.getData().removeAll(pieChart.getData());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate dateOfLabel = LocalDate.parse(dateLabel.getText(), formatter);
         if (isdaily) {
+            //dateOfLabel.getDayOfMonth();
+            //dateOfLabel.getMonthValue();
+            //dateOfLabel.getYear();
+
+            //sql part to get sales records with matching day, month, year values with dateOfLabel and put them into an ArrayList<SalesObject> salesObjects
+            //setPieChart(Stats.createPieChartData(salesObjects));
             setPieChart(Stats.createDailyPieChartInfo());
         } else {
+            //sql part to get sales records with matching month, year values with dateOfLabel and put them into an ArrayList<SalesObject> salesObjects
+            //setPieChart(Stats.createPieChartData(salesObjects));
             setPieChart(Stats.createMonthlyPieChartInfo());
         }
     }
 
-    public void initBarData(Boolean isdaily) {
+    public void initLineData(Boolean isMonthly) {
         stackedBarChart.getData().removeAll(stackedBarChart.getData());
         LinkedHashMap<String, Double> datesAndProfits = DBAccess.barChartValues();
-        if (isdaily) {
+        if (isMonthly) {
+            //sql part to get sales records with matching month, year values and put them into an ArrayList<SalesObject> salesObjects
+            //setBarChart(Stats.createLineChartData(salesObjects, isMonthly));
             setBarChart(datesAndProfits);
         } else {
+            //sql part to get sales records with matching year values and put them into an ArrayList<SalesObject> salesObjects
+            //setBarChart(Stats.createLineChartData(salesObjects, isMonthly));
             HashMap<String, Double> barChartData = Stats.calculateMonthlyProfits(datesAndProfits);
             setBarChart(barChartData);
 

@@ -17,7 +17,7 @@ import java.util.Locale;
 
 public class Main extends Application {
     static Stage globalStage;
-    static Boolean isFirstExec;
+    static Boolean isFirstExec = false;
     public static void main(String[] args) {
         launch();
     }
@@ -25,7 +25,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         globalStage = stage;
-        isFirstExec = false;
+        isFirstExec = ProcessLogs.checkLogsFile();
         if (isFirstExec){
             DBAccess.insertUser("admin", UserInteractions.hashPassword("admin"), "1111111");
         } else {
