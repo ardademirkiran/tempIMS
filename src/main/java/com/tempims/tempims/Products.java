@@ -6,12 +6,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.AccessibleRole;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 public class Products {
     TextField discountPercentage = new TextField("0");
@@ -22,7 +18,8 @@ public class Products {
     Double calculatedUnitSellPrice;
     Double sellPriceDB;
     String name, barcode;
-    Products(String barcode, String name, String brand,Integer tax, Double sellpricedb) {
+
+    Products(String barcode, String name, String brand, Integer tax, Double sellpricedb) {
         this.name = brand + " " + name;
         this.barcode = barcode;
         this.unitSellPrice = sellpricedb;
@@ -122,35 +119,37 @@ public class Products {
     }
 
     private Double calculateDiscountPercentage() {
-        if (this.discount.getText().isEmpty()){
+        if (this.discount.getText().isEmpty()) {
             return 0.0;
         }
         return ((Double.parseDouble(this.discount.getText()) * 100) / this.unitSellPrice);
     }
 
     private Double calculateDiscount() {
-        if (this.discountPercentage.getText().isEmpty()){
+        if (this.discountPercentage.getText().isEmpty()) {
             return 0.0;
         }
         return (Double.parseDouble(this.discountPercentage.getText()) * this.unitSellPrice) / 100;
     }
-    public void init(){
+
+    public void init() {
         // FIXME: 2.09.2022 Aga ben halletcem burayı ellemeyin şimdilik iskontolara
         discount.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("^[+-]?[0-9]{1,9}(?:\\.[0-9]{1,2})?$")) {
-                if (newValue.charAt(newValue.length()-1) == '.'){
+                if (newValue.charAt(newValue.length() - 1) == '.') {
                     discount.setText(newValue);
-                }else {
+                } else {
                     discount.setText("");
                 }
             }
         });
         discountPercentage.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("^[+-]?[0-9]{1,9}(?:\\.[0-9]{1,2})?$")) {
-                if (newValue.charAt(newValue.length()-1) == '.'){
+                if (newValue.charAt(newValue.length() - 1) == '.') {
                     discountPercentage.setText(newValue);
-                }else {
+                } else {
                     discountPercentage.setText("");
+                    discount.setStyle("-fx-background-color: ALICEBLUE");
                 }
             }
         });
@@ -160,7 +159,7 @@ public class Products {
                 discount.setText(String.valueOf(calculateDiscount()));
                 sellPriceLabel.setText(String.valueOf((unitSellPrice - Double.parseDouble(discount.getText())) * amount));
                 MainScreen.setLabelDisplay();
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 discount.setText("");
                 sellPriceLabel.setText(String.valueOf(sellPriceDB));
             }
@@ -171,8 +170,7 @@ public class Products {
                 discountPercentage.setText(String.valueOf(calculateDiscountPercentage()));
                 sellPriceLabel.setText(String.valueOf((unitSellPrice - Double.parseDouble(discount.getText())) * amount));
                 MainScreen.setLabelDisplay();
-            }
-            catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 discount.setText("");
                 sellPriceLabel.setText(String.valueOf(sellPriceDB));
             }

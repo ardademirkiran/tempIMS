@@ -236,11 +236,10 @@ public class MainScreen {
             }
         });
         pieToggleSwitch.setMaxWidth(400);
-        pieToggleSwitch.setRotate(-90);
         pieToggleSwitch.setMaxHeight(40);
         pieToggleSwitch.setAlignment(Pos.CENTER);
         GridPane.setHalignment(pieToggleSwitch, HPos.CENTER);
-        statisticsGridPane.add(pieToggleSwitch, 0, 0, 1, 1);
+        statisticsGridPane.add(pieToggleSwitch, 0, 1, 1, 1);
 
         lineToggleSwitch.switchOnProperty().addListener((a, b, c) -> { // lineChart initializations
             if (c) {
@@ -251,11 +250,10 @@ public class MainScreen {
             }
         });
         lineToggleSwitch.setMaxWidth(400);
-        lineToggleSwitch.setRotate(+90);
         lineToggleSwitch.setMaxHeight(40);
         lineToggleSwitch.setAlignment(Pos.CENTER);
         GridPane.setHalignment(lineToggleSwitch, HPos.CENTER);
-        statisticsGridPane.add(lineToggleSwitch, 3, 0, 1, 1);
+        statisticsGridPane.add(lineToggleSwitch, 1, 1, 1, 1);
 
 
     }

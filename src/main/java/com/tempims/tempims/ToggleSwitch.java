@@ -27,9 +27,6 @@ public class ToggleSwitch extends HBox {
         button.setOnAction((e) -> {
             isDaily.set(!isDaily.get());
         });
-        label.setOnMouseClicked((e) -> {
-            isDaily.set(!isDaily.get());
-        });
         setStyle();
         bindProperties();
     }
@@ -37,7 +34,8 @@ public class ToggleSwitch extends HBox {
     private void setStyle() {
         setWidth(120);
         label.setAlignment(Pos.CENTER);
-        setStyle("-fx-background-color: grey; -fx-text-fill:black; -fx-background-radius: 4;");
+        setStyle("-fx-background-color: grey; -fx-text-fill:black; -fx-background-radius: 20;");
+        button.setStyle("-fx-text-fill:black; -fx-background-radius: 20;");
         setAlignment(Pos.CENTER_LEFT);
     }
 
@@ -54,12 +52,14 @@ public class ToggleSwitch extends HBox {
             if (c) {
                 label.setText(firsttext);
                 button.setText(secondtext);
-                setStyle("-fx-background-color: gray;");
+                button.setStyle("-fx-text-fill:black; -fx-background-radius: 20;");
+                label.setStyle("-fx-background-color: grey; -fx-text-fill:black; -fx-background-radius: 20;");
                 label.toFront();
             } else {
                 label.setText(secondtext);
                 button.setText(firsttext);
-                setStyle("-fx-background-color: gray;");
+                button.setStyle("-fx-text-fill:black; -fx-background-radius: 20;");
+                label.setStyle("-fx-background-color: grey; -fx-text-fill:black; -fx-background-radius: 20;");
                 button.toFront();
             }
         });
