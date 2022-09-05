@@ -1,13 +1,15 @@
 package com.tempims.tempims;
 
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.util.converter.LocalDateTimeStringConverter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.Date;
 
-public class LogObject {
+public class LogObject implements Comparable<LogObject> {
     String dateTime;
     String type;
     String explanation;
@@ -23,6 +25,11 @@ public class LogObject {
         this.details = details;
         this.employee = employee;
     }
+    public LocalDateTime getDateTime(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd\tHH:mm");
+        return LocalDateTime.parse(this.dateTime);
+    }
+
     public ObservableValue<String> getType(){
         return new SimpleStringProperty(type);
     }public ObservableValue<String> getExplanation(){
@@ -31,8 +38,12 @@ public class LogObject {
         return new SimpleStringProperty(details);
     }public ObservableValue<String> getEmployee(){
         return new SimpleStringProperty(employee);
-    }public ObservableValue<String> getDate(){
+    }public ObservableValue<String> getDateString(){
         return new SimpleStringProperty(dateTime);
     }
 
+    @Override
+    public int compareTo(LogObject o) {
+        return o.getDateTime().compareTo(this.getDateTime());
+    }
 }

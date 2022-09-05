@@ -145,12 +145,25 @@ public class MainScreen {
             }
             ProcessLogs.recordSalesProcess(midText, Double.parseDouble(totalpricelabeltext));
             DBAccess.updateDailyProfit(ProcessLogs.currentDate, totalProfit);
+
         }
     }
 
     @FXML
-    protected void returnButtonClicked() {
-        // FIXME: 2.09.2022
+    protected void returnButtonClicked() throws IOException {
+        String totalpricelabeltext = totalPriceLabel.getText();
+        if (sellScreenTable.getItems().size() > 0) {
+            Products[] productsList = sellScreenTable.getItems().toArray(new Products[0]);
+            cancelButtonClicked();
+            String midText = "";
+            for (Products product : productsList) {
+                double profitToAdd = Stats.calculateProfit(product);
+                DBAccess.updateStock(product.barcode, product.amount);
+                DBAccess.amendProfit(product.barcode, -profitToAdd);
+                midText += product.amount + "x" + product.name + "/-";
+            }
+            ProcessLogs.recordReturnProcess(midText, Double.parseDouble(totalpricelabeltext));
+        }
     }
 
     protected void editTabsForUsers() {
@@ -608,11 +621,12 @@ public class MainScreen {
     public void logTabOpened() throws IOException {
         if (tabpane.getSelectionModel().getSelectedItem().equals(logTab)) {
             historyTable.getItems().removeAll(historyTable.getItems());
-            historyTableDate.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getDate());
+            historyTableDate.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getDateString());
             historyTableEmployee.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getEmployee());
             historyTableType.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getType());
             historyTableExplanation.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getExplanation());
             historyTable.getItems().addAll(ProcessLogs.getLogObjects());
+            Collections.reverse(historyTable.getItems());
             historyTable.setRowFactory(tv -> new TableRow<>() {
                 Node detailsPane;
 
@@ -632,6 +646,8 @@ public class MainScreen {
                 protected void updateItem(LogObject item, boolean empty) {
                     super.updateItem(item, empty);
                     if (item != null && item.type.equals("SATIŞ")) setStyle("-fx-background-color: #79cc79");
+                     else if (item != null && item.type.equals("İADE")) setStyle("-fx-background-color: #e13359");
+                     else if (item != null && item.type.equals("STOK TANIMI")) setStyle("-fx-background-color: #71b6e5");
                     else {
                         setStyle("");
                     }
