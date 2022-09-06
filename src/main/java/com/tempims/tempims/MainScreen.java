@@ -486,8 +486,12 @@ public class MainScreen {
             }
         }
         if (!find) {
-            productdb = ProductInteractions.getProduct(barcodeField.getText());
-            sellScreenTable.getItems().addAll(productdb);
+            try {
+                productdb = ProductInteractions.getProduct(barcodeField.getText());
+                sellScreenTable.getItems().addAll(productdb);
+            } catch (NullPointerException e){
+                System.out.println("Bu barkod kayıtlı değil.");
+            }
         }
         refreshTableData();
         sellScreenTable.refresh();

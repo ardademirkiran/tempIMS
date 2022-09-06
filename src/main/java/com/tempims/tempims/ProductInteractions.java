@@ -19,7 +19,7 @@ public class ProductInteractions {
         int tax = Integer.parseInt(productInfo[2]); //sql part to get tax
         double sellprice = Double.parseDouble(productInfo[3]);//sql part to get sellprice
 
-        return new Products(barcode, name, brand,tax, sellprice);
+        return new Products(barcode, name, brand, tax, sellprice);
     }
     public static ArrayList<AllProducts> createAllProducts(){
         ArrayList<AllProducts> allProducts = new ArrayList<>();
