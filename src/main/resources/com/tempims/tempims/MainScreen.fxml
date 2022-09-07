@@ -113,17 +113,17 @@
                         <Font size="24.0" />
                     </font>
                 </TextField>
-                <TextField fx:id="productEntryLabelPiece" layoutX="97.0" layoutY="276.0" onKeyReleased="#buyPriceKeyPressed" stylesheets="@TextField.css" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="280.0">
+                <TextField fx:id="productEntryLabelPiece" layoutX="97.0" layoutY="276.0" onKeyReleased="#productAmountInputController" stylesheets="@TextField.css" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="280.0">
                     <font>
                         <Font size="24.0" />
                     </font>
                 </TextField>
-                <TextField fx:id="productEntryLabelTax" layoutX="97.0" layoutY="362.0" onKeyReleased="#buyPriceKeyPressed" stylesheets="@TextField.css" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="360.0">
+                <TextField fx:id="productEntryLabelTax" layoutX="97.0" layoutY="362.0" onKeyReleased="#taxInputController" stylesheets="@TextField.css" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="360.0">
                     <font>
                         <Font size="24.0" />
                     </font>
                 </TextField>
-                <TextField fx:id="productEntryLabelBuyPrice" layoutX="91.0" layoutY="427.0" onKeyReleased="#buyPriceKeyPressed" stylesheets="@TextField.css" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="440.0">
+                <TextField fx:id="productEntryLabelBuyPrice" layoutX="91.0" layoutY="427.0" onKeyReleased="#buyPriceInputController" onKeyPressed="#buyPriceKeyPressed" stylesheets="@TextField.css" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="440.0">
                     <font>
                         <Font size="24.0" />
                     </font>
@@ -136,7 +136,7 @@
                         <Font size="24.0" />
                     </font>
                 </TextField>
-                <TextField fx:id="productEntryLabelSellPrice" layoutX="283.0" layoutY="417.0" stylesheets="@TextField.css" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="600.0">
+                <TextField fx:id="productEntryLabelSellPrice" layoutX="283.0" layoutY="417.0" onKeyReleased="#sellPriceInputController" stylesheets="@TextField.css" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="600.0">
                     <font>
                         <Font size="24.0" />
                     </font>

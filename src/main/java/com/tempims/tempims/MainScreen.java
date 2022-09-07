@@ -352,27 +352,77 @@ public class MainScreen {
             keyTypedAlgorithm();
         }
     }
+    @FXML
+    protected void taxInputController(){
+        productEntryLabelTax.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.matches("^[0-9.]*$")) {
+                if (newValue.matches("^[0-9]+\\.([0-9]){0,2}")){
+                    System.out.println("input doğru ve noktalı");
+
+                } else if(newValue.matches("^[0-9]+\\.([0-9.]{3})") && productEntryLabelTax.getText().length() > 2){
+                    System.out.println("Harf silinecek");
+                    StringBuilder sb= new StringBuilder(newValue);
+                    sb.deleteCharAt(sb.length()-1);
+                    newValue = String.valueOf(sb);
+                    productEntryLabelTax.setText(newValue);
+                }
+            } else {
+                productEntryLabelTax.setText(newValue.replaceAll("[^\\d.]", ""));
+            }
+        });
+    }
 
     @FXML
-    protected void buyPriceKeyPressed() {
+    protected void buyPriceInputController(){
+        productEntryLabelBuyPrice.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.matches("^[0-9.]*$")) {
+                if (newValue.matches("^[0-9]+\\.([0-9]){0,2}")){
+                    System.out.println("input doğru ve noktalı");
 
+                } else if(newValue.matches("^[0-9]+\\.([0-9.]{3})") && productEntryLabelBuyPrice.getText().length() > 2){
+                    System.out.println("Harf silinecek");
+                    StringBuilder sb= new StringBuilder(newValue);
+                    sb.deleteCharAt(sb.length()-1);
+                    newValue = String.valueOf(sb);
+                    productEntryLabelBuyPrice.setText(newValue);
+                }
+            } else {
+                productEntryLabelBuyPrice.setText(newValue.replaceAll("[^\\d.]", ""));
+            }
+        });
+    }
+
+    @FXML
+    protected void sellPriceInputController(){
+        productEntryLabelSellPrice.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.matches("^[0-9.]*$")) {
+                if (newValue.matches("^[0-9]+\\.([0-9]{0,2})")){
+                    System.out.println("input doğru ve noktalı");
+
+                } else if(newValue.matches("^[0-9]+\\.([0-9.]{3})") && productEntryLabelSellPrice.getText().length() > 2){
+                    System.out.println("Harf silinecek");
+                    StringBuilder sb= new StringBuilder(newValue);
+                    sb.deleteCharAt(sb.length()-1);
+                    newValue = String.valueOf(sb);
+                    productEntryLabelSellPrice.setText(newValue);
+                }
+            } else {
+                productEntryLabelSellPrice.setText(newValue.replaceAll("[^\\d.]", ""));
+            }
+        });
+    }
+
+    @FXML
+    protected void productAmountInputController(){
         productEntryLabelPiece.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) {
+            if (!newValue.matches("^[0-9]*$")) {
                 productEntryLabelPiece.setText(newValue.replaceAll("[^\\d]", ""));
             }
         });
-        productEntryLabelBuyPrice.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) {
-                productEntryLabelBuyPrice.setText(newValue.replaceAll("[^\\d]", ""));
-            }
-        });
+    }
 
-        productEntryLabelTax.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) {
-                productEntryLabelTax.setText(newValue.replaceAll("[^\\d]", ""));
-            }
-        });
-
+    @FXML
+    protected void buyPriceKeyPressed() {
         try {
             productEntryLabelPrice.setText(String.format(Locale.ROOT, "%.2f", Double.parseDouble(productEntryLabelBuyPrice.getText()) / Double.parseDouble(productEntryLabelPiece.getText())));
         } catch (NumberFormatException e) {
