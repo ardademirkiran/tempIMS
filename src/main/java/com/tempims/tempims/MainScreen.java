@@ -3,6 +3,8 @@ package com.tempims.tempims;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
@@ -353,6 +355,24 @@ public class MainScreen {
 
     @FXML
     protected void buyPriceKeyPressed() {
+
+        productEntryLabelPiece.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                productEntryLabelPiece.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
+        productEntryLabelBuyPrice.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                productEntryLabelBuyPrice.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
+
+        productEntryLabelTax.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                productEntryLabelTax.setText(newValue.replaceAll("[^\\d]", ""));
+            }
+        });
+
         try {
             productEntryLabelPrice.setText(String.format(Locale.ROOT, "%.2f", Double.parseDouble(productEntryLabelBuyPrice.getText()) / Double.parseDouble(productEntryLabelPiece.getText())));
         } catch (NumberFormatException e) {

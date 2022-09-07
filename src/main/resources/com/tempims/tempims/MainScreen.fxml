@@ -113,12 +113,12 @@
                         <Font size="24.0" />
                     </font>
                 </TextField>
-                <TextField fx:id="productEntryLabelPiece" layoutX="97.0" layoutY="276.0" stylesheets="@TextField.css" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="280.0">
+                <TextField fx:id="productEntryLabelPiece" layoutX="97.0" layoutY="276.0" onKeyReleased="#buyPriceKeyPressed" stylesheets="@TextField.css" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="280.0">
                     <font>
                         <Font size="24.0" />
                     </font>
                 </TextField>
-                <TextField fx:id="productEntryLabelTax" layoutX="97.0" layoutY="362.0" stylesheets="@TextField.css" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="360.0">
+                <TextField fx:id="productEntryLabelTax" layoutX="97.0" layoutY="362.0" onKeyReleased="#buyPriceKeyPressed" stylesheets="@TextField.css" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="360.0">
                     <font>
                         <Font size="24.0" />
                     </font>
