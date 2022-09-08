@@ -31,10 +31,16 @@ public class FirstOpenScreen {
             DBAccess.removeUser("admin");
             UserInteractions.checkLogin(usernameField.getText(),passwordField.getText());
             System.out.println("Yeni kullanıcı oluşturuldu.");
-            FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("MainScreen.fxml"));
-            Scene scene = new Scene(fxmlLoader.load());
-            Main.globalStage.setMaximized(true);
-            Main.globalStage.setScene(scene);
+            openMainScreen();
         }
+    }
+
+    static void openMainScreen() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("MainScreen.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        Main.globalStage.setScene(scene);
+        Main.globalStage.setFullScreen(true);
+        Main.globalStage.setHeight(800);
+        Main.globalStage.setWidth(1100);
     }
 }

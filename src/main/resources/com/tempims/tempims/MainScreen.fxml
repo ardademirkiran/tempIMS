@@ -61,17 +61,17 @@
                         <Font size="36.0" />
                     </font>
                 </Label>
-                <Label fx:id="totalDiscountLabel" layoutX="20.0" layoutY="447.0" text="0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="320.0">
+                <Label fx:id="totalDiscountLabel" layoutX="20.0" layoutY="447.0" text="0.00" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="320.0">
                     <font>
                         <Font size="36.0" />
                     </font>
                 </Label>
-                <Label fx:id="totalPriceLabel" layoutX="140.0" layoutY="447.0" text="0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="320.0">
+                <Label fx:id="totalPriceLabel" layoutX="140.0" layoutY="447.0" text="0.00" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="320.0">
                     <font>
                         <Font size="36.0" />
                     </font>
                 </Label>
-                <Label fx:id="totalTaxLabel" layoutX="140.0" layoutY="447.0" text="0.0" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="320.0">
+                <Label fx:id="totalTaxLabel" layoutX="140.0" layoutY="447.0" text="0.00" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="320.0">
                     <font>
                         <Font size="36.0" />
                     </font>
@@ -81,7 +81,7 @@
                         <Font size="36.0" />
                     </font>
                 </Label>
-                <Label fx:id="subTotalLabel" layoutX="340.0" layoutY="463.0" text="0.0" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="320.0">
+                <Label fx:id="subTotalLabel" layoutX="340.0" layoutY="463.0" text="0.00" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="320.0">
                     <font>
                         <Font size="36.0" />
                     </font>
@@ -123,7 +123,7 @@
                         <Font size="24.0" />
                     </font>
                 </TextField>
-                <TextField fx:id="productEntryLabelBuyPrice" layoutX="91.0" layoutY="427.0" onKeyReleased="#buyPriceInputController" onKeyPressed="#buyPriceKeyPressed" stylesheets="@TextField.css" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="440.0">
+                <TextField fx:id="productEntryLabelBuyPrice" layoutX="91.0" layoutY="427.0" onKeyPressed="#buyPriceKeyPressed" onKeyReleased="#buyPriceInputController" stylesheets="@TextField.css" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="440.0">
                     <font>
                         <Font size="24.0" />
                     </font>
@@ -255,7 +255,7 @@
                   <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <PieChart fx:id="pieChart" GridPane.hgrow="NEVER" />
-               <LineChart fx:id="stackedBarChart" GridPane.columnIndex="1">
+               <LineChart fx:id="stackedBarChart" stylesheets="@LineChart.css" GridPane.columnIndex="1">
                  <xAxis>
                    <CategoryAxis side="BOTTOM" />
                  </xAxis>

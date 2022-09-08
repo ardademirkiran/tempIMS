@@ -35,10 +35,7 @@ public class LoginScreen {
                 Scene scene = new Scene(fxmlLoader.load());
                 Main.globalStage.setScene(scene);
             }else {
-                FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("MainScreen.fxml"));
-                Scene scene = new Scene(fxmlLoader.load());
-                Main.globalStage.setMaximized(true);
-                Main.globalStage.setScene(scene);
+                FirstOpenScreen.openMainScreen();
             }
         }
 

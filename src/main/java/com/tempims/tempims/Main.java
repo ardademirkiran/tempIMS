@@ -1,8 +1,12 @@
 package com.tempims.tempims;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -30,6 +34,21 @@ public class Main extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 480, 360);
         stage.setTitle("tempIMS");
         setGradient(stage, scene);
+        stage.setFullScreenExitHint("Tam Ekrandan Çıkmak İçin Esc'ye basınız");
+        stage.fullScreenProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
+                if (!aBoolean){
+                    stage.setMinWidth(1100);
+                    stage.setMinHeight(800);
+                }
+            }
+        });
+        stage.addEventHandler(KeyEvent.KEY_PRESSED, keyEvent -> {
+            if (KeyCode.F11.equals(keyEvent.getCode())){
+                stage.setFullScreen(!stage.isFullScreen());
+            }
+        });
     }
 
     static void setGradient(Stage stage, Scene scene) {

@@ -496,6 +496,7 @@ public class MainScreen {
     @FXML
     public void onStockControlOpened() {
         if (tabpane.getSelectionModel().getSelectedItem().equals(stockControlTab)) {
+            toggleSwitchStock.switchOnProperty().set(false);
             stockTable.getItems().removeAll(stockTable.getItems());
             stockCollumnBarcode.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getbarcode());
             stockCollumnAmont.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getamont());
@@ -673,7 +674,7 @@ public class MainScreen {
         for (String date : dateAndPriceList.keySet()) {
             series.getData().add(new XYChart.Data<>(date, dateAndPriceList.get(date)));
         }
-        series.setName("Tarih");
+        stackedBarChart.setLegendVisible(false);
         stackedBarChart.getData().add(series);
         stackedBarChart.setAnimated(false);
         Label barinfo = new Label("");
