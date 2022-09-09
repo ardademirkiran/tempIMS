@@ -392,10 +392,10 @@ public class MainScreen {
     protected void taxInputController(){
         productEntryLabelTax.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.matches("^[0-9.]*$")) {
-                if (newValue.matches("^[0-9]+\\.([0-9]){0,2}")){
+                if (newValue.matches("^[0-9]+\\.([0-9]{0,2})")){
                     System.out.println("input doğru ve noktalı");
 
-                } else if(newValue.matches("^[0-9]+\\.([0-9]*)\\.*") && productEntryLabelTax.getText().length() > 2){
+                } else if(newValue.matches("^[0-9]*\\.([0-9]*)\\.*") && productEntryLabelTax.getText().length() >= 2){
                     System.out.println("Harf silinecek");
                     StringBuilder sb= new StringBuilder(newValue);
                     sb.deleteCharAt(sb.length()-1);
@@ -412,10 +412,10 @@ public class MainScreen {
     protected void buyPriceInputController(){
         productEntryLabelBuyPrice.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.matches("^[0-9.]*$")) {
-                if (newValue.matches("^[0-9]+\\.([0-9]){0,2}")){
+                if (newValue.matches("^[0-9]+\\.([0-9]{0,2})")){
                     System.out.println("input doğru ve noktalı");
 
-                } else if(newValue.matches("^[0-9]+\\.([0-9]*)\\.*") && productEntryLabelBuyPrice.getText().length() > 2){
+                } else if(newValue.matches("^[0-9]*\\.([0-9]*)\\.*") && productEntryLabelBuyPrice.getText().length() >= 2){
                     System.out.println("Harf silinecek");
                     StringBuilder sb= new StringBuilder(newValue);
                     sb.deleteCharAt(sb.length()-1);
@@ -436,7 +436,7 @@ public class MainScreen {
                 if (newValue.matches("^[0-9]+\\.([0-9]{0,2})")){
                     System.out.println("input doğru ve noktalı");
 
-                } else if(newValue.matches("^[0-9]+\\.([0-9]*)\\.*") && productEntryLabelSellPrice.getText().length() > 2){
+                } else if(newValue.matches("^[0-9]*\\.([0-9]*)\\.*") && productEntryLabelSellPrice.getText().length() >= 2){
                     System.out.println("Harf silinecek");
                     StringBuilder sb= new StringBuilder(newValue);
                     sb.deleteCharAt(sb.length()-1);
