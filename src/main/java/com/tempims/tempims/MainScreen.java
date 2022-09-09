@@ -13,6 +13,7 @@ import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.SubScene;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
@@ -861,5 +862,10 @@ public class MainScreen {
             Main.setGradient(changePassStage, scene);
             changePassStage.setOnCloseRequest(windowEvent -> onUserTabOpened());
         }
+    }
+    @FXML
+    protected void productsWithoutBarcodeButton(){
+        // TODO: BUNA FİKİR LAZIM NASI YAPACAZ OLM
+
     }
 }

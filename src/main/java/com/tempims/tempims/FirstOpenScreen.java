@@ -14,6 +14,7 @@ public class FirstOpenScreen {
     public PasswordField passwordFieldAgain;
     public PasswordField passwordField;
     public TextField usernameField;
+    public static Scene sceneStatic;
 
 
     public void signupButtonAction() throws IOException {
@@ -37,8 +38,8 @@ public class FirstOpenScreen {
 
     static void openMainScreen() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("MainScreen.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
-        Main.globalStage.setScene(scene);
+        sceneStatic = new Scene(fxmlLoader.load());
+        Main.globalStage.setScene(sceneStatic);
         Main.globalStage.setFullScreen(true);
         Main.globalStage.setHeight(800);
         Main.globalStage.setWidth(1100);

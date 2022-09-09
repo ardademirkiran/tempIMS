@@ -21,7 +21,7 @@
     <TabPane fx:id="tabpane" style="-fx-font-size: 15" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
         <Tab fx:id="sellScreenTab" text="Satış Ekranı">
             <AnchorPane>
-                <Button layoutX="20.0" layoutY="20.0" prefWidth="230.0" text="Barkodsuz Ürünler" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                <Button layoutX="20.0" layoutY="20.0" onAction="#productsWithoutBarcodeButton" prefWidth="230.0" text="Barkodsuz Ürünler" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                 <TextField fx:id="barcodeField" layoutX="240.0" layoutY="20.0" onKeyTyped="#barcodeFieldKeyTyped" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="75.0" AnchorPane.topAnchor="10.0" />
                 <Button alignment="CENTER" layoutX="431.0" layoutY="20.0" mnemonicParsing="false" onAction="#cancelButtonClicked" stylesheets="@ButtonSmall.css" text="İptal" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                <font>
