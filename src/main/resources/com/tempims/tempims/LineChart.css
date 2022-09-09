@@ -5,9 +5,12 @@
     -fx-padding: 10px;
 }
 .chart-series-line{
-    -fx-stroke-width: 15px;
     -fx-stroke-line-cap: round;
     -fx-effect: null;
 }
 .default-color0.chart-series-line { -fx-stroke: Red; }
-.default-color0.chart-line-symbol { -fx-background-color: Red , red; }
+.default-color0.chart-line-symbol {
+    -fx-background-color: Red , red;
+    -fx-scale-x: 2.5;
+    -fx-scale-y: 2.5;
+}

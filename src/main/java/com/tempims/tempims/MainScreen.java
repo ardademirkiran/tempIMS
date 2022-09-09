@@ -23,7 +23,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
+import java.io.Console;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -109,6 +111,14 @@ public class MainScreen {
     public Label dateLabel;
     public ToggleSwitch lineToggleSwitch = new ToggleSwitch("Aylık", "Yıllık");
     public ToggleSwitch pieToggleSwitch = new ToggleSwitch("Günlük", "Aylık");
+    public Label barcodeInfo;
+    public Label brandInfo;
+    public Label nameInfo;
+    public Label amountInfo;
+    public Label taxInfo;
+    public Label buyPriceInfo;
+    public Label buyPricePerAmountInfo;
+    public Label sellPriceInfo;
 
     public static void setLabelDisplay() {
         double totalprice = 0;
@@ -191,6 +201,15 @@ public class MainScreen {
 
     @FXML
     public void initialize() {
+        // FIXME: 9.09.2022 
+        barcodeInfo.setTooltip(createToolTip("Barkod ile ilgili bişeyler"));
+        brandInfo.setTooltip(createToolTip("Marka ile ilgili bişeyler"));
+        nameInfo.setTooltip(createToolTip("İsim ile ilgili bişeyler"));
+        amountInfo.setTooltip(createToolTip("Miktar ile ilgili bişeyler"));
+        taxInfo.setTooltip(createToolTip("Vergi ile ilgili bişeyler"));
+        buyPriceInfo.setTooltip(createToolTip("Alış Fiyatı ile ilgili bişeyler"));
+        buyPricePerAmountInfo.setTooltip(createToolTip("Ürün başına Alış Fiyatı ile ilgili bişeyler"));
+        sellPriceInfo.setTooltip(createToolTip("Satış fiyatı ile ilgili bişeyler"));
         sellScreenTable.setPlaceholder(new Label("Bir ürün eklemeden satış veya iade yapamazsınız"));
         stockTable.setPlaceholder(new Label("Henüz bir ürün kaydı oluşturulmadı"));
         companyNameLabel.setText("Şirket: " + companyName);
@@ -271,6 +290,22 @@ public class MainScreen {
         statisticsGridPane.add(lineToggleSwitch, 1, 1, 1, 1);
 
 
+    }
+    public Tooltip createToolTip(String HintText){
+        Tooltip tooltip = new Tooltip(HintText);
+        tooltip.setStyle("""
+                -fx-border-color: WHITESMOKE;
+                -fx-border-width: 1px;
+                -fx-background-color: WHITESMOKE;
+                -fx-text-fill: black;
+                -fx-background-radius: 4;
+                -fx-effect: dropshadow( gaussian , BLACK , 4,0,0.5,1.8 );
+                -fx-border-radius: 4;
+                -fx-opacity: 1.0;""".indent(4));
+        tooltip.setGraphicTextGap(0.0);
+        tooltip.setShowDelay(Duration.ZERO);
+        tooltip.showDurationProperty().set(Duration.hours(1));
+        return tooltip;
     }
 
     @FXML

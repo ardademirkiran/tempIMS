@@ -21,7 +21,7 @@
     <TabPane fx:id="tabpane" style="-fx-font-size: 15" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
         <Tab fx:id="sellScreenTab" text="Satış Ekranı">
             <AnchorPane>
-                <ComboBox layoutX="20.0" layoutY="20.0" promptText="Müşteri (Genel Müşteri)" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                <Button layoutX="20.0" layoutY="20.0" prefWidth="230.0" text="Barkodsuz Ürünler" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                 <TextField fx:id="barcodeField" layoutX="240.0" layoutY="20.0" onKeyTyped="#barcodeFieldKeyTyped" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="75.0" AnchorPane.topAnchor="10.0" />
                 <Button alignment="CENTER" layoutX="431.0" layoutY="20.0" mnemonicParsing="false" onAction="#cancelButtonClicked" stylesheets="@ButtonSmall.css" text="İptal" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                <font>
@@ -190,6 +190,45 @@
                         <Font size="18.0" />
                     </font>
                 </Label>
+            <Label fx:id="barcodeInfo" layoutX="47.0" layoutY="63.0" text="i" textFill="Gray" AnchorPane.leftAnchor="85.0" AnchorPane.topAnchor="50.0">
+               <font>
+                  <Font size="20.0" />
+               </font></Label>
+            <Label fx:id="brandInfo" layoutX="90.0" layoutY="70.0" text="i" textFill="Gray" AnchorPane.leftAnchor="85.0" AnchorPane.topAnchor="130.0">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Label fx:id="nameInfo" layoutX="100.0" layoutY="80.0" text="i" textFill="Gray" AnchorPane.leftAnchor="85.0" AnchorPane.topAnchor="210.0">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Label fx:id="amountInfo" layoutX="110.0" layoutY="90.0" text="i" textFill="Gray" AnchorPane.leftAnchor="85.0" AnchorPane.topAnchor="290.0">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Label fx:id="taxInfo" layoutX="120.0" layoutY="100.0" text="i" textFill="Gray" AnchorPane.leftAnchor="85.0" AnchorPane.topAnchor="370.0">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Label fx:id="buyPriceInfo" layoutX="130.0" layoutY="110.0" text="i" textFill="Gray" AnchorPane.leftAnchor="85.0" AnchorPane.topAnchor="450.0">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Label fx:id="buyPricePerAmountInfo" layoutX="140.0" layoutY="120.0" text="i" textFill="Gray" AnchorPane.leftAnchor="85.0" AnchorPane.topAnchor="530.0">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Label fx:id="sellPriceInfo" layoutX="90.0" layoutY="550.0" text="i" textFill="Gray" AnchorPane.leftAnchor="85.0" AnchorPane.topAnchor="610.0">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
             </AnchorPane>
         </Tab>
         <Tab fx:id="logTab" onSelectionChanged="#logTabOpened" text="Geçmiş">
