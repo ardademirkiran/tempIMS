@@ -394,7 +394,7 @@ public class MainScreen {
                 if (newValue.matches("^[0-9]+\\.([0-9]){0,2}")){
                     System.out.println("input doğru ve noktalı");
 
-                } else if(newValue.matches("^[0-9]+\\.([0-9.]{3})") && productEntryLabelTax.getText().length() > 2){
+                } else if(newValue.matches("^[0-9]+\\.([0-9]*)\\.*") && productEntryLabelTax.getText().length() > 2){
                     System.out.println("Harf silinecek");
                     StringBuilder sb= new StringBuilder(newValue);
                     sb.deleteCharAt(sb.length()-1);
@@ -414,7 +414,7 @@ public class MainScreen {
                 if (newValue.matches("^[0-9]+\\.([0-9]){0,2}")){
                     System.out.println("input doğru ve noktalı");
 
-                } else if(newValue.matches("^[0-9]+\\.([0-9.]{3})") && productEntryLabelBuyPrice.getText().length() > 2){
+                } else if(newValue.matches("^[0-9]+\\.([0-9]*)\\.*") && productEntryLabelBuyPrice.getText().length() > 2){
                     System.out.println("Harf silinecek");
                     StringBuilder sb= new StringBuilder(newValue);
                     sb.deleteCharAt(sb.length()-1);
@@ -425,6 +425,7 @@ public class MainScreen {
                 productEntryLabelBuyPrice.setText(newValue.replaceAll("[^\\d.]", ""));
             }
         });
+        buyPriceKeyPressed();
     }
 
     @FXML
@@ -434,7 +435,7 @@ public class MainScreen {
                 if (newValue.matches("^[0-9]+\\.([0-9]{0,2})")){
                     System.out.println("input doğru ve noktalı");
 
-                } else if(newValue.matches("^[0-9]+\\.([0-9.]{3})") && productEntryLabelSellPrice.getText().length() > 2){
+                } else if(newValue.matches("^[0-9]+\\.([0-9]*)\\.*") && productEntryLabelSellPrice.getText().length() > 2){
                     System.out.println("Harf silinecek");
                     StringBuilder sb= new StringBuilder(newValue);
                     sb.deleteCharAt(sb.length()-1);
