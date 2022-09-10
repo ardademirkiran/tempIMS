@@ -3,8 +3,6 @@ package com.tempims.tempims;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
@@ -13,7 +11,6 @@ import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.SubScene;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
@@ -26,7 +23,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.Console;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -290,9 +286,20 @@ public class MainScreen {
         GridPane.setHalignment(lineToggleSwitch, HPos.CENTER);
         statisticsGridPane.add(lineToggleSwitch, 1, 1, 1, 1);
 
+        productEntryLabelPrice.setContextMenu(new ContextMenu());
+        productEntryLabelPiece.setContextMenu(new ContextMenu());
+        productEntryLabelBrand.setContextMenu(new ContextMenu());
+        productEntryLabelName.setContextMenu(new ContextMenu());
+        productEntryLabelTax.setContextMenu(new ContextMenu());
+        productEntryLabelBuyPrice.setContextMenu(new ContextMenu());
+        productEntryLabelSellPrice.setContextMenu(new ContextMenu());
+        productEntryLabelBarcode.setContextMenu(new ContextMenu());
+        barcodeField.setContextMenu(new ContextMenu());
+
 
     }
-    public Tooltip createToolTip(String HintText){
+
+    public Tooltip createToolTip(String HintText) {
         Tooltip tooltip = new Tooltip(HintText);
         tooltip.setStyle("""
                 -fx-border-color: WHITESMOKE;
@@ -388,17 +395,18 @@ public class MainScreen {
             keyTypedAlgorithm();
         }
     }
+
     @FXML
-    protected void taxInputController(){
+    protected void taxInputController() {
         productEntryLabelTax.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.matches("^[0-9.]*$")) {
-                if (newValue.matches("^[0-9]+\\.([0-9]{0,2})")){
+                if (newValue.matches("^[0-9]+\\.([0-9]{0,2})")) {
                     System.out.println("input doğru ve noktalı");
 
-                } else if(newValue.matches("^[0-9]*\\.([0-9]*)\\.*") && productEntryLabelTax.getText().length() >= 2){
+                } else if (newValue.matches("^[0-9]*\\.([0-9]*)\\.*") && productEntryLabelTax.getText().length() >= 2) {
                     System.out.println("Harf silinecek");
-                    StringBuilder sb= new StringBuilder(newValue);
-                    sb.deleteCharAt(sb.length()-1);
+                    StringBuilder sb = new StringBuilder(newValue);
+                    sb.deleteCharAt(sb.length() - 1);
                     newValue = String.valueOf(sb);
                     productEntryLabelTax.setText(newValue);
                 }
@@ -409,16 +417,16 @@ public class MainScreen {
     }
 
     @FXML
-    protected void buyPriceInputController(){
+    protected void buyPriceInputController() {
         productEntryLabelBuyPrice.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.matches("^[0-9.]*$")) {
-                if (newValue.matches("^[0-9]+\\.([0-9]{0,2})")){
+                if (newValue.matches("^[0-9]+\\.([0-9]{0,2})")) {
                     System.out.println("input doğru ve noktalı");
 
-                } else if(newValue.matches("^[0-9]*\\.([0-9]*)\\.*") && productEntryLabelBuyPrice.getText().length() >= 2){
+                } else if (newValue.matches("^[0-9]*\\.([0-9]*)\\.*") && productEntryLabelBuyPrice.getText().length() >= 2) {
                     System.out.println("Harf silinecek");
-                    StringBuilder sb= new StringBuilder(newValue);
-                    sb.deleteCharAt(sb.length()-1);
+                    StringBuilder sb = new StringBuilder(newValue);
+                    sb.deleteCharAt(sb.length() - 1);
                     newValue = String.valueOf(sb);
                     productEntryLabelBuyPrice.setText(newValue);
                 }
@@ -430,16 +438,16 @@ public class MainScreen {
     }
 
     @FXML
-    protected void sellPriceInputController(){
+    protected void sellPriceInputController() {
         productEntryLabelSellPrice.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.matches("^[0-9.]*$")) {
-                if (newValue.matches("^[0-9]+\\.([0-9]{0,2})")){
+                if (newValue.matches("^[0-9]+\\.([0-9]{0,2})")) {
                     System.out.println("input doğru ve noktalı");
 
-                } else if(newValue.matches("^[0-9]*\\.([0-9]*)\\.*") && productEntryLabelSellPrice.getText().length() >= 2){
+                } else if (newValue.matches("^[0-9]*\\.([0-9]*)\\.*") && productEntryLabelSellPrice.getText().length() >= 2) {
                     System.out.println("Harf silinecek");
-                    StringBuilder sb= new StringBuilder(newValue);
-                    sb.deleteCharAt(sb.length()-1);
+                    StringBuilder sb = new StringBuilder(newValue);
+                    sb.deleteCharAt(sb.length() - 1);
                     newValue = String.valueOf(sb);
                     productEntryLabelSellPrice.setText(newValue);
                 }
@@ -450,7 +458,7 @@ public class MainScreen {
     }
 
     @FXML
-    protected void productAmountInputController(){
+    protected void productAmountInputController() {
         productEntryLabelPiece.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("^[0-9]*$")) {
                 productEntryLabelPiece.setText(newValue.replaceAll("[^\\d]", ""));
@@ -597,7 +605,7 @@ public class MainScreen {
             try {
                 productdb = ProductInteractions.getProduct(barcodeField.getText());
                 sellScreenTable.getItems().addAll(productdb);
-            } catch (NullPointerException e){
+            } catch (NullPointerException e) {
                 System.out.println("Bu barkod kayıtlı değil.");
             }
         }
@@ -757,10 +765,14 @@ public class MainScreen {
                 @Override
                 protected void updateItem(LogObject item, boolean empty) {
                     super.updateItem(item, empty);
-                    if (item != null && item.type.equals("SATIŞ")) setStyle("-fx-background-color: #79cc79");
-                     else if (item != null && item.type.equals("İADE")) setStyle("-fx-background-color: #e13359");
-                     else if (item != null && item.type.equals("STOK TANIMI")) setStyle("-fx-background-color: #71b6e5");
-                    else {
+                    if (item != null) {
+                        switch (item.type) {
+                            case "SATIŞ" -> setStyle("-fx-background-color: #79cc79");
+                            case "İADE" -> setStyle("-fx-background-color: #e13359");
+                            case "STOK TANIMI" -> setStyle("-fx-background-color: #71b6e5");
+                            default -> setStyle("");
+                        }
+                    } else {
                         setStyle("");
                     }
                 }
@@ -863,8 +875,9 @@ public class MainScreen {
             changePassStage.setOnCloseRequest(windowEvent -> onUserTabOpened());
         }
     }
+
     @FXML
-    protected void productsWithoutBarcodeButton(){
+    protected void productsWithoutBarcodeButton() {
         // TODO: BUNA FİKİR LAZIM NASI YAPACAZ OLM
 
     }

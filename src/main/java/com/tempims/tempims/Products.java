@@ -135,26 +135,41 @@ public class Products {
     public void init() {
         // FIXME: 2.09.2022 Aga ben halletcem burayı ellemeyin şimdilik iskontolara
         discount.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("^[+-]?[0-9]{1,9}(?:\\.[0-9]{1,2})?$")) {
-                if (newValue.charAt(newValue.length() - 1) == '.') {
+            if (newValue.matches("^[0-9.]*$")) {
+                if (newValue.matches("^[0-9]+\\.([0-9]{0,2})")) {
+                    System.out.println("input doğru ve noktalı");
+
+                } else if (newValue.matches("^[0-9]*\\.([0-9]*)\\.*") && discount.getText().length() >= 2) {
+                    System.out.println("Harf silinecek");
+                    StringBuilder sb = new StringBuilder(newValue);
+                    sb.deleteCharAt(sb.length() - 1);
+                    newValue = String.valueOf(sb);
                     discount.setText(newValue);
-                } else {
-                    discount.setText("");
                 }
+            } else {
+                discount.setText(newValue.replaceAll("[^\\d.]", ""));
             }
         });
         discountPercentage.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("^[+-]?[0-9]{1,9}(?:\\.[0-9]{1,2})?$")) {
-                if (newValue.charAt(newValue.length() - 1) == '.') {
+            if (newValue.matches("^[0-9.]*$")) {
+                if (newValue.matches("^[0-9]+\\.([0-9]{0,2})")) {
+                    System.out.println("input doğru ve noktalı");
+
+
+                } else if (newValue.matches("^[0-9]*\\.([0-9]*)\\.*") && discountPercentage.getText().length() >= 2) {
+                    System.out.println("Harf silinecek");
+                    StringBuilder sb = new StringBuilder(newValue);
+                    sb.deleteCharAt(sb.length() - 1);
+                    newValue = String.valueOf(sb);
                     discountPercentage.setText(newValue);
-                } else {
-                    discountPercentage.setText("");
-                    discount.setStyle("-fx-background-color: ALICEBLUE");
                 }
+            } else {
+                discountPercentage.setText(newValue.replaceAll("[^\\d.]", ""));
             }
         });
         discountPercentage.setOnKeyTyped(keyEvent -> {
             try {
+                //fixme arada bi hata veriyo neden bulamadın yarın sağlam kafayla bak
                 calculatedUnitSellPrice = (sellPriceDB - calculateDiscount());
                 discount.setText(String.valueOf(calculateDiscount()));
                 sellPriceLabel.setText(String.valueOf((unitSellPrice - Double.parseDouble(discount.getText())) * amount));

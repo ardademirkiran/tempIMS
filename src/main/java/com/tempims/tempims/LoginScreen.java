@@ -3,6 +3,7 @@ package com.tempims.tempims;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -19,6 +20,11 @@ public class LoginScreen {
     @FXML
     private Label warningLabel;
 
+    public void initialize() {
+        passwordField.setContextMenu(new ContextMenu());
+        usernameField.setContextMenu(new ContextMenu());
+    }
+
     public void loginButtonAction() throws IOException {
         int flag = UserInteractions.checkLogin(usernameField.getText(), passwordField.getText());
         if (flag == -1) {
@@ -30,11 +36,11 @@ public class LoginScreen {
             TextField[] textFields = {passwordField};
             invalidInputAction(textFields);
         } else {
-            if (Main.isFirstExec){
+            if (Main.isFirstExec) {
                 FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("FirstOpenScreen.fxml"));
                 Scene scene = new Scene(fxmlLoader.load());
                 Main.globalStage.setScene(scene);
-            }else {
+            } else {
                 FirstOpenScreen.openMainScreen();
             }
         }

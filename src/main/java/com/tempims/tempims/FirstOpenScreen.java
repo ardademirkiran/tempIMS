@@ -3,6 +3,7 @@ package com.tempims.tempims;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
@@ -15,6 +16,20 @@ public class FirstOpenScreen {
     public PasswordField passwordField;
     public TextField usernameField;
 
+    static void openMainScreen() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("MainScreen.fxml"));
+        Scene scene = new Scene(fxmlLoader.load());
+        Main.globalStage.setScene(scene);
+        Main.globalStage.setFullScreen(true);
+        Main.globalStage.setHeight(800);
+        Main.globalStage.setWidth(1100);
+    }
+
+    public void initialize() {
+        passwordFieldAgain.setContextMenu(new ContextMenu());
+        passwordField.setContextMenu(new ContextMenu());
+        usernameField.setContextMenu(new ContextMenu());
+    }
 
     public void signupButtonAction() throws IOException {
         int flag = UserInteractions.checkSignUp(usernameField.getText(), passwordField.getText(), passwordFieldAgain.getText(), "1111111");
@@ -26,21 +41,12 @@ public class FirstOpenScreen {
             System.out.println("Şifre ve şifre onayı birbiriyle eşleşmiyor.");
         } else if (companyName.getText().isEmpty()) {
             System.out.println("Şirket İsmi Boş Olamaz");
-        }else{
+        } else {
             MainScreen.companyName = companyName.getText();
             DBAccess.removeUser("admin");
-            UserInteractions.checkLogin(usernameField.getText(),passwordField.getText());
+            UserInteractions.checkLogin(usernameField.getText(), passwordField.getText());
             System.out.println("Yeni kullanıcı oluşturuldu.");
             openMainScreen();
         }
-    }
-
-    static void openMainScreen() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("MainScreen.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
-        Main.globalStage.setScene(scene);
-        Main.globalStage.setFullScreen(true);
-        Main.globalStage.setHeight(800);
-        Main.globalStage.setWidth(1100);
     }
 }
