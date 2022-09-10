@@ -199,14 +199,14 @@ public class MainScreen {
     @FXML
     public void initialize() {
         // FIXME: 9.09.2022 
-        barcodeInfo.setTooltip(createToolTip("Barkod ile ilgili bişeyler"));
-        brandInfo.setTooltip(createToolTip("Marka ile ilgili bişeyler"));
-        nameInfo.setTooltip(createToolTip("İsim ile ilgili bişeyler"));
-        amountInfo.setTooltip(createToolTip("Miktar ile ilgili bişeyler"));
-        taxInfo.setTooltip(createToolTip("Vergi ile ilgili bişeyler"));
-        buyPriceInfo.setTooltip(createToolTip("Alış Fiyatı ile ilgili bişeyler"));
-        buyPricePerAmountInfo.setTooltip(createToolTip("Ürün başına Alış Fiyatı ile ilgili bişeyler"));
-        sellPriceInfo.setTooltip(createToolTip("Satış fiyatı ile ilgili bişeyler"));
+        barcodeInfo.setTooltip(createToolTip("Tanımlanan ürünün barkodu bu alana yazılır."));
+        brandInfo.setTooltip(createToolTip("Ürünün ait olduğu marka bu alana yazılır."));
+        nameInfo.setTooltip(createToolTip("Ürünün adı bu alana yazılır."));
+        amountInfo.setTooltip(createToolTip("Tanımlanan ürünün giriş adeti bu alana yazılır."));
+        taxInfo.setTooltip(createToolTip("Ürünün KDV oranı bu alana yazılır."));
+        buyPriceInfo.setTooltip(createToolTip("Tanımlanan ürünün toplam alış fiyatı bu alana yazılır. Birim alış fiyatını uygulama otomatik olarak hesaplayacaktır."));
+        buyPricePerAmountInfo.setTooltip(createToolTip("Tanımlanan ürünün birim alış fiyatı, otomatik olarak hesaplanır."));
+        sellPriceInfo.setTooltip(createToolTip("Tanımlanan ürünün reyon satış fiyatı bu alana yazılır."));
         sellScreenTable.setPlaceholder(new Label("Bir ürün eklemeden satış veya iade yapamazsınız"));
         stockTable.setPlaceholder(new Label("Henüz bir ürün kaydı oluşturulmadı"));
         companyNameLabel.setText("Şirket: " + companyName);
@@ -396,65 +396,40 @@ public class MainScreen {
         }
     }
 
-    @FXML
-    protected void taxInputController() {
-        productEntryLabelTax.textProperty().addListener((observable, oldValue, newValue) -> {
+
+    static void inputController(TextField selectedTextField) {
+        selectedTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.matches("^[0-9.]*$")) {
                 if (newValue.matches("^[0-9]+\\.([0-9]{0,2})")) {
                     System.out.println("input doğru ve noktalı");
 
-                } else if (newValue.matches("^[0-9]*\\.([0-9]*)\\.*") && productEntryLabelTax.getText().length() >= 2) {
+                } else if (newValue.matches("^[0-9]*\\.([0-9]*)\\.*") && selectedTextField.getText().length() >= 2) {
                     System.out.println("Harf silinecek");
                     StringBuilder sb = new StringBuilder(newValue);
                     sb.deleteCharAt(sb.length() - 1);
                     newValue = String.valueOf(sb);
-                    productEntryLabelTax.setText(newValue);
+                    selectedTextField.setText(newValue);
                 }
             } else {
-                productEntryLabelTax.setText(newValue.replaceAll("[^\\d.]", ""));
+                selectedTextField.setText(newValue.replaceAll("[^\\d.]", ""));
             }
         });
     }
 
     @FXML
-    protected void buyPriceInputController() {
-        productEntryLabelBuyPrice.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.matches("^[0-9.]*$")) {
-                if (newValue.matches("^[0-9]+\\.([0-9]{0,2})")) {
-                    System.out.println("input doğru ve noktalı");
+    protected void taxInputController() {
+        inputController(productEntryLabelTax);
+    }
 
-                } else if (newValue.matches("^[0-9]*\\.([0-9]*)\\.*") && productEntryLabelBuyPrice.getText().length() >= 2) {
-                    System.out.println("Harf silinecek");
-                    StringBuilder sb = new StringBuilder(newValue);
-                    sb.deleteCharAt(sb.length() - 1);
-                    newValue = String.valueOf(sb);
-                    productEntryLabelBuyPrice.setText(newValue);
-                }
-            } else {
-                productEntryLabelBuyPrice.setText(newValue.replaceAll("[^\\d.]", ""));
-            }
-        });
+    @FXML
+    protected void buyPriceInputController() {
+        inputController(productEntryLabelBuyPrice);
         buyPriceKeyPressed();
     }
 
     @FXML
     protected void sellPriceInputController() {
-        productEntryLabelSellPrice.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.matches("^[0-9.]*$")) {
-                if (newValue.matches("^[0-9]+\\.([0-9]{0,2})")) {
-                    System.out.println("input doğru ve noktalı");
-
-                } else if (newValue.matches("^[0-9]*\\.([0-9]*)\\.*") && productEntryLabelSellPrice.getText().length() >= 2) {
-                    System.out.println("Harf silinecek");
-                    StringBuilder sb = new StringBuilder(newValue);
-                    sb.deleteCharAt(sb.length() - 1);
-                    newValue = String.valueOf(sb);
-                    productEntryLabelSellPrice.setText(newValue);
-                }
-            } else {
-                productEntryLabelSellPrice.setText(newValue.replaceAll("[^\\d.]", ""));
-            }
-        });
+        inputController(productEntryLabelSellPrice);
     }
 
     @FXML
