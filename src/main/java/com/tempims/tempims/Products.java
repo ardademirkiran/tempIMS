@@ -9,6 +9,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
+import java.util.Locale;
+
 public class Products {
     TextField discountPercentage = new TextField("0");
     TextField discount = new TextField("0");
@@ -119,46 +121,51 @@ public class Products {
     }
 
     private Double calculateDiscountPercentage() {
-        if (this.discount.getText().isEmpty()) {
-            return 0.0;
-        }
         return ((Double.parseDouble(this.discount.getText()) * 100) / this.unitSellPrice);
     }
 
     private Double calculateDiscount() {
-        if (this.discountPercentage.getText().isEmpty()) {
-            return 0.0;
-        }
         return (Double.parseDouble(this.discountPercentage.getText()) * this.unitSellPrice) / 100;
     }
 
+    protected void discountPercentageController(){
+            try{
+                Double discountNumber = calculateDiscount();
+                calculatedUnitSellPrice = (sellPriceDB - discountNumber);
+                discount.setText(String.valueOf(discountNumber));
+                sellPriceLabel.setText(String.format(Locale.ROOT, "%.2f",(unitSellPrice - Double.parseDouble(discount.getText())) * amount));
+                MainScreen.setLabelDisplay();
+            } catch (NumberFormatException exception){
+                discount.setText("0.00");
+                sellPriceLabel.setText(String.format(Locale.ROOT, "%.2f",sellPriceDB * amount));
+            }
+        }
+
+        protected void discountController(){
+                try {
+                    calculatedUnitSellPrice = (sellPriceDB - Double.parseDouble(discount.getText()));
+                    discountPercentage.setText(String.valueOf(calculateDiscountPercentage()));
+                    sellPriceLabel.setText(String.format(Locale.ROOT, "%.2f", (unitSellPrice - Double.parseDouble(discount.getText())) * amount));
+                    MainScreen.setLabelDisplay();
+                } catch (NumberFormatException exception){
+                    sellPriceLabel.setText(String.format(Locale.ROOT, "%.2f",sellPriceDB * amount));
+                }
+        }
+
+
     public void init() {
-        // FIXME: 2.09.2022 Aga ben halletcem burayı ellemeyin şimdilik iskontolara
         MainScreen.inputController(discount);
         MainScreen.inputController(discountPercentage);
         discountPercentage.setOnKeyTyped(keyEvent -> {
-            try {
-                //fixme arada bi hata veriyo neden bulamadın yarın sağlam kafayla bak
-                calculatedUnitSellPrice = (sellPriceDB - calculateDiscount());
-                discount.setText(String.valueOf(calculateDiscount()));
-                sellPriceLabel.setText(String.valueOf((unitSellPrice - Double.parseDouble(discount.getText())) * amount));
-                MainScreen.setLabelDisplay();
-            } catch (NumberFormatException e) {
-                discount.setText("");
-                sellPriceLabel.setText(String.valueOf(sellPriceDB));
-            }
+            discountPercentageController();
         });
         discount.setOnKeyTyped(keyEvent -> {
-            try {
-                calculatedUnitSellPrice = (sellPriceDB - Double.parseDouble(discount.getText()));
-                discountPercentage.setText(String.valueOf(calculateDiscountPercentage()));
-                sellPriceLabel.setText(String.valueOf((unitSellPrice - Double.parseDouble(discount.getText())) * amount));
-                MainScreen.setLabelDisplay();
-            } catch (NumberFormatException e) {
-                discount.setText("");
-                sellPriceLabel.setText(String.valueOf(sellPriceDB));
-            }
+            discountController();
         });
         sellPriceLabel.setText(String.valueOf((unitSellPrice - Double.parseDouble(discount.getText())) * amount));
+
+       // discountPercentage.setOnMouseReleased(e -> {if(discountPercentage.getText().isEmpty()){discountPercentage.setText("0.31");}});
+        //discount.setOnMouseReleased(e -> {if(discount.getText().isEmpty()){discount.setText("0.31");}});
+
     }
 }
