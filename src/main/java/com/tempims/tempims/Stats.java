@@ -67,7 +67,7 @@ public class Stats {
 
     }
 
-    public static double calculateProfit(Products product){
+    public static double calculateProfit(SellScreenProduct product){
         double unitBuyPrice = DBAccess.fetchUnitBuyingPrice(product.barcode); //sql part to get buyPrice per unit by using "product.barcode"
         double profitToAdd = product.amount * (product.calculatedUnitSellPrice - unitBuyPrice);
         return profitToAdd;
