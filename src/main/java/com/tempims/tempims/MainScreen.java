@@ -857,7 +857,6 @@ public class MainScreen {
         Stage productsWithoutBarcodeStage = new Stage();
         productsWithoutBarcodeStage.setTitle("Barkodsuz Ürün Seçimi");
         GridPane gridPane = new GridPane();
-        ArrayList<Product> tempProductsArrayList= new ArrayList<>();
         ArrayList<Product> allProductsArrayList = new ArrayList<>(ProductInteractions.createAllProducts());
         int sqrt = (int) Math.sqrt(allProductsArrayList.size()) + 1;
         for (int i = 0; i < sqrt; i++) {
@@ -873,46 +872,17 @@ public class MainScreen {
                     product.setOnAction(new EventHandler<ActionEvent>() {
                         @Override
                         public void handle(ActionEvent actionEvent) {
-                            tempProductsArrayList.add(ProductInteractions.getProduct(product.getId()));
+                            keyTypedAlgorithm((product.getId()));
                         }
                     });
                 } catch (IndexOutOfBoundsException ignored) {
                 }
             }
         }
-        Button set = new Button("Onayla");
-        Button cancel = new Button("İptal");
-        Label empty = new Label("");
-        empty.setPrefHeight(100);
-        GridPane.setConstraints(empty, sqrt, sqrt + 1);
-        gridPane.getChildren().add(empty);
-        GridPane.setConstraints(set, sqrt - 2, sqrt + 2);
-        GridPane.setConstraints(cancel, sqrt - 1, sqrt + 2);
-        gridPane.getChildren().add(set);
-        gridPane.getChildren().add(cancel);
-        GridPane.setMargin(set, new Insets(10));
-        set.setPrefHeight(30);
-        set.setPrefWidth(200);
-        GridPane.setMargin(cancel, new Insets(10));
-        cancel.setPrefHeight(30);
-        cancel.setPrefWidth(200);
         Scene productsWithoutBarcodeScene = new Scene(gridPane);
         productsWithoutBarcodeStage.setScene(productsWithoutBarcodeScene);
+        productsWithoutBarcodeStage.setAlwaysOnTop(true);
         productsWithoutBarcodeStage.show();
-        set.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                for (Product products : tempProductsArrayList) {
-                    keyTypedAlgorithm(products.barcode);
-                }
-                productsWithoutBarcodeStage.close();
-            }
-        });
-        cancel.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                productsWithoutBarcodeStage.close();
-            }
-        });
+
     }
 }
