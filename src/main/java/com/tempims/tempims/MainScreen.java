@@ -31,10 +31,10 @@ import java.util.*;
 
 public class MainScreen {
 
-    public static TableColumn<Products, Label> lastPriceCollumnstatic;
-    public static TableView<Products> sellScreenTablestatic;
-    public static TableColumn<Products, TextField> discountCollumnstatic;
-    public static TableColumn<Products, Integer> kdvCollumnstatic;
+    public static TableColumn<SellScreenProduct, Label> lastPriceCollumnstatic;
+    public static TableView<SellScreenProduct> sellScreenTablestatic;
+    public static TableColumn<SellScreenProduct, TextField> discountCollumnstatic;
+    public static TableColumn<SellScreenProduct, Integer> kdvCollumnstatic;
     public static Label totalDiscountLabelstatic;
     public static Label totalPriceLabelstatic;
     public static Label totalTaxLabelstatic;
@@ -44,14 +44,14 @@ public class MainScreen {
     public Tab statisticsTab;
     public PieChart pieChart;
     public Label username;
-    public TableView<Products> sellScreenTable;
-    public TableColumn<Products, String> barcodeCollumn;
-    public TableColumn<Products, String> nameCollumn;
-    public TableColumn<Products, Integer> amountCollumn;
-    public TableColumn<Products, Integer> kdvCollumn;
-    public TableColumn<Products, TextField> percentageDiscountCollumn;
-    public TableColumn<Products, TextField> discountCollumn;
-    public TableColumn<Products, Label> lastPriceCollumn;
+    public TableView<SellScreenProduct> sellScreenTable;
+    public TableColumn<SellScreenProduct, String> barcodeCollumn;
+    public TableColumn<SellScreenProduct, String> nameCollumn;
+    public TableColumn<SellScreenProduct, Integer> amountCollumn;
+    public TableColumn<SellScreenProduct, Integer> kdvCollumn;
+    public TableColumn<SellScreenProduct, TextField> percentageDiscountCollumn;
+    public TableColumn<SellScreenProduct, TextField> discountCollumn;
+    public TableColumn<SellScreenProduct, Label> lastPriceCollumn;
     public TextField barcodeField;
     public Tab sellScreenTab;
     public Tab buyScreenTab;
@@ -70,16 +70,16 @@ public class MainScreen {
     public Label totalTaxLabel;
     public TabPane tabpane;
     public Label subTotalLabel;
-    public TableView<AllProducts> stockTable;
-    public TableColumn<AllProducts, String> stockCollumnBarcode;
-    public TableColumn<AllProducts, String> stockCollumnBrand;
-    public TableColumn<AllProducts, String> stockCollumnName;
-    public TableColumn<AllProducts, Integer> stockCollumnAmont;
-    public TableColumn<AllProducts, Integer> stockCollumnTax;
-    public TableColumn<AllProducts, Double> stockCollumnUnitBuy;
-    public TableColumn<AllProducts, Double> stockCollumnUnitSell;
-    public TableColumn<AllProducts, Double> stockCollumnExpectedProfit;
-    public TableColumn<AllProducts, Button> stockCollumnAddList;
+    public TableView<StockViewProduct> stockTable;
+    public TableColumn<StockViewProduct, String> stockCollumnBarcode;
+    public TableColumn<StockViewProduct, String> stockCollumnBrand;
+    public TableColumn<StockViewProduct, String> stockCollumnName;
+    public TableColumn<StockViewProduct, Integer> stockCollumnAmont;
+    public TableColumn<StockViewProduct, Integer> stockCollumnTax;
+    public TableColumn<StockViewProduct, Double> stockCollumnUnitBuy;
+    public TableColumn<StockViewProduct, Double> stockCollumnUnitSell;
+    public TableColumn<StockViewProduct, Double> stockCollumnExpectedProfit;
+    public TableColumn<StockViewProduct, Button> stockCollumnAddList;
     public Tab logTab;
     public AnchorPane stockControlPane;
     public TableView<LogObject> historyTable;
@@ -126,7 +126,7 @@ public class MainScreen {
         totalTaxLabelstatic.setText(String.valueOf(0));
         subTotalLabelstatic.setText(String.valueOf(0));
 
-        for (Products item : sellScreenTablestatic.getItems()) {
+        for (SellScreenProduct item : sellScreenTablestatic.getItems()) {
             totalprice += Double.parseDouble(lastPriceCollumnstatic.getCellObservableValue(item).getValue().getText());
             totaldiscount += Double.parseDouble(discountCollumnstatic.getCellObservableValue(item).getValue().getText()) * item.amount;
             subtotal += Double.parseDouble(lastPriceCollumnstatic.getCellObservableValue(item).getValue().getText()) / (1 + kdvCollumnstatic.getCellObservableValue(item).getValue() / 100.0);
@@ -141,11 +141,11 @@ public class MainScreen {
     protected void sellButtonClicked() throws IOException {
         String totalpricelabeltext = totalPriceLabel.getText();
         if (sellScreenTable.getItems().size() > 0) {
-            Products[] productsList = sellScreenTable.getItems().toArray(new Products[0]);
+            SellScreenProduct[] sellScreenProductList = sellScreenTable.getItems().toArray(new SellScreenProduct[0]);
             cancelButtonClicked();
             double totalProfit = 0;
             String midText = "";
-            for (Products product : productsList) {
+            for (SellScreenProduct product : sellScreenProductList) {
                 double profitToAdd = Stats.calculateProfit(product);
                 DBAccess.updateStock(product.barcode, -product.amount);
                 DBAccess.amendProfit(product.barcode, profitToAdd);
@@ -162,10 +162,10 @@ public class MainScreen {
     protected void returnButtonClicked() throws IOException {
         String totalpricelabeltext = totalPriceLabel.getText();
         if (sellScreenTable.getItems().size() > 0) {
-            Products[] productsList = sellScreenTable.getItems().toArray(new Products[0]);
+            SellScreenProduct[] sellScreenProductList = sellScreenTable.getItems().toArray(new SellScreenProduct[0]);
             cancelButtonClicked();
             String midText = "";
-            for (Products product : productsList) {
+            for (SellScreenProduct product : sellScreenProductList) {
                 double profitToAdd = Stats.calculateProfit(product);
                 DBAccess.updateStock(product.barcode, product.amount);
                 DBAccess.amendProfit(product.barcode, -profitToAdd);
@@ -250,7 +250,7 @@ public class MainScreen {
         toggleSwitchStock.switchOnProperty().addListener((a, b, c) -> {
             if (c) {
                 stockTable.getItems().removeAll(stockTable.getItems());
-                stockTable.getItems().addAll(AllProducts.buyArray);
+                stockTable.getItems().addAll(StockViewProduct.buyArray);
                 stockCollumnAddList.setVisible(false);
             } else {
                 stockTable.getItems().removeAll(stockTable.getItems());
@@ -341,14 +341,14 @@ public class MainScreen {
                 CustomMenuItem menuItem = new CustomMenuItem(label, true);
                 menuItem.setOnAction(actionEvent -> {
                     productEntryLabelBarcode.setText(label.getText());
-                    final AllProducts[] products = new AllProducts[1];
-                    ProductInteractions.createAllProducts().forEach(allProducts -> products[0] = (allProducts.getbarcode().getValue().equals(label.getText()) ? allProducts : products[0]));
-                    productEntryLabelBarcode.setText(products[0].getbarcode().getValue());
-                    productEntryLabelPrice.setText(String.valueOf(products[0].getunitbuy().getValue()));
-                    productEntryLabelBrand.setText(products[0].getbrand().getValue());
-                    productEntryLabelName.setText(products[0].getname().getValue());
-                    productEntryLabelTax.setText(String.valueOf(products[0].gettax().getValue()));
-                    productEntryLabelSellPrice.setText(String.valueOf(products[0].getunitsell().getValue()));
+                    final StockViewProduct[] products = new StockViewProduct[1];
+                    ProductInteractions.createAllProducts().forEach(allProducts -> products[0] = (allProducts.getBarcode().getValue().equals(label.getText()) ? allProducts : products[0]));
+                    productEntryLabelBarcode.setText(products[0].getBarcode().getValue());
+                    productEntryLabelPrice.setText(String.valueOf(products[0].getUnitBuyPrice().getValue()));
+                    productEntryLabelBrand.setText(products[0].getBrand().getValue());
+                    productEntryLabelName.setText(products[0].getName().getValue());
+                    productEntryLabelTax.setText(String.valueOf(products[0].getTax().getValue()));
+                    productEntryLabelSellPrice.setText(String.valueOf(products[0].getUnitSellPrice().getValue()));
                     productEntryBarcodeContextMenu.hide();
                 });
                 productEntryBarcodeContextMenu.getItems().add(menuItem);
@@ -361,10 +361,10 @@ public class MainScreen {
         ArrayList<String> barcodes = new ArrayList<>();
         int size = barcodeeverwritten.length();
 
-        for (AllProducts allproducts : ProductInteractions.createAllProducts()) {
-            if (allproducts.getbarcode().getValue().length() >= size) {
-                if (allproducts.getbarcode().getValue().substring(0, size).equals(barcodeeverwritten)) {
-                    barcodes.add(allproducts.getbarcode().getValue());
+        for (StockViewProduct allproducts : ProductInteractions.createAllProducts()) {
+            if (allproducts.getBarcode().getValue().length() >= size) {
+                if (allproducts.getBarcode().getValue().substring(0, size).equals(barcodeeverwritten)) {
+                    barcodes.add(allproducts.getBarcode().getValue());
                 }
             }
         }
@@ -470,8 +470,8 @@ public class MainScreen {
     }
 
     public void refreshTableData() {
-        for (Products pro : sellScreenTable.getItems()) {
-            pro.init();
+        for (SellScreenProduct pro : sellScreenTable.getItems()) {
+            pro.controlDiscountFields();
         }
 
         amountCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().getAmount()));
@@ -502,7 +502,7 @@ public class MainScreen {
         removeItem.setOnAction(actionEvent -> {
             sellScreenTable.getItems().remove(sellScreenTable.getSelectionModel().getSelectedItem());
             if (sellScreenTable.getSelectionModel().getSelectedItem() != null) {
-                sellScreenTable.getSelectionModel().getSelectedItem().init();
+                sellScreenTable.getSelectionModel().getSelectedItem().controlDiscountFields();
             }
             refreshTableData();
             init();
@@ -518,14 +518,14 @@ public class MainScreen {
         if (tabpane.getSelectionModel().getSelectedItem().equals(stockControlTab)) {
             toggleSwitchStock.switchOnProperty().set(false);
             stockTable.getItems().removeAll(stockTable.getItems());
-            stockCollumnBarcode.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getbarcode());
-            stockCollumnAmont.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getamont());
-            stockCollumnBrand.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getbrand());
-            stockCollumnName.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getname());
-            stockCollumnTax.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().gettax());
-            stockCollumnUnitBuy.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getunitbuy());
-            stockCollumnUnitSell.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getunitsell());
-            stockCollumnExpectedProfit.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getprofit());
+            stockCollumnBarcode.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getBarcode());
+            stockCollumnAmont.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getAmount());
+            stockCollumnBrand.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getBrand());
+            stockCollumnName.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getName());
+            stockCollumnTax.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getTax());
+            stockCollumnUnitBuy.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getUnitBuyPrice());
+            stockCollumnUnitSell.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getUnitSellPrice());
+            stockCollumnExpectedProfit.setCellValueFactory(allProductsStringCellDataFeatures -> allProductsStringCellDataFeatures.getValue().getProfit());
             stockCollumnAddList.setCellValueFactory(allProductsButtonCellDataFeatures -> allProductsButtonCellDataFeatures.getValue().getButton());
             stockTable.getItems().removeAll(stockTable.getItems());
             stockTable.getItems().addAll(ProductInteractions.createAllProducts());
@@ -535,14 +535,14 @@ public class MainScreen {
     @FXML
     public void stockDisplayDoubleClick(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 2 & stockTable.getSelectionModel().getSelectedItem() != null) {
-            AllProducts selectedproduct = stockTable.getSelectionModel().getSelectedItem();
+            StockViewProduct selectedproduct = stockTable.getSelectionModel().getSelectedItem();
             tabpane.getSelectionModel().select(buyScreenTab);
-            productEntryLabelBarcode.setText(selectedproduct.getbarcode().getValue());
-            productEntryLabelPrice.setText(String.valueOf(selectedproduct.getunitbuy().getValue()));
-            productEntryLabelBrand.setText(selectedproduct.getbrand().getValue());
-            productEntryLabelName.setText(selectedproduct.getname().getValue());
-            productEntryLabelTax.setText(String.valueOf(selectedproduct.gettax().getValue()));
-            productEntryLabelSellPrice.setText(String.valueOf(selectedproduct.getunitsell().getValue()));
+            productEntryLabelBarcode.setText(selectedproduct.getBarcode().getValue());
+            productEntryLabelPrice.setText(String.valueOf(selectedproduct.getUnitBuyPrice().getValue()));
+            productEntryLabelBrand.setText(selectedproduct.getBrand().getValue());
+            productEntryLabelName.setText(selectedproduct.getName().getValue());
+            productEntryLabelTax.setText(String.valueOf(selectedproduct.getTax().getValue()));
+            productEntryLabelSellPrice.setText(String.valueOf(selectedproduct.getUnitSellPrice().getValue()));
         }
     }
 
@@ -566,9 +566,9 @@ public class MainScreen {
 
     private void keyTypedAlgorithm() {
         boolean find = false;
-        Products productdb;
+        SellScreenProduct productdb;
         if (sellScreenTable.getItems().size() > 0) {
-            for (Products pro : sellScreenTable.getItems()) {
+            for (SellScreenProduct pro : sellScreenTable.getItems()) {
                 if (Objects.equals(pro.barcode, barcodeField.getText())) {
                     pro.amount++;
                     pro.sellPriceLabel.setText(String.valueOf((pro.unitSellPrice - Double.parseDouble(pro.discount.getText())) * pro.amount));

@@ -12,23 +12,24 @@ public class ProductInteractions {
     }
 
 
-    public static Products getProduct(String barcode) {
+    public static SellScreenProduct getProduct(String barcode) {
         String[] productInfo = (DBAccess.newProductInfo(barcode)).split(":");
-        String name = productInfo[0]; //sql part to get name
         String brand = productInfo[1];
-        int tax = Integer.parseInt(productInfo[2]); //sql part to get tax
-        double sellprice = Double.parseDouble(productInfo[3]);//sql part to get sellprice
+        String name = productInfo[2]; //sql part to get name
+        int productNumber = Integer.parseInt(productInfo[3]);
+        int tax = Integer.parseInt(productInfo[4]); //sql part to get tax
+        double unitBuyPrice = Double.parseDouble(productInfo[5]);
+        double totalBuyPrice = Double.parseDouble(productInfo[6]);
+        double unitSellPrice =  Double.parseDouble(productInfo[7]);
 
-        return new Products(barcode, name, brand, tax, sellprice);
+        return new SellScreenProduct(barcode, brand, name, productNumber, tax, unitBuyPrice, totalBuyPrice, unitSellPrice);
     }
-    public static ArrayList<AllProducts> createAllProducts(){
-        ArrayList<AllProducts> allProducts = new ArrayList<>();
+    public static ArrayList<StockViewProduct> createAllProducts(){
+        ArrayList<StockViewProduct> allProducts = new ArrayList<>();
         ResultSet rs = DBAccess.fetchProducts("stockView");
         try {
             while (rs.next()) {
-                allProducts.add(new AllProducts(rs.getString("BARCODE"), rs.getString("BRAND"), rs.getString("NAME"),
-                        String.valueOf(rs.getInt("PRODUCT_NUMBER")), String.valueOf(rs.getInt("TAX")),
-                        String.valueOf(rs.getDouble("UNIT_BUYING_PRICE")), String.valueOf(rs.getDouble("UNIT_SELLING_PRICE"))));
+                allProducts.add(new StockViewProduct(rs.getString("BARCODE"), rs.getString("BRAND"), rs.getString("NAME"), rs.getInt("PRODUCT_NUMBER"), rs.getInt("TAX"), rs.getDouble("UNIT_BUYING_PRICE"), rs.getDouble("TOTAL_BUYING_PRICE"), rs.getDouble("UNIT_SELLING_PRICE")));
             }
         }
         catch (SQLException e){

@@ -11,28 +11,25 @@ import javafx.scene.control.TextField;
 
 import java.util.Locale;
 
-public class Products {
+public class SellScreenProduct extends Product{
     TextField discountPercentage = new TextField("0");
     TextField discount = new TextField("0");
     Label sellPriceLabel = new Label("");
-    int amount, tax;
-    Double unitSellPrice;
+    int amount;
     Double calculatedUnitSellPrice;
     Double sellPriceDB;
-    String name, barcode;
+    String displayName;
 
-    Products(String barcode, String name, String brand, Integer tax, Double sellpricedb) {
-        this.name = brand + " " + name;
-        this.barcode = barcode;
-        this.unitSellPrice = sellpricedb;
-        this.sellPriceDB = sellpricedb;
-        this.calculatedUnitSellPrice = sellpricedb;
-        this.tax = tax;
+    SellScreenProduct(String barcode, String brand, String name, int number, int tax, double unitBuyPrice, double totalBuyPrice, double unitSellPrice) {
+        super(barcode, brand, name, number, tax, unitBuyPrice, totalBuyPrice, unitSellPrice);
+        this.displayName = brand + " " + name;
+        this.sellPriceDB = unitSellPrice;
+        this.calculatedUnitSellPrice = unitSellPrice;
         this.amount = 1;
-        this.sellPriceLabel.setText(String.valueOf(sellpricedb));
-        init();
-        discount.setPromptText("0");
-        discountPercentage.setPromptText("0");
+        this.sellPriceLabel.setText(String.valueOf(unitSellPrice));
+        controlDiscountFields();
+        discount.setPromptText("0.00");
+        discountPercentage.setPromptText("0.00");
         discount.setStyle("-fx-font-size: 25");
         discountPercentage.setStyle("-fx-font-size: 25");
         sellPriceLabel.setStyle("-fx-font-size: 25");
@@ -153,7 +150,7 @@ public class Products {
         }
 
 
-    public void init() {
+    public void controlDiscountFields() {
         MainScreen.inputController(discount);
         MainScreen.inputController(discountPercentage);
         discountPercentage.setOnKeyTyped(keyEvent -> {
