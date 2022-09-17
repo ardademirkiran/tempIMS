@@ -3,6 +3,8 @@ package com.tempims.tempims;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
@@ -198,7 +200,6 @@ public class MainScreen {
 
     @FXML
     public void initialize() {
-        // FIXME: 9.09.2022 
         barcodeInfo.setTooltip(createToolTip("Tanımlanan ürünün barkodu bu alana yazılır."));
         brandInfo.setTooltip(createToolTip("Ürünün ait olduğu marka bu alana yazılır."));
         nameInfo.setTooltip(createToolTip("Ürünün adı bu alana yazılır."));
@@ -392,7 +393,7 @@ public class MainScreen {
     protected void barcodeFieldKeyTyped(KeyEvent keyEvent) {
         byte[] enter = {13};
         if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(enter))) {
-            keyTypedAlgorithm();
+            keyTypedAlgorithm(barcodeField.getText());
         }
     }
 
@@ -552,7 +553,7 @@ public class MainScreen {
             byte[] enter = {13};
             byte[] back = {8};
             if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(enter))) {
-                keyTypedAlgorithm();
+                keyTypedAlgorithm(barcodeField.getText());
             } else if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(back))) {
                 String prebarcode = barcodeField.getText();
                 prebarcode = prebarcode.substring(0, prebarcode.length() - 1);
@@ -564,12 +565,12 @@ public class MainScreen {
         }
     }
 
-    private void keyTypedAlgorithm() {
+    private void keyTypedAlgorithm(String Barcode) {
         boolean find = false;
         SellScreenProduct productdb;
         if (sellScreenTable.getItems().size() > 0) {
             for (SellScreenProduct pro : sellScreenTable.getItems()) {
-                if (Objects.equals(pro.barcode, barcodeField.getText())) {
+                if (Objects.equals(pro.barcode, Barcode)) {
                     pro.amount++;
                     pro.sellPriceLabel.setText(String.valueOf((pro.unitSellPrice - Double.parseDouble(pro.discount.getText())) * pro.amount));
                     find = true;
@@ -578,7 +579,7 @@ public class MainScreen {
         }
         if (!find) {
             try {
-                productdb = ProductInteractions.getProduct(barcodeField.getText());
+                productdb = ProductInteractions.getProduct(Barcode);
                 sellScreenTable.getItems().addAll(productdb);
             } catch (NullPointerException e) {
                 System.out.println("Bu barkod kayıtlı değil.");
@@ -853,7 +854,65 @@ public class MainScreen {
 
     @FXML
     protected void productsWithoutBarcodeButton() {
-        // TODO: BUNA FİKİR LAZIM NASI YAPACAZ OLM
-
+        Stage productsWithoutBarcodeStage = new Stage();
+        productsWithoutBarcodeStage.setTitle("Barkodsuz Ürün Seçimi");
+        GridPane gridPane = new GridPane();
+        ArrayList<Product> tempProductsArrayList= new ArrayList<>();
+        ArrayList<Product> allProductsArrayList = new ArrayList<>(ProductInteractions.createAllProducts());
+        int sqrt = (int) Math.sqrt(allProductsArrayList.size()) + 1;
+        for (int i = 0; i < sqrt; i++) {
+            for (int j = 0; j < sqrt; j++) {
+                try {
+                    Button product = new Button(allProductsArrayList.get(i * sqrt + (j)).brand + " " + allProductsArrayList.get(i * sqrt + (j)).name);
+                    product.setId(allProductsArrayList.get(i * sqrt + (j)).barcode);
+                    product.setPrefHeight(30);
+                    product.setPrefWidth(200);
+                    GridPane.setConstraints(product, j, i);
+                    gridPane.getChildren().add(product);
+                    GridPane.setMargin(product, new Insets(10));
+                    product.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent actionEvent) {
+                            tempProductsArrayList.add(ProductInteractions.getProduct(product.getId()));
+                        }
+                    });
+                } catch (IndexOutOfBoundsException ignored) {
+                }
+            }
+        }
+        Button set = new Button("Onayla");
+        Button cancel = new Button("İptal");
+        Label empty = new Label("");
+        empty.setPrefHeight(100);
+        GridPane.setConstraints(empty, sqrt, sqrt + 1);
+        gridPane.getChildren().add(empty);
+        GridPane.setConstraints(set, sqrt - 2, sqrt + 2);
+        GridPane.setConstraints(cancel, sqrt - 1, sqrt + 2);
+        gridPane.getChildren().add(set);
+        gridPane.getChildren().add(cancel);
+        GridPane.setMargin(set, new Insets(10));
+        set.setPrefHeight(30);
+        set.setPrefWidth(200);
+        GridPane.setMargin(cancel, new Insets(10));
+        cancel.setPrefHeight(30);
+        cancel.setPrefWidth(200);
+        Scene productsWithoutBarcodeScene = new Scene(gridPane);
+        productsWithoutBarcodeStage.setScene(productsWithoutBarcodeScene);
+        productsWithoutBarcodeStage.show();
+        set.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                for (Product products : tempProductsArrayList) {
+                    keyTypedAlgorithm(products.barcode);
+                }
+                productsWithoutBarcodeStage.close();
+            }
+        });
+        cancel.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                productsWithoutBarcodeStage.close();
+            }
+        });
     }
 }
