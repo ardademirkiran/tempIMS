@@ -25,11 +25,6 @@
                 <Insets />
             </VBox.margin>
         </PasswordField>
-        <Label focusTraversable="false" onMouseClicked="#forgetPassword" text="Şifremi Unuttum">
-            <VBox.margin>
-                <Insets left="90.0" />
-            </VBox.margin>
-        </Label>
         <Label fx:id="warningLabel" text="Label" textAlignment="CENTER" visible="false" />
         <HBox alignment="BOTTOM_CENTER" prefHeight="60.0" prefWidth="590.0">
             <children>
