@@ -3,8 +3,6 @@ package com.tempims.tempims;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
@@ -869,12 +867,7 @@ public class MainScreen {
                     GridPane.setConstraints(product, j, i);
                     gridPane.getChildren().add(product);
                     GridPane.setMargin(product, new Insets(10));
-                    product.setOnAction(new EventHandler<ActionEvent>() {
-                        @Override
-                        public void handle(ActionEvent actionEvent) {
-                            keyTypedAlgorithm((product.getId()));
-                        }
-                    });
+                    product.setOnAction(actionEvent -> keyTypedAlgorithm((product.getId())));
                 } catch (IndexOutOfBoundsException ignored) {
                 }
             }
