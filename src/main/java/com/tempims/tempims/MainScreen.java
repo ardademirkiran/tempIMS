@@ -148,7 +148,12 @@ public class MainScreen {
             for (SellScreenProduct product : sellScreenProductList) {
                 double profitToAdd = Stats.calculateProfit(product);
                 DBAccess.updateStock(product.barcode, -product.amount);
-                DBAccess.amendProfit(product.barcode, profitToAdd);
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate date = LocalDate.parse(dateLabel.getText(), formatter);
+
+                DBAccess.amendProfit(String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonth()),
+                        String.valueOf(date.getYear()), product.barcode, product.name, profitToAdd);
                 midText += product.amount + "x" + product.name + "/-";
                 totalProfit += profitToAdd;
             }
@@ -168,7 +173,12 @@ public class MainScreen {
             for (SellScreenProduct product : sellScreenProductList) {
                 double profitToAdd = Stats.calculateProfit(product);
                 DBAccess.updateStock(product.barcode, product.amount);
-                DBAccess.amendProfit(product.barcode, -profitToAdd);
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate date = LocalDate.parse(dateLabel.getText(), formatter);
+
+                DBAccess.amendProfit(String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonth()),
+                        String.valueOf(date.getYear()), product.barcode, product.name, -profitToAdd);
                 midText += product.amount + "x" + product.name + "/-";
             }
             ProcessLogs.recordReturnProcess(midText, Double.parseDouble(totalpricelabeltext));
@@ -638,11 +648,11 @@ public class MainScreen {
             //dateOfLabel.getMonthValue();
             //dateOfLabel.getYear();
 
-            //sql part to get sales records with matching day, month, year values with dateOfLabel and put them into an ArrayList<SalesObject> salesObjects
+            ArrayList<SalesObject> salesObjects = DBAccess.createSalesObjects("daily", dateOfLabel);
             //setPieChart(Stats.createPieChartData(salesObjects));
             setPieChart(Stats.createDailyPieChartInfo());
         } else {
-            //sql part to get sales records with matching month, year values with dateOfLabel and put them into an ArrayList<SalesObject> salesObjects
+            ArrayList<SalesObject> salesObjects = DBAccess.createSalesObjects("monthly", dateOfLabel);
             //setPieChart(Stats.createPieChartData(salesObjects));
             setPieChart(Stats.createMonthlyPieChartInfo());
         }
@@ -651,13 +661,16 @@ public class MainScreen {
     public void initLineData(Boolean isMonthly) {
         stackedBarChart.getData().removeAll(stackedBarChart.getData());
         LinkedHashMap<String, Double> datesAndProfits = DBAccess.barChartValues();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate dateOfLabel = LocalDate.parse(dateLabel.getText(), formatter);
         if (isMonthly) {
-            //sql part to get sales records with matching month, year values and put them into an ArrayList<SalesObject> salesObjects
+            ArrayList<SalesObject> salesObjects = DBAccess.createSalesObjects("monthly", dateOfLabel);
             //setBarChart(Stats.createLineChartData(salesObjects, isMonthly));
             setBarChart(datesAndProfits);
         } else {
-            //sql part to get sales records with matching year values and put them into an ArrayList<SalesObject> salesObjects
-            //setBarChart(Stats.createLineChartData(salesObjects, isMonthly));
+            //sql part to get sales records with matching YEAR values and put them into an ArrayList<SalesObject> salesObjects
+            ArrayList<SalesObject> salesObjects = DBAccess.createSalesObjects("annual", dateOfLabel);
+            //setBarChart(Stats.createLineChartData(salesObjects, isMonthly ???));
             HashMap<String, Double> barChartData = Stats.calculateMonthlyProfits(datesAndProfits);
             setBarChart(barChartData);
 

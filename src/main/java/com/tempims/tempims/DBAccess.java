@@ -45,9 +45,9 @@ public class DBAccess {
                     + " TAX TINYINT(127),\n"
                     + " UNIT_BUYING_PRICE DECIMAL(32,2),\n"
                     + " TOTAL_BUYING_PRICE DECIMAL(32,2),\n"
-                    + " UNIT_SELLING_PRICE DECIMAL(32,2),\n"
-                    + " PROFIT_RETURN DECIMAL(32,2),\n"
-                    + " DAILY_PROFIT_RETURN DECIMAL(32,2)\n"
+                    + " UNIT_SELLING_PRICE DECIMAL(32,2)\n"
+                    /*+ " PROFIT_RETURN DECIMAL(32,2),\n"
+                    + " DAILY_PROFIT_RETURN DECIMAL(32,2)\n"*/
                     + ");";
             Statement stmt = conn.createStatement();
             stmt.execute(sql);
@@ -59,7 +59,11 @@ public class DBAccess {
     protected static void createProfitTable(Connection conn) {
         try {
             String sql = "CREATE TABLE IF NOT EXISTS PROFITS (\n"
-                    + " DATE CHAR(127) PRIMARY KEY,\n"
+                    + " DAY CHAR(127),\n"
+                    + " MONTH CHAR(127),\n"
+                    + " YEAR CHAR(127),\n"
+                    + " PRODUCT_BARCODE CHAR(127),\n"
+                    + " PRODUCT_NAME CHAR(127),\n"
                     + " GROSS_PROFIT DECIMAL(32,2)\n"
                     + ");";
             Statement stmt = conn.createStatement();
@@ -280,12 +284,15 @@ public class DBAccess {
         return 0;
     }
 
-    protected static void amendProfit(String barcode, double newProfit){
+    protected static void amendProfit(String day, String month, String year, String barcode, String name, double newProfit){
         Connection conn = connect();
         try{
-            String sql = String.format(Locale.ROOT,"UPDATE PRODUCTS SET PROFIT_RETURN = PROFIT_RETURN + '%,.2f', DAILY_PROFIT_RETURN = DAILY_PROFIT_RETURN + '%,.2f' WHERE BARCODE = '%s'",newProfit,newProfit,barcode);
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate(sql);
+            //String sql = String.format(Locale.ROOT,"UPDATE PRODUCTS SET PROFIT_RETURN = PROFIT_RETURN + '%,.2f', DAILY_PROFIT_RETURN = DAILY_PROFIT_RETURN + '%,.2f' WHERE BARCODE = '%s'",newProfit,newProfit,barcode);
+            String sql = "INSERT INTO PROFITS (DAY, MONTH, YEAR, PRODUCT_BARCODE, PRODUCT_NAME, GROSS_PROFIT) VALUES (?,?,?,?,?,?)";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, day); pstmt.setString(2, month); pstmt.setString(3, year);
+            pstmt.setString(4, barcode); pstmt.setString(5, name); pstmt.setDouble(6,newProfit);
+            pstmt.executeUpdate();
         }
         catch (SQLException e){
             e.printStackTrace(System.out);
@@ -592,5 +599,47 @@ public class DBAccess {
             }
         }
         return info;
+    }
+
+    protected static ArrayList<SalesObject> createSalesObjects(String queryFilter, LocalDate date){
+        ArrayList<SalesObject> salesObjects = new ArrayList<>();
+        Connection conn = connect();
+        try{
+            ResultSet rs = null;
+            if(queryFilter.equals("daily")){
+                String sql = String.format(Locale.ROOT,"SELECT PRODUCT_NAME, GROSS_PROFIT FROM FROM PROFITS WHERE DAY = '%s' AND MONTH = '%s' AND YEAR = '%s'",
+                        String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonth()), String.valueOf(date.getYear()));
+                Statement stmt = conn.createStatement();
+                rs = stmt.executeQuery(sql);
+            }
+            else if(queryFilter.equals("monthly")){
+                String sql = String.format(Locale.ROOT,"SELECT PRODUCT_NAME, GROSS_PROFIT FROM FROM PROFITS WHERE MONTH = '%s' AND YEAR = '%s'",
+                        String.valueOf(date.getMonth()), String.valueOf(date.getYear()));
+                Statement stmt = conn.createStatement();
+                rs = stmt.executeQuery(sql);
+            }
+            else if(queryFilter.equals("annual")){
+                String sql = String.format(Locale.ROOT,"SELECT PRODUCT_NAME, GROSS_PROFIT FROM FROM PROFITS WHERE YEAR = '%s'",
+                        String.valueOf(date.getYear()));
+                Statement stmt = conn.createStatement();
+                rs = stmt.executeQuery(sql);
+            }
+            while(rs.next()){
+                salesObjects.add(new SalesObject(date, rs.getString("PRODUCT_NAME"), rs.getDouble("GROSS_PROFIT")));
+            }
+            return salesObjects;
+        }
+        catch(SQLException e){
+            e.printStackTrace(System.out);
+        }
+        finally{
+            try{
+                conn.close();
+            }
+            catch(SQLException e){
+                e.printStackTrace(System.out);
+            }
+        }
+        return salesObjects;
     }
 }
