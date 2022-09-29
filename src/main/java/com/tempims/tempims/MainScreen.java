@@ -26,6 +26,7 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -150,15 +151,14 @@ public class MainScreen {
                 DBAccess.updateStock(product.barcode, -product.amount);
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                LocalDate date = LocalDate.parse(dateLabel.getText(), formatter);
+                LocalDate date = java.time.LocalDate.now();
 
-                DBAccess.amendProfit(String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonth()),
+                DBAccess.amendProfit(String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()),
                         String.valueOf(date.getYear()), product.barcode, product.name, profitToAdd);
                 midText += product.amount + "x" + product.name + "/-";
                 totalProfit += profitToAdd;
             }
             ProcessLogs.recordSalesProcess(midText, Double.parseDouble(totalpricelabeltext));
-            DBAccess.updateDailyProfit(ProcessLogs.currentDate, totalProfit);
 
         }
     }
@@ -643,19 +643,13 @@ public class MainScreen {
         pieChart.getData().removeAll(pieChart.getData());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate dateOfLabel = LocalDate.parse(dateLabel.getText(), formatter);
+        ArrayList<SalesObject> salesObjects;
         if (isdaily) {
-            //dateOfLabel.getDayOfMonth();
-            //dateOfLabel.getMonthValue();
-            //dateOfLabel.getYear();
-
-            ArrayList<SalesObject> salesObjects = DBAccess.createSalesObjects("daily", dateOfLabel);
-            //setPieChart(Stats.createPieChartData(salesObjects));
-            setPieChart(Stats.createDailyPieChartInfo());
+            salesObjects = DBAccess.createSalesObjects("daily", dateOfLabel);
         } else {
-            ArrayList<SalesObject> salesObjects = DBAccess.createSalesObjects("monthly", dateOfLabel);
-            //setPieChart(Stats.createPieChartData(salesObjects));
-            setPieChart(Stats.createMonthlyPieChartInfo());
+            salesObjects = DBAccess.createSalesObjects("monthly", dateOfLabel);
         }
+        setPieChart(Stats.createPieChartData(salesObjects));
     }
 
     public void initLineData(Boolean isMonthly) {
@@ -665,22 +659,19 @@ public class MainScreen {
         LocalDate dateOfLabel = LocalDate.parse(dateLabel.getText(), formatter);
         if (isMonthly) {
             ArrayList<SalesObject> salesObjects = DBAccess.createSalesObjects("monthly", dateOfLabel);
-            //setBarChart(Stats.createLineChartData(salesObjects, isMonthly));
-            setBarChart(datesAndProfits);
+            setBarChart(Stats.createLineChartData(salesObjects, isMonthly));
         } else {
             //sql part to get sales records with matching YEAR values and put them into an ArrayList<SalesObject> salesObjects
             ArrayList<SalesObject> salesObjects = DBAccess.createSalesObjects("annual", dateOfLabel);
-            //setBarChart(Stats.createLineChartData(salesObjects, isMonthly ???));
-            HashMap<String, Double> barChartData = Stats.calculateMonthlyProfits(datesAndProfits);
-            setBarChart(barChartData);
+            setBarChart(Stats.createLineChartData(salesObjects, isMonthly));
 
         }
 
     }
 
-    public void setPieChart(HashMap<String, Number> nameAndPrice) {
+    public void setPieChart(HashMap<String, Double> nameAndPrice) {
         for (String name : nameAndPrice.keySet()) {
-            pieChart.getData().add(new PieChart.Data(name, nameAndPrice.get(name).doubleValue()));
+            pieChart.getData().add(new PieChart.Data(name, nameAndPrice.get(name)));
         }
         Label pieInfo = new Label("");
         pieInfo.setTextFill(Color.BLACK);

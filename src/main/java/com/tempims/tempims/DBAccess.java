@@ -45,9 +45,9 @@ public class DBAccess {
                     + " TAX TINYINT(127),\n"
                     + " UNIT_BUYING_PRICE DECIMAL(32,2),\n"
                     + " TOTAL_BUYING_PRICE DECIMAL(32,2),\n"
-                    + " UNIT_SELLING_PRICE DECIMAL(32,2)\n"
-                    /*+ " PROFIT_RETURN DECIMAL(32,2),\n"
-                    + " DAILY_PROFIT_RETURN DECIMAL(32,2)\n"*/
+                    + " UNIT_SELLING_PRICE DECIMAL(32,2),\n"
+                    + " PROFIT_RETURN DECIMAL(32,2),\n"
+                    + " DAILY_PROFIT_RETURN DECIMAL(32,2)\n"
                     + ");";
             Statement stmt = conn.createStatement();
             stmt.execute(sql);
@@ -302,34 +302,6 @@ public class DBAccess {
                 conn.close();
             }
             catch (SQLException e){
-                e.printStackTrace(System.out);
-            }
-        }
-    }
-
-    protected static void insertProfitRow(LocalDate date){
-        Connection conn = connect();
-        try{
-            String sql = String.format(Locale.ROOT,"SELECT * FROM PROFITS WHERE DATE = '%s'", date);
-            System.out.println(sql);
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            if(!rs.next()){
-                String newDate = "INSERT INTO PROFITS (DATE, GROSS_PROFIT) VALUES(?, ?)";
-                PreparedStatement pstmt = conn.prepareStatement(newDate);
-                pstmt.setString(1,String.valueOf(date));
-                pstmt.setDouble(2,0.00);
-                pstmt.executeUpdate();
-            }
-        }
-        catch(SQLException e){
-            e.printStackTrace(System.out);
-        }
-        finally{
-            try{
-                conn.close();
-            }
-            catch(SQLException e){
                 e.printStackTrace(System.out);
             }
         }
@@ -607,19 +579,19 @@ public class DBAccess {
         try{
             ResultSet rs = null;
             if(queryFilter.equals("daily")){
-                String sql = String.format(Locale.ROOT,"SELECT PRODUCT_NAME, GROSS_PROFIT FROM FROM PROFITS WHERE DAY = '%s' AND MONTH = '%s' AND YEAR = '%s'",
-                        String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonth()), String.valueOf(date.getYear()));
+                String sql = String.format(Locale.ROOT,"SELECT PRODUCT_NAME, GROSS_PROFIT FROM PROFITS WHERE DAY = '%s' AND MONTH = '%s' AND YEAR = '%s'",
+                        String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()));
                 Statement stmt = conn.createStatement();
                 rs = stmt.executeQuery(sql);
             }
             else if(queryFilter.equals("monthly")){
-                String sql = String.format(Locale.ROOT,"SELECT PRODUCT_NAME, GROSS_PROFIT FROM FROM PROFITS WHERE MONTH = '%s' AND YEAR = '%s'",
-                        String.valueOf(date.getMonth()), String.valueOf(date.getYear()));
+                String sql = String.format(Locale.ROOT,"SELECT PRODUCT_NAME, GROSS_PROFIT FROM PROFITS WHERE MONTH = '%s' AND YEAR = '%s'",
+                        String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()));
                 Statement stmt = conn.createStatement();
                 rs = stmt.executeQuery(sql);
             }
             else if(queryFilter.equals("annual")){
-                String sql = String.format(Locale.ROOT,"SELECT PRODUCT_NAME, GROSS_PROFIT FROM FROM PROFITS WHERE YEAR = '%s'",
+                String sql = String.format(Locale.ROOT,"SELECT PRODUCT_NAME, GROSS_PROFIT FROM PROFITS WHERE YEAR = '%s'",
                         String.valueOf(date.getYear()));
                 Statement stmt = conn.createStatement();
                 rs = stmt.executeQuery(sql);
