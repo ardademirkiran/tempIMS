@@ -32,6 +32,8 @@ public class SellScreenProduct extends Product{
         discountPercentage.setPromptText("0.00");
         discount.setStyle("-fx-font-size: 25");
         discountPercentage.setStyle("-fx-font-size: 25");
+        discount.setFocusTraversable(false);
+        discountPercentage.setFocusTraversable(false);
         sellPriceLabel.setStyle("-fx-font-size: 25");
     }
 

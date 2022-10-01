@@ -26,7 +26,6 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -249,7 +248,7 @@ public class MainScreen {
         });
 
         Main.globalStage.addEventHandler(KeyEvent.KEY_TYPED, this::sellScreenKeyTyped); //sell screen key event handler
-
+        Main.globalStage.addEventHandler(KeyEvent.KEY_RELEASED, this::sellScreenKeyReleased);
         stockTable.getItems().removeAll(stockTable.getItems()); // stock control switch and addlist
         stockTable.getItems().addAll(ProductInteractions.createAllProducts());
         stockControlPane.getChildren().add(toggleSwitchStock);
@@ -306,6 +305,77 @@ public class MainScreen {
         barcodeField.setContextMenu(new ContextMenu());
 
 
+    }
+    Map<String, String> test1 = Map.of(
+            "48","0" ,
+            "49", "1",
+            "50","2",
+            "51","3",
+            "52","4",
+            "53","5",
+            "54","6",
+            "55","7",
+            "56","8",
+            "57","9"
+    );
+    ArrayList<byte[]> bytes = new ArrayList<>();
+    boolean isHolding= false;
+    String amountByte = "";
+    Integer amountInteger = 1;
+
+    private void sellScreenKeyReleased(KeyEvent keyEvent) {
+        byte[] tab = {9};
+        byte[] empty = {0};
+        if (bytes.size()!=0){
+            if (Arrays.toString(bytes.get(0)).equals(Arrays.toString(tab))){
+                bytes.add(empty);
+                bytes.remove(bytes.size()-1);
+                bytes.remove(bytes.size()-1);
+            }
+            if (bytes.isEmpty()){
+                isHolding=false;
+            }
+        }
+
+    }
+    @FXML
+    public void sellScreenKeyTyped(KeyEvent keyEvent) {
+        if (tabpane.getSelectionModel().getSelectedItem().getId().equals(sellScreenTab.getId())) {
+            byte[] enter = {13};
+            byte[] back = {8};
+            byte[] tab = {9};
+            if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(enter))) {
+                keyTypedAlgorithm(barcodeField.getText());
+            } else if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(back))) {
+                String prebarcode = barcodeField.getText();
+                prebarcode = prebarcode.substring(0, prebarcode.length() - 1);
+                barcodeField.setText(prebarcode);
+            }else if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(tab))){
+                if (!isHolding){
+                    isHolding = true;
+                    bytes.add((keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)));
+                }
+            }else {
+                if (isHolding){
+                    bytes.add(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8));
+                    amountByte +=Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8));
+                }else{
+                    if (!amountByte.isEmpty()){
+                        String realamount = "";
+                        String[] amountSplitted = amountByte.split("]\\[");
+                        for (String s: amountSplitted) {
+                            s = s.replaceAll("]","").replaceAll("\\[","");
+                            realamount+=test1.get(s);
+                        }
+                        amountByte = "";
+                        try {
+                            amountInteger = Integer.parseInt(realamount);
+                        }catch (Exception ignored){}
+                    }
+                    String prebarcode = barcodeField.getText();
+                    barcodeField.setText(prebarcode + keyEvent.getCharacter());}
+            }
+        }
     }
 
     public Tooltip createToolTip(String HintText) {
@@ -555,31 +625,14 @@ public class MainScreen {
         }
     }
 
-    @FXML
-    public void sellScreenKeyTyped(KeyEvent keyEvent) {
-        if (tabpane.getSelectionModel().getSelectedItem().getId().equals(sellScreenTab.getId())) {
-            byte[] enter = {13};
-            byte[] back = {8};
-            if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(enter))) {
-                keyTypedAlgorithm(barcodeField.getText());
-            } else if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(back))) {
-                String prebarcode = barcodeField.getText();
-                prebarcode = prebarcode.substring(0, prebarcode.length() - 1);
-                barcodeField.setText(prebarcode);
-            } else {
-                String prebarcode = barcodeField.getText();
-                barcodeField.setText(prebarcode + keyEvent.getCharacter());
-            }
-        }
-    }
-
     private void keyTypedAlgorithm(String Barcode) {
         boolean find = false;
         SellScreenProduct productdb;
         if (sellScreenTable.getItems().size() > 0) {
             for (SellScreenProduct pro : sellScreenTable.getItems()) {
                 if (Objects.equals(pro.barcode, Barcode)) {
-                    pro.amount++;
+                    pro.amount=pro.amount+amountInteger;
+                    amountInteger = 1;
                     pro.sellPriceLabel.setText(String.valueOf((pro.unitSellPrice - Double.parseDouble(pro.discount.getText())) * pro.amount));
                     find = true;
                 }
@@ -588,6 +641,8 @@ public class MainScreen {
         if (!find) {
             try {
                 productdb = ProductInteractions.getProduct(Barcode);
+                productdb.amount = productdb.amount + amountInteger - 1;
+                amountInteger=1;
                 sellScreenTable.getItems().addAll(productdb);
             } catch (NullPointerException e) {
                 System.out.println("Bu barkod kayıtlı değil.");
@@ -619,24 +674,32 @@ public class MainScreen {
     public void decreaseMonthButtonAction() {
         LocalDate localDate = LocalDate.parse(dateLabel.getText());
         dateLabel.setText(String.valueOf(localDate.minusMonths(1)));
+        initLineData(lineToggleSwitch.switchOnProperty().getValue());
+        initPieData(pieToggleSwitch.switchOnProperty().getValue());
     }
 
     @FXML
     public void decreaseDayButtonAction() {
         LocalDate localDate = LocalDate.parse(dateLabel.getText());
         dateLabel.setText(String.valueOf(localDate.minusDays(1)));
+        initLineData(lineToggleSwitch.switchOnProperty().getValue());
+        initPieData(pieToggleSwitch.switchOnProperty().getValue());
     }
 
     @FXML
     public void increaseDayButtonAction() {
         LocalDate localDate = LocalDate.parse(dateLabel.getText());
         dateLabel.setText(String.valueOf(localDate.plusDays(1)));
+        initLineData(lineToggleSwitch.switchOnProperty().getValue());
+        initPieData(pieToggleSwitch.switchOnProperty().getValue());
     }
 
     @FXML
     public void increaseMonthButtonAction() {
         LocalDate localDate = LocalDate.parse(dateLabel.getText());
         dateLabel.setText(String.valueOf(localDate.plusMonths(1)));
+        initLineData(lineToggleSwitch.switchOnProperty().getValue());
+        initPieData(pieToggleSwitch.switchOnProperty().getValue());
     }
 
     public void initPieData(Boolean isdaily) {
@@ -668,7 +731,6 @@ public class MainScreen {
         }
 
     }
-
     public void setPieChart(HashMap<String, Double> nameAndPrice) {
         for (String name : nameAndPrice.keySet()) {
             pieChart.getData().add(new PieChart.Data(name, nameAndPrice.get(name)));
