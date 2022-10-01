@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox fx:id="appVbox" prefHeight="853.0" prefWidth="1224.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tempims.tempims.MainScreen">
+<VBox fx:id="appVbox" prefHeight="853.0" prefWidth="1224.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tempims.tempims.MainScreen">
     <HBox alignment="TOP_CENTER">
         <VBox.margin>
             <Insets />
@@ -22,7 +22,7 @@
         <Tab fx:id="sellScreenTab" text="Satış Ekranı">
             <AnchorPane>
                 <Button focusTraversable="false" layoutX="20.0" layoutY="20.0" onAction="#productsWithoutBarcodeButton" prefWidth="230.0" text="Barkodsuz Ürünler" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
-                <TextField fx:id="barcodeField" layoutX="240.0" layoutY="20.0" onKeyTyped="#barcodeFieldKeyTyped" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="75.0" AnchorPane.topAnchor="10.0" />
+                <TextField fx:id="barcodeField" focusTraversable="false" layoutX="240.0" layoutY="20.0" onKeyTyped="#barcodeFieldKeyTyped" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="75.0" AnchorPane.topAnchor="10.0" />
                 <Button alignment="CENTER" focusTraversable="false" layoutX="431.0" layoutY="20.0" mnemonicParsing="false" onAction="#cancelButtonClicked" stylesheets="@ButtonSmall.css" text="İptal" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                     <font>
                         <Font size="1.0" />
