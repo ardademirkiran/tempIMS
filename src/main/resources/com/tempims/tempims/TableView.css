@@ -28,12 +28,15 @@ linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #23d0f3ff 0.0%, #d791f9ff 50.0%, 
 }
 
 .table-row-cell:odd {
-    -fx-background-color: linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #23d0f3ff 0.0%, #d791f9ff 50.0%, #fe7b84ff 100.0%)    -fx-background-insets: 0, 0 0 1 0;
+    -fx-background-color: linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #23d0f3ff 0.0%, #d791f9ff 50.0%, #fe7b84ff 100.0%);
+    -fx-background-insets: 0, 0 0 1 0;
+
 -fx-background-insets: 0, 0 0 1 0;
 }
 
 .table-row-cell:even {
--fx-background-color: linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #23d0f3ff 0.0%, #d791f9ff 50.0%, #fe7b84ff 100.0%)    -fx-background-insets: 0, 0 0 1 0;
+-fx-background-color: linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #23d0f3ff 0.0%, #d791f9ff 50.0%, #fe7b84ff 100.0%);
+    -fx-background-insets: 0, 0 0 1 0;
 }
 
 .table-view:focused .table-row-cell:focused, .table-view:focused .table-row-cell:focused:odd {
