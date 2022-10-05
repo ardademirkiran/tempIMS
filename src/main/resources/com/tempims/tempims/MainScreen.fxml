@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox fx:id="appVbox" prefHeight="853.0" prefWidth="1224.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tempims.tempims.MainScreen">
+<VBox fx:id="appVbox" prefHeight="853.0" prefWidth="1224.0" style="-fx-background-color: url('index.jpeg')" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tempims.tempims.MainScreen">
     <HBox alignment="TOP_CENTER">
         <VBox.margin>
             <Insets />
@@ -47,46 +47,50 @@
                         <Font size="36.0" />
                     </font>
                 </Button>
-                <Label focusTraversable="false" text="İskonto :" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="10.0">
-                    <font>
-                        <Font size="36.0" />
-                    </font>
-                </Label>
-                <Label focusTraversable="false" text="Kdv :" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="10.0">
-                    <font>
-                        <Font size="36.0" />
-                    </font>
-                </Label>
-                <Label focusTraversable="false" layoutX="10.0" layoutY="10.0" text="Satış Fiyatı :" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
-                    <font>
-                        <Font size="36.0" />
-                    </font>
-                </Label>
-                <Label fx:id="totalDiscountLabel" focusTraversable="false" layoutX="20.0" layoutY="447.0" text="0.00" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="320.0">
-                    <font>
-                        <Font size="36.0" />
-                    </font>
-                </Label>
-                <Label fx:id="totalPriceLabel" focusTraversable="false" layoutX="140.0" layoutY="447.0" text="0.00" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="320.0">
-                    <font>
-                        <Font size="36.0" />
-                    </font>
-                </Label>
-                <Label fx:id="totalTaxLabel" focusTraversable="false" layoutX="140.0" layoutY="447.0" text="0.00" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="320.0">
-                    <font>
-                        <Font size="36.0" />
-                    </font>
-                </Label>
-                <Label focusTraversable="false" layoutX="17.0" layoutY="409.0" text="Ara Toplam:" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="10.0">
-                    <font>
-                        <Font size="36.0" />
-                    </font>
-                </Label>
-                <Label fx:id="subTotalLabel" focusTraversable="false" layoutX="340.0" layoutY="463.0" text="0.00" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="320.0">
-                    <font>
-                        <Font size="36.0" />
-                    </font>
-                </Label>
+            <AnchorPane layoutX="20.0" layoutY="617.0" prefHeight="170.0" prefWidth="420.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
+               <children>
+                      <Label fx:id="discountTextLabel" focusTraversable="false" layoutY="80.0" text="Iskonto :" AnchorPane.leftAnchor="30.0">
+                          <font>
+                              <Font size="36.0" />
+                          </font>
+                      </Label>
+                      <Label fx:id="taxTextLabel" focusTraversable="false" layoutY="40.0" text="Kdv :" AnchorPane.leftAnchor="30.0">
+                          <font>
+                              <Font size="36.0" />
+                          </font>
+                      </Label>
+                      <Label fx:id="sellPriceTextLabel" focusTraversable="false" layoutY="120.0" text="Satis Fiyati :" AnchorPane.leftAnchor="30.0">
+                          <font>
+                              <Font size="36.0" />
+                          </font>
+                      </Label>
+                      <Label fx:id="totalDiscountLabel" focusTraversable="false" layoutX="310.0" layoutY="80.0" text="0.00" AnchorPane.rightAnchor="30.0">
+                          <font>
+                              <Font size="36.0" />
+                          </font>
+                      </Label>
+                      <Label fx:id="totalPriceLabel" focusTraversable="false" layoutX="310.0" layoutY="120.0" text="0.00" AnchorPane.rightAnchor="30.0">
+                          <font>
+                              <Font size="36.0" />
+                          </font>
+                      </Label>
+                      <Label fx:id="totalTaxLabel" focusTraversable="false" layoutX="310.0" layoutY="40.0" text="0.00" AnchorPane.rightAnchor="30.0">
+                          <font>
+                              <Font size="36.0" />
+                          </font>
+                      </Label>
+                      <Label fx:id="subTotalTextLabel" focusTraversable="false" text="Ara Toplam:" AnchorPane.leftAnchor="30.0">
+                          <font>
+                              <Font size="36.0" />
+                          </font>
+                      </Label>
+                      <Label fx:id="subTotalLabel" focusTraversable="false" layoutX="310.0" text="0.00" AnchorPane.rightAnchor="30.0">
+                          <font>
+                              <Font size="36.0" />
+                          </font>
+                      </Label>
+               </children>
+            </AnchorPane>
                 <Button alignment="CENTER" focusTraversable="false" layoutX="572.0" layoutY="497.0" mnemonicParsing="false" onAction="#returnButtonClicked" onMouseClicked="#sellButtonClicked" prefHeight="80.0" prefWidth="295.0" stylesheets="@ButtonBig.css" text="İade Al" AnchorPane.bottomAnchor="110.0" AnchorPane.rightAnchor="30.0">
                     <font>
                         <Font size="65.0" />
@@ -149,42 +153,42 @@
                         </font>
                     </Button>
                 </VBox>
-                <Label layoutX="100.0" layoutY="14.0" text="Barkod" underline="true" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="20.0">
+                <Label layoutX="100.0" layoutY="14.0" text="  Barkod" underline="true" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="20.0">
                     <font>
                         <Font size="18.0" />
                     </font>
                 </Label>
-                <Label layoutX="97.0" layoutY="93.0" text="Marka" underline="true" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="100.0">
+                <Label layoutX="97.0" layoutY="93.0" text="  Marka" underline="true" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="100.0">
                     <font>
                         <Font size="18.0" />
                     </font>
                 </Label>
-                <Label layoutX="91.0" layoutY="166.0" text="İsim" underline="true" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="180.0">
+                <Label layoutX="91.0" layoutY="166.0" text="  İsim" underline="true" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="180.0">
                     <font>
                         <Font size="18.0" />
                     </font>
                 </Label>
-                <Label layoutX="87.0" layoutY="243.0" text="Gelen Ürün Adedi" underline="true" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="260.0">
+                <Label layoutX="87.0" layoutY="243.0" text="  Gelen Ürün Adedi" underline="true" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="260.0">
                     <font>
                         <Font size="18.0" />
                     </font>
                 </Label>
-                <Label layoutX="93.0" layoutY="328.0" text="Vergi (%)" underline="true" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="340.0">
+                <Label layoutX="93.0" layoutY="328.0" text="  Vergi (%)" underline="true" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="340.0">
                     <font>
                         <Font size="18.0" />
                     </font>
                 </Label>
-                <Label layoutX="91.0" layoutY="405.0" prefWidth="132.0" text="Alış Fiyatı" underline="true" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="420.0">
+                <Label layoutX="91.0" layoutY="405.0" prefWidth="132.0" text="  Alış Fiyatı" underline="true" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="420.0">
                     <font>
                         <Font size="18.0" />
                     </font>
                 </Label>
-                <Label layoutX="86.0" layoutY="466.0" text="Birim Alış Fiyatı" underline="true" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="500.0">
+                <Label layoutX="86.0" layoutY="466.0" text="  Birim Alış Fiyatı" underline="true" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="500.0">
                     <font>
                         <Font size="18.0" />
                     </font>
                 </Label>
-                <Label layoutX="15.0" layoutY="545.0" text="Birim Satış Fiyatı" underline="true" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="580.0">
+                <Label layoutX="15.0" layoutY="545.0" text="  Birim Satış Fiyatı" underline="true" AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="580.0">
                     <font>
                         <Font size="18.0" />
                     </font>

@@ -1,4 +1,6 @@
+
 .table-cell {
+    linear-gradient(from 0.0% to 100.0% , #9e899b 0.0%, Gray 100.0%)
     -fx-padding: 0.5em;
     -fx-border-color: transparent -fx-box-border transparent transparent;
     -fx-font: 25px "Arial";
@@ -13,7 +15,7 @@
 
 
 .table-view {
-    -fx-table-header-border-color: #959595;
+linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #23d0f3ff 0.0%, #d791f9ff 50.0%, #fe7b84ff 100.0%)    -fx-table-header-border-color: #959595;
     -fx-table-cell-border-color: -fx-box-border;
 }
 
@@ -26,13 +28,12 @@
 }
 
 .table-row-cell:odd {
-    -fx-background-color: #F9F9F9;
-    -fx-background-insets: 0, 0 0 1 0;
+    -fx-background-color: linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #23d0f3ff 0.0%, #d791f9ff 50.0%, #fe7b84ff 100.0%)    -fx-background-insets: 0, 0 0 1 0;
+-fx-background-insets: 0, 0 0 1 0;
 }
 
 .table-row-cell:even {
-    -fx-background-color: white;
-    -fx-background-insets: 0, 0 0 1 0;
+-fx-background-color: linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #23d0f3ff 0.0%, #d791f9ff 50.0%, #fe7b84ff 100.0%)    -fx-background-insets: 0, 0 0 1 0;
 }
 
 .table-view:focused .table-row-cell:focused, .table-view:focused .table-row-cell:focused:odd {
@@ -64,8 +65,7 @@
 }
 
 .table-view:row-selection .table-row-cell:filled:hover {
-    -fx-background-color: rgb(231, 231, 231);
-}
+linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #23d0f3ff 0.0%, #d791f9ff 50.0%, #fe7b84ff 100.0%)}
 
 .table-view:row-selection .table-row-cell:filled:focused:hover {
     -fx-background-color: rgb(205, 205, 205);
@@ -85,8 +85,7 @@
 }
 
 .table-view .column-header, .table-view .filler {
-    -fx-background-color: #F7F7F7;
-    -fx-size: 35px;
+linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #23d0f3ff 0.0%, #d791f9ff 50.0%, #fe7b84ff 100.0%)    -fx-size: 35px;
     -fx-border-color: -fx-box-border;
     -fx-border-insets: -1 0 0 -1;
     -fx-padding: 0 5 0 0;

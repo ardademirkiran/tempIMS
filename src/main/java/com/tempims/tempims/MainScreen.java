@@ -20,9 +20,17 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -116,6 +124,13 @@ public class MainScreen {
     public Label buyPriceInfo;
     public Label buyPricePerAmountInfo;
     public Label sellPriceInfo;
+    public Label discountTextLabel;
+    public Label subTotalTextLabel;
+    public Label sellPriceTextLabel;
+    public Label taxTextLabel;
+
+    public MainScreen() throws FileNotFoundException {
+    }
 
     public static void setLabelDisplay() {
         double totalprice = 0;
@@ -152,8 +167,7 @@ public class MainScreen {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate date = java.time.LocalDate.now();
 
-                DBAccess.amendProfit(String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()),
-                        String.valueOf(date.getYear()), product.barcode, product.name, profitToAdd);
+                DBAccess.amendProfit(String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, profitToAdd);
                 midText += product.amount + "x" + product.name + "/-";
                 totalProfit += profitToAdd;
             }
@@ -176,8 +190,7 @@ public class MainScreen {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate date = LocalDate.parse(dateLabel.getText(), formatter);
 
-                DBAccess.amendProfit(String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonth()),
-                        String.valueOf(date.getYear()), product.barcode, product.name, -profitToAdd);
+                DBAccess.amendProfit(String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonth()), String.valueOf(date.getYear()), product.barcode, product.name, -profitToAdd);
                 midText += product.amount + "x" + product.name + "/-";
             }
             ProcessLogs.recordReturnProcess(midText, Double.parseDouble(totalpricelabeltext));
@@ -205,8 +218,18 @@ public class MainScreen {
         }
     }
 
+    Font font = Font.loadFont(new FileInputStream("src/main/resources/com/tempims/tempims/DS-DIGIT.TTF"), 45);
+
     @FXML
     public void initialize() {
+        totalPriceLabel.setFont(font);
+        subTotalLabel.setFont(font);
+        totalDiscountLabel.setFont(font);
+        totalTaxLabel.setFont(font);
+        discountTextLabel.setFont(font);
+        subTotalTextLabel.setFont(font);
+        sellPriceTextLabel.setFont(font);
+        taxTextLabel.setFont(font);
         barcodeInfo.setTooltip(createToolTip("Tanımlanan ürünün barkodu bu alana yazılır."));
         brandInfo.setTooltip(createToolTip("Ürünün ait olduğu marka bu alana yazılır."));
         nameInfo.setTooltip(createToolTip("Ürünün adı bu alana yazılır."));
@@ -306,38 +329,29 @@ public class MainScreen {
 
 
     }
-    Map<String, String> test1 = Map.of(
-            "48","0" ,
-            "49", "1",
-            "50","2",
-            "51","3",
-            "52","4",
-            "53","5",
-            "54","6",
-            "55","7",
-            "56","8",
-            "57","9"
-    );
+
+    Map<String, String> test1 = Map.of("48", "0", "49", "1", "50", "2", "51", "3", "52", "4", "53", "5", "54", "6", "55", "7", "56", "8", "57", "9");
     ArrayList<byte[]> bytes = new ArrayList<>();
-    boolean isHolding= false;
+    boolean isHolding = false;
     String amountByte = "";
     Integer amountInteger = 1;
 
     private void sellScreenKeyReleased(KeyEvent keyEvent) {
         byte[] tab = {9};
         byte[] empty = {0};
-        if (bytes.size()!=0){
-            if (Arrays.toString(bytes.get(0)).equals(Arrays.toString(tab))){
+        if (bytes.size() != 0) {
+            if (Arrays.toString(bytes.get(0)).equals(Arrays.toString(tab))) {
                 bytes.add(empty);
-                bytes.remove(bytes.size()-1);
-                bytes.remove(bytes.size()-1);
+                bytes.remove(bytes.size() - 1);
+                bytes.remove(bytes.size() - 1);
             }
-            if (bytes.isEmpty()){
-                isHolding=false;
+            if (bytes.isEmpty()) {
+                isHolding = false;
             }
         }
 
     }
+
     @FXML
     public void sellScreenKeyTyped(KeyEvent keyEvent) {
         if (tabpane.getSelectionModel().getSelectedItem().getId().equals(sellScreenTab.getId())) {
@@ -350,30 +364,32 @@ public class MainScreen {
                 String prebarcode = barcodeField.getText();
                 prebarcode = prebarcode.substring(0, prebarcode.length() - 1);
                 barcodeField.setText(prebarcode);
-            }else if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(tab))){
-                if (!isHolding){
+            } else if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(tab))) {
+                if (!isHolding) {
                     isHolding = true;
                     bytes.add((keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)));
                 }
-            }else {
-                if (isHolding){
+            } else {
+                if (isHolding) {
                     bytes.add(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8));
-                    amountByte +=Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8));
-                }else{
-                    if (!amountByte.isEmpty()){
+                    amountByte += Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8));
+                } else {
+                    if (!amountByte.isEmpty()) {
                         String realamount = "";
                         String[] amountSplitted = amountByte.split("]\\[");
-                        for (String s: amountSplitted) {
-                            s = s.replaceAll("]","").replaceAll("\\[","");
-                            realamount+=test1.get(s);
+                        for (String s : amountSplitted) {
+                            s = s.replaceAll("]", "").replaceAll("\\[", "");
+                            realamount += test1.get(s);
                         }
                         amountByte = "";
                         try {
                             amountInteger = Integer.parseInt(realamount);
-                        }catch (Exception ignored){}
+                        } catch (Exception ignored) {
+                        }
                     }
                     String prebarcode = barcodeField.getText();
-                    barcodeField.setText(prebarcode + keyEvent.getCharacter());}
+                    barcodeField.setText(prebarcode + keyEvent.getCharacter());
+                }
             }
         }
     }
@@ -631,7 +647,7 @@ public class MainScreen {
         if (sellScreenTable.getItems().size() > 0) {
             for (SellScreenProduct pro : sellScreenTable.getItems()) {
                 if (Objects.equals(pro.barcode, Barcode)) {
-                    pro.amount=pro.amount+amountInteger;
+                    pro.amount = pro.amount + amountInteger;
                     amountInteger = 1;
                     pro.sellPriceLabel.setText(String.valueOf((pro.unitSellPrice - Double.parseDouble(pro.discount.getText())) * pro.amount));
                     find = true;
@@ -642,7 +658,7 @@ public class MainScreen {
             try {
                 productdb = ProductInteractions.getProduct(Barcode);
                 productdb.amount = productdb.amount + amountInteger - 1;
-                amountInteger=1;
+                amountInteger = 1;
                 sellScreenTable.getItems().addAll(productdb);
             } catch (NullPointerException e) {
                 System.out.println("Bu barkod kayıtlı değil.");
@@ -731,6 +747,7 @@ public class MainScreen {
         }
 
     }
+
     public void setPieChart(HashMap<String, Double> nameAndPrice) {
         for (String name : nameAndPrice.keySet()) {
             pieChart.getData().add(new PieChart.Data(name, nameAndPrice.get(name)));

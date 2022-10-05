@@ -108,7 +108,7 @@ public class SellScreenProduct extends Product{
     }
 
     public StringProperty getName() {
-        return new SimpleStringProperty(name);
+        return new SimpleStringProperty(displayName);
     }
 
     public ObservableValue<Integer> getTax() {
