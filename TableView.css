@@ -1,0 +1,25 @@
+.table-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 0.5em;
+    -fx-border-color: transparent -fx-box-border transparent transparent;
+    -fx-font: 25px "Arial";
+    -fx-text-fill: #212121;
+}
+
+.table-row-cell{
+    -fx-background-color: #c4b0c1;
+}
+
+.table-view{
+    -fx-background-color: #c4b0c1;
+    -fx-table-header-border-color: #959595;
+    -fx-table-cell-border-color: -fx-box-border;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #80717d;
+}
+.table-row-cell:hover:filled {
+    -fx-background-color: #948392;
+}
+
