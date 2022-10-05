@@ -733,7 +733,7 @@ public class MainScreen {
 
     public void initLineData(Boolean isMonthly) {
         stackedBarChart.getData().removeAll(stackedBarChart.getData());
-        LinkedHashMap<String, Double> datesAndProfits = DBAccess.barChartValues();
+        //LinkedHashMap<String, Double> datesAndProfits = DBAccess.barChartValues();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate dateOfLabel = LocalDate.parse(dateLabel.getText(), formatter);
         if (isMonthly) {
@@ -761,7 +761,7 @@ public class MainScreen {
                 pieInfo.setTranslateX(e.getSceneX() + 5);
                 pieInfo.setTranslateY(e.getSceneY() - 90);
                 String text = String.format(Locale.ROOT, "%.1f%%", 100 * data.getPieValue() / total.get());
-                pieInfo.setText(text + "\n" + (int) data.getPieValue() + "TL");
+                pieInfo.setText(text + "\n" + data.getPieValue() + "TL");
             });
             data.getNode().addEventHandler(MouseEvent.MOUSE_EXITED, mouseEvent -> pieInfo.setVisible(false));
         }

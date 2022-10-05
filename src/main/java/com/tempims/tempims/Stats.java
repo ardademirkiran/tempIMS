@@ -30,7 +30,7 @@ public class Stats {
         String dateKey;
         for (SalesObject salesObject : salesObjects){
             if (isMonthly){
-                dateKey = salesObject.getDateOfSale().getDayOfMonth() + "/" + salesObject.getDateOfSale().getDayOfMonth() + "/" + salesObject.getDateOfSale().getYear();
+                dateKey = salesObject.getDateOfSale().getDayOfMonth() + "/" + salesObject.getDateOfSale().getMonthValue() + "/" + salesObject.getDateOfSale().getYear();
             } else {
                 dateKey = salesObject.getDateOfSale().getDayOfMonth() + "/" + salesObject.getDateOfSale().getYear();
             }

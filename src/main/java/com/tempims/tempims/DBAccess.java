@@ -3,6 +3,7 @@ package com.tempims.tempims;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.*;
+import java.time.format.DateTimeFormatter;
 
 public class DBAccess {
     private static Connection connect() {
@@ -290,7 +291,10 @@ public class DBAccess {
             //String sql = String.format(Locale.ROOT,"UPDATE PRODUCTS SET PROFIT_RETURN = PROFIT_RETURN + '%,.2f', DAILY_PROFIT_RETURN = DAILY_PROFIT_RETURN + '%,.2f' WHERE BARCODE = '%s'",newProfit,newProfit,barcode);
             String sql = "INSERT INTO PROFITS (DAY, MONTH, YEAR, PRODUCT_BARCODE, PRODUCT_NAME, GROSS_PROFIT) VALUES (?,?,?,?,?,?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, day); pstmt.setString(2, month); pstmt.setString(3, year);
+            day = (day.length() == 1 ? ("0"+day): day);
+            month = (month.length() == 1 ? ("0"+month): month);
+            pstmt.setString(1, day);
+            pstmt.setString(2, month); pstmt.setString(3, year);
             pstmt.setString(4, barcode); pstmt.setString(5, name); pstmt.setDouble(6,newProfit);
             pstmt.executeUpdate();
         }
@@ -349,7 +353,7 @@ public class DBAccess {
         }
     }
 
-    protected static LinkedHashMap<String, Double> barChartValues(){
+    /*protected static LinkedHashMap<String, Double> barChartValues(){
         Connection conn = connect();
         LinkedHashMap<String, Double> returnVal = new LinkedHashMap<>();
         try{
@@ -373,7 +377,7 @@ public class DBAccess {
             }
         }
         return returnVal;
-    }
+    }*/
 
     protected static void clearProfitTable(){
         Connection conn = connect();
@@ -574,30 +578,32 @@ public class DBAccess {
     }
 
     protected static ArrayList<SalesObject> createSalesObjects(String queryFilter, LocalDate date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         ArrayList<SalesObject> salesObjects = new ArrayList<>();
         Connection conn = connect();
         try{
             ResultSet rs = null;
             if(queryFilter.equals("daily")){
-                String sql = String.format(Locale.ROOT,"SELECT PRODUCT_NAME, GROSS_PROFIT FROM PROFITS WHERE DAY = '%s' AND MONTH = '%s' AND YEAR = '%s'",
+                String sql = String.format(Locale.ROOT,"SELECT DAY, MONTH, YEAR, PRODUCT_NAME, GROSS_PROFIT FROM PROFITS WHERE DAY = '%s' AND MONTH = '%s' AND YEAR = '%s'",
                         String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()));
                 Statement stmt = conn.createStatement();
                 rs = stmt.executeQuery(sql);
             }
             else if(queryFilter.equals("monthly")){
-                String sql = String.format(Locale.ROOT,"SELECT PRODUCT_NAME, GROSS_PROFIT FROM PROFITS WHERE MONTH = '%s' AND YEAR = '%s'",
+                String sql = String.format(Locale.ROOT,"SELECT DAY, MONTH, YEAR, PRODUCT_NAME, GROSS_PROFIT FROM PROFITS WHERE MONTH = '%s' AND YEAR = '%s'",
                         String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()));
                 Statement stmt = conn.createStatement();
                 rs = stmt.executeQuery(sql);
             }
             else if(queryFilter.equals("annual")){
-                String sql = String.format(Locale.ROOT,"SELECT PRODUCT_NAME, GROSS_PROFIT FROM PROFITS WHERE YEAR = '%s'",
+                String sql = String.format(Locale.ROOT,"SELECT DAY, MONTH, YEAR, PRODUCT_NAME, GROSS_PROFIT FROM PROFITS WHERE YEAR = '%s'",
                         String.valueOf(date.getYear()));
                 Statement stmt = conn.createStatement();
                 rs = stmt.executeQuery(sql);
             }
             while(rs.next()){
-                salesObjects.add(new SalesObject(date, rs.getString("PRODUCT_NAME"), rs.getDouble("GROSS_PROFIT")));
+                LocalDate dbdate = LocalDate.parse((rs.getString("YEAR")+"-"+rs.getString("MONTH")+"-"+rs.getString("DAY")),formatter);
+                salesObjects.add(new SalesObject(dbdate, rs.getString("PRODUCT_NAME"), rs.getDouble("GROSS_PROFIT")));
             }
             return salesObjects;
         }
