@@ -37,5 +37,10 @@ public class ProductInteractions {
         }
         return allProducts;
     }
+    public static ArrayList<SellScreenProduct> getNonBarcodeProducts(){
+        ArrayList<SellScreenProduct> nonBarcodeProducts = new ArrayList<>();
+        //nonBarcodeProducts = sql part
+        return nonBarcodeProducts;
+    }
 
 }
