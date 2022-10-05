@@ -504,6 +504,7 @@ public class MainScreen {
         productEntryLabelBuyPrice.setText("");
         productEntryLabelPiece.setText("");
         productEntryLabelPrice.setText("");
+        productEntryTabCheckBox.setSelected(false);
     }
 
     @FXML
@@ -961,12 +962,12 @@ public class MainScreen {
         Stage productsWithoutBarcodeStage = new Stage();
         productsWithoutBarcodeStage.setTitle("Barkodsuz Ürün Seçimi");
         GridPane gridPane = new GridPane();
-        ArrayList<Product> allProductsArrayList = new ArrayList<>(ProductInteractions.createAllProducts());
+        ArrayList<Product> allProductsArrayList = new ArrayList<>(ProductInteractions.getNonBarcodeProducts());
         int sqrt = (int) Math.sqrt(allProductsArrayList.size()) + 1;
         for (int i = 0; i < sqrt; i++) {
             for (int j = 0; j < sqrt; j++) {
                 try {
-                    Button product = new Button(allProductsArrayList.get(i * sqrt + (j)).brand + " " + allProductsArrayList.get(i * sqrt + (j)).name);
+                    Button product = new Button(allProductsArrayList.get(i * sqrt + (j)).brand);
                     product.setId(allProductsArrayList.get(i * sqrt + (j)).barcode);
                     product.setPrefHeight(30);
                     product.setPrefWidth(200);
