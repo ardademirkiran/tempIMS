@@ -1,7 +1,5 @@
 package com.tempims.tempims;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class ProductInteractions {
@@ -25,22 +23,10 @@ public class ProductInteractions {
         return new SellScreenProduct(barcode, brand, name, productNumber, tax, unitBuyPrice, totalBuyPrice, unitSellPrice);
     }
     public static ArrayList<StockViewProduct> createAllProducts(){
-        ArrayList<StockViewProduct> allProducts = new ArrayList<>();
-        ResultSet rs = DBAccess.fetchProducts("stockView");
-        try {
-            while (rs.next()) {
-                allProducts.add(new StockViewProduct(rs.getString("BARCODE"), rs.getString("BRAND"), rs.getString("NAME"), rs.getInt("PRODUCT_NUMBER"), rs.getInt("TAX"), rs.getDouble("UNIT_BUYING_PRICE"), rs.getDouble("TOTAL_BUYING_PRICE"), rs.getDouble("UNIT_SELLING_PRICE")));
-            }
-        }
-        catch (SQLException e){
-            e.printStackTrace(System.out);
-        }
-        return allProducts;
+        return DBAccess.fetchProducts();
     }
     public static ArrayList<SellScreenProduct> getNonBarcodeProducts(){
-        ArrayList<SellScreenProduct> nonBarcodeProducts = new ArrayList<>();
-        //nonBarcodeProducts = sql part
-        return nonBarcodeProducts;
+        return DBAccess.fetchNonBarcodeProducts();
     }
 
 }

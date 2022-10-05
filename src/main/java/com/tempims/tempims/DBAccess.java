@@ -236,34 +236,59 @@ public class DBAccess {
         return null;
     }
 
-    protected static ResultSet fetchProducts(String purpose){
-        if(purpose.equals("stockView")){
-            Connection connStock = connect();
-            try{
-                String sqlStock = "SELECT * FROM PRODUCTS";
-                Statement stmtStock = connStock.createStatement();
-                ResultSet rsStock = stmtStock.executeQuery(sqlStock);
-                return rsStock;
+    protected static ArrayList<StockViewProduct> fetchProducts(){
+        ArrayList<StockViewProduct> allProducts = new ArrayList<>();
+        Connection conn = connect();
+        try{
+            String sql = "SELECT * FROM PRODUCTS";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                allProducts.add(new StockViewProduct(rs.getString("BARCODE"), rs.getString("BRAND"), rs.getString("NAME"), rs.getInt("PRODUCT_NUMBER"), rs.getInt("TAX"), rs.getDouble("UNIT_BUYING_PRICE"), rs.getDouble("TOTAL_BUYING_PRICE"), rs.getDouble("UNIT_SELLING_PRICE")));
             }
-            catch (SQLException e) {
+            return allProducts;
+        }
+        catch (SQLException e) {
+            e.printStackTrace(System.out);
+        }
+        finally{
+            try{
+                conn.close();
+            }
+            catch(SQLException e){
                 e.printStackTrace(System.out);
             }
         }
+        return allProducts;
+    }
 
-        else if(purpose.equals("statView")){
-            Connection connStat = connect();
-            try{
-                String sqlStat = "SELECT NAME, PROFIT_RETURN FROM PRODUCTS WHERE PROFIT_RETURN <> 0.00 ";
-                Statement stmtStat = connStat.createStatement();
-                ResultSet rsStat = stmtStat.executeQuery(sqlStat);
-                return rsStat;
+    protected static ArrayList<SellScreenProduct> fetchNonBarcodeProducts(){
+        ArrayList<SellScreenProduct> nonBarcodeProducts = new ArrayList<>();
+        Connection conn = connect();
+        try{
+            String sql = "SELECT * FROM PRODUCTS WHERE BARCODE = BRAND AND BRAND = NAME";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while(rs.next()){
+                nonBarcodeProducts.add(new SellScreenProduct((rs.getString("BARCODE")),(rs.getString("BRAND")),
+                        (rs.getString("NAME")), (rs.getInt("PRODUCT_NUMBER")), (rs.getInt("TAX")),
+                        (rs.getDouble("UNIT_BUYING_PRICE")), (rs.getDouble("TOTAL_BUYING_PRICE")),
+                        (rs.getDouble("UNIT_SELLING_PRICE"))));
             }
-            catch (SQLException e) {
-                System.out.println("Problem 1");
+            return nonBarcodeProducts;
+        }
+        catch (SQLException e) {
+            e.printStackTrace(System.out);
+        }
+        finally{
+            try{
+                conn.close();
+            }
+            catch(SQLException e){
                 e.printStackTrace(System.out);
             }
         }
-        return null;
+        return nonBarcodeProducts;
     }
 
     protected static double fetchUnitBuyingPrice(String barcode){
@@ -311,78 +336,11 @@ public class DBAccess {
         }
     }
 
-    protected static void updateDailyProfit(LocalDate date, double newDailyProfit){
-        Connection conn = connect();
-        try{
-            String sql = String.format(Locale.ROOT,"UPDATE PROFITS SET GROSS_PROFIT = GROSS_PROFIT + '%,.2f' WHERE DATE = '%s'",
-                    newDailyProfit, date); // might create a problem later, should test and see (using date without parsing) !!!
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate(sql);
-        }
-        catch(SQLException e){
-            e.printStackTrace(System.out);
-        }
-        finally{
-            try{
-                conn.close();
-            }
-            catch (SQLException e){
-                e.printStackTrace(System.out);
-            }
-        }
-    }
-
     protected static void updatePriceInfo(double newUnitPrice, double newSellingPrice, double newBuyingPrice, String barcode){
         Connection conn = connect();
         try{
             String sql = String.format(Locale.ROOT,"UPDATE PRODUCTS SET UNIT_BUYING_PRICE = '%,.2f', UNIT_SELLING_PRICE = '%,.2f', TOTAL_BUYING_PRICE = TOTAL_BUYING_PRICE + '%,.2f' WHERE BARCODE = '%s'",
                     newUnitPrice, newSellingPrice, newBuyingPrice, barcode);
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate(sql);
-        }
-        catch(SQLException e){
-            e.printStackTrace(System.out);
-        }
-        finally{
-            try{
-                conn.close();
-            }
-            catch(SQLException e){
-                e.printStackTrace(System.out);
-            }
-        }
-    }
-
-    /*protected static LinkedHashMap<String, Double> barChartValues(){
-        Connection conn = connect();
-        LinkedHashMap<String, Double> returnVal = new LinkedHashMap<>();
-        try{
-            String sql = "SELECT * FROM PROFITS";
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            while(rs.next()){
-                returnVal.put(rs.getString("DATE"), rs.getDouble("GROSS_PROFIT"));
-            }
-            return returnVal;
-        }
-        catch(SQLException e){
-            e.printStackTrace(System.out);
-        }
-        finally{
-            try{
-                conn.close();
-            }
-            catch(SQLException e){
-                e.printStackTrace(System.out);
-            }
-        }
-        return returnVal;
-    }*/
-
-    protected static void clearProfitTable(){
-        Connection conn = connect();
-        try{
-            String sql = "DELETE FROM PROFITS";
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
         }
@@ -508,73 +466,6 @@ public class DBAccess {
             }
         }
 
-    }
-
-    protected static void clearDailyProfits(){
-        Connection conn = connect();
-        try{
-            String sql = String.format(Locale.ROOT,"UPDATE PRODUCTS SET DAILY_PROFIT_RETURN = '%.2f'",0.00);
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate(sql);
-        }
-        catch(SQLException e){
-            e.printStackTrace(System.out);
-        }
-        finally{
-            try{
-                conn.close();
-            }
-            catch(SQLException e){
-                e.printStackTrace(System.out);
-            }
-        }
-    }
-
-    protected static void clearMonthlyProfits(){
-        Connection conn = connect();
-        try{
-            String sql = String.format(Locale.ROOT,"UPDATE PRODUCTS SET PROFIT_RETURN = '%.2f'",0.00);
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate(sql);
-        }
-        catch(SQLException e){
-            e.printStackTrace(System.out);
-        }
-        finally{
-            try{
-                conn.close();
-            }
-            catch(SQLException e){
-                e.printStackTrace(System.out);
-            }
-        }
-    }
-
-    protected static HashMap<String, Number> dailyPieChartInfo(){
-        HashMap<String, Number> info = new HashMap<>();
-        Connection conn = connect();
-        try{
-            String sql = "SELECT NAME, DAILY_PROFIT_RETURN FROM PRODUCTS";
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            while(rs.next()){
-                info.put(rs.getString("NAME"), rs.getDouble("DAILY_PROFIT_RETURN"));
-            }
-            return info;
-
-        }
-        catch(SQLException e){
-            e.printStackTrace(System.out);
-        }
-        finally{
-            try{
-                conn.close();
-            }
-            catch(SQLException e){
-                e.printStackTrace(System.out);
-            }
-        }
-        return info;
     }
 
     protected static ArrayList<SalesObject> createSalesObjects(String queryFilter, LocalDate date){
