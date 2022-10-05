@@ -233,6 +233,7 @@
                         <Font size="20.0" />
                     </font>
                 </Label>
+            <CheckBox fx:id="productEntryTabCheckBox" layoutX="1121.0" layoutY="22.0" mnemonicParsing="false" style="-fx-background-color: grey;" text="Barkodsuz Ürün Kaydı" textAlignment="CENTER" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
             </AnchorPane>
         </Tab>
         <Tab fx:id="logTab" onSelectionChanged="#logTabOpened" text="Geçmiş">
