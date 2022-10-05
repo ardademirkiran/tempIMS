@@ -32,7 +32,7 @@ public class Stats {
             if (isMonthly){
                 dateKey = salesObject.getDateOfSale().getDayOfMonth() + "/" + salesObject.getDateOfSale().getMonthValue() + "/" + salesObject.getDateOfSale().getYear();
             } else {
-                dateKey = salesObject.getDateOfSale().getDayOfMonth() + "/" + salesObject.getDateOfSale().getYear();
+                dateKey = salesObject.getDateOfSale().getMonthValue() + "/" + salesObject.getDateOfSale().getYear();
             }
             if (barChartDataMap.containsKey(dateKey)){
                 Double currentProfitValue = barChartDataMap.get(dateKey);
