@@ -14,3 +14,6 @@
     -fx-scale-x: 2.5;
     -fx-scale-y: 2.5;
 }
+.chart-plot-background{
+    -fx-background-color: #9E899B;
+}

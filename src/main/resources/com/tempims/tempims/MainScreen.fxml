@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox fx:id="appVbox" prefHeight="853.0" prefWidth="1224.0" style="-fx-background-color: url('index.jpeg')" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tempims.tempims.MainScreen">
+<VBox fx:id="appVbox" prefHeight="853.0" prefWidth="1224.0" style="-fx-background-color: url('index.jpeg')" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tempims.tempims.MainScreen">
     <HBox alignment="TOP_CENTER">
         <VBox.margin>
             <Insets />
@@ -18,14 +18,14 @@
         </Label>
         <Label fx:id="username" text="Kullanıcı : Enes Yaman (Admin)" />
     </HBox>
-    <TabPane fx:id="tabpane" style="-fx-font-size: 15" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+    <TabPane fx:id="tabpane" style="-fx-font-size: 15" stylesheets="@TabPane.css" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
         <Tab fx:id="sellScreenTab" text="Satış Ekranı">
             <AnchorPane>
                 <Button focusTraversable="false" layoutX="20.0" layoutY="20.0" onAction="#productsWithoutBarcodeButton" prefWidth="230.0" text="Barkodsuz Ürünler" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                 <TextField fx:id="barcodeField" focusTraversable="false" layoutX="240.0" layoutY="20.0" onKeyTyped="#barcodeFieldKeyTyped" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="75.0" AnchorPane.topAnchor="10.0" />
-                <Button alignment="CENTER" focusTraversable="false" layoutX="431.0" layoutY="20.0" mnemonicParsing="false" onAction="#cancelButtonClicked" stylesheets="@ButtonSmall.css" text="İptal" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                <Button alignment="CENTER" focusTraversable="false" layoutX="431.0" layoutY="20.0" mnemonicParsing="false" onAction="#cancelButtonClicked" text="İptal" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                     <font>
-                        <Font size="1.0" />
+                        <Font size="15.0" />
                     </font>
                 </Button>
                 <TableView fx:id="sellScreenTable" editable="true" fixedCellSize="70" focusTraversable="false" layoutX="20.0" layoutY="64.0" stylesheets="@TableView.css" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0">
@@ -42,7 +42,7 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                     </columnResizePolicy>
                 </TableView>
-                <Button alignment="CENTER" focusTraversable="false" mnemonicParsing="false" onMouseClicked="#sellButtonClicked" prefHeight="80.0" prefWidth="295.0" stylesheets="@ButtonBig.css" text="İşlemi Onayla" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="30.0">
+                <Button alignment="CENTER" focusTraversable="false" mnemonicParsing="false" onMouseClicked="#sellButtonClicked" prefHeight="80.0" prefWidth="295.0" stylesheets="@Button.css" text="İşlemi Onayla" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="30.0">
                     <font>
                         <Font size="36.0" />
                     </font>
@@ -91,7 +91,7 @@
                       </Label>
                </children>
             </AnchorPane>
-                <Button alignment="CENTER" focusTraversable="false" layoutX="572.0" layoutY="497.0" mnemonicParsing="false" onAction="#returnButtonClicked" onMouseClicked="#sellButtonClicked" prefHeight="80.0" prefWidth="295.0" stylesheets="@ButtonBig.css" text="İade Al" AnchorPane.bottomAnchor="110.0" AnchorPane.rightAnchor="30.0">
+                <Button alignment="CENTER" focusTraversable="false" layoutX="572.0" layoutY="497.0" mnemonicParsing="false" onAction="#returnButtonClicked" onMouseClicked="#sellButtonClicked" prefHeight="80.0" prefWidth="295.0" stylesheets="@Button.css" text="İade Al" AnchorPane.bottomAnchor="110.0" AnchorPane.rightAnchor="30.0">
                     <font>
                         <Font size="65.0" />
                     </font>
@@ -147,7 +147,7 @@
                     </font>
                 </TextField>
                 <VBox alignment="TOP_CENTER" layoutX="500.0" layoutY="700.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="700.0">
-                    <Button fx:id="productEntryLabelButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" onMouseClicked="#productEntryLabelButtonOnClicked" stylesheets="@ButtonBig.css" text="Ürün Girişini Tamamla">
+                    <Button fx:id="productEntryLabelButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" onMouseClicked="#productEntryLabelButtonOnClicked" stylesheets="@Button.css" text="Ürün Girişini Tamamla">
                         <font>
                             <Font size="24.0" />
                         </font>
@@ -193,42 +193,42 @@
                         <Font size="18.0" />
                     </font>
                 </Label>
-                <Label fx:id="barcodeInfo" alignment="CENTER" layoutX="47.0" layoutY="63.0" prefHeight="30.0" prefWidth="30.0" style="-fx-border-radius: 50%; -fx-border-color: gray;" text="i" textAlignment="CENTER" textFill="Gray" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="48.0">
+                <Label fx:id="barcodeInfo" alignment="CENTER" layoutX="47.0" layoutY="63.0" prefHeight="30.0" prefWidth="30.0" style="-fx-border-radius: 50%; -fx-border-color: white;" text="i" textAlignment="CENTER" textFill="WHITE" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="48.0">
                     <font>
                         <Font size="20.0" />
                     </font>
                 </Label>
-                <Label fx:id="brandInfo" alignment="CENTER" layoutX="90.0" layoutY="70.0" prefHeight="30.0" prefWidth="30.0" style="-fx-border-radius: 50%; -fx-border-color: gray;" text="i" textFill="Gray" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="128.0">
+                <Label fx:id="brandInfo" alignment="CENTER" layoutX="90.0" layoutY="70.0" prefHeight="30.0" prefWidth="30.0" style="-fx-border-radius: 50%; -fx-border-color: white;" text="i" textFill="WHITE" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="128.0">
                     <font>
                         <Font size="20.0" />
                     </font>
                 </Label>
-                <Label fx:id="nameInfo" alignment="CENTER" layoutX="100.0" layoutY="80.0" prefHeight="30.0" prefWidth="30.0" style="-fx-border-radius: 50%; -fx-border-color: gray;" text="i" textFill="Gray" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="208.0">
+                <Label fx:id="nameInfo" alignment="CENTER" layoutX="100.0" layoutY="80.0" prefHeight="30.0" prefWidth="30.0" style="-fx-border-radius: 50%; -fx-border-color: white;" text="i" textFill="WHITE" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="208.0">
                     <font>
                         <Font size="20.0" />
                     </font>
                 </Label>
-                <Label fx:id="amountInfo" alignment="CENTER" layoutX="110.0" layoutY="90.0" prefHeight="30.0" prefWidth="30.0" style="-fx-border-radius: 50%; -fx-border-color: gray;" text="i" textFill="Gray" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="288.0">
+                <Label fx:id="amountInfo" alignment="CENTER" layoutX="110.0" layoutY="90.0" prefHeight="30.0" prefWidth="30.0" style="-fx-border-radius: 50%; -fx-border-color: white;" text="i" textFill="WHITE" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="288.0">
                     <font>
                         <Font size="20.0" />
                     </font>
                 </Label>
-                <Label fx:id="taxInfo" alignment="CENTER" layoutX="120.0" layoutY="100.0" prefHeight="30.0" prefWidth="30.0" style="-fx-border-radius: 50%; -fx-border-color: gray;" text="i" textFill="Gray" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="368.0">
+                <Label fx:id="taxInfo" alignment="CENTER" layoutX="120.0" layoutY="100.0" prefHeight="30.0" prefWidth="30.0" style="-fx-border-radius: 50%; -fx-border-color: white;" text="i" textFill="WHITE" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="368.0">
                     <font>
                         <Font size="20.0" />
                     </font>
                 </Label>
-                <Label fx:id="buyPriceInfo" alignment="CENTER" layoutX="130.0" layoutY="110.0" prefHeight="30.0" prefWidth="30.0" style="-fx-border-radius: 50%; -fx-border-color: gray;" text="i" textFill="Gray" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="448.0">
+                <Label fx:id="buyPriceInfo" alignment="CENTER" layoutX="130.0" layoutY="110.0" prefHeight="30.0" prefWidth="30.0" style="-fx-border-radius: 50%; -fx-border-color: white;" text="i" textFill="WHITE" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="448.0">
                     <font>
                         <Font size="20.0" />
                     </font>
                 </Label>
-                <Label fx:id="buyPricePerAmountInfo" alignment="CENTER" layoutX="140.0" layoutY="120.0" prefHeight="30.0" prefWidth="30.0" style="-fx-border-radius: 50%; -fx-border-color: gray;" text="i" textFill="Gray" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="528.0">
+                <Label fx:id="buyPricePerAmountInfo" alignment="CENTER" layoutX="140.0" layoutY="120.0" prefHeight="30.0" prefWidth="30.0" style="-fx-border-radius: 50%; -fx-border-color: white;" text="i" textFill="WHITE" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="528.0">
                     <font>
                         <Font size="20.0" />
                     </font>
                 </Label>
-                <Label fx:id="sellPriceInfo" alignment="CENTER" layoutX="90.0" layoutY="550.0" prefHeight="30.0" prefWidth="30.0" style="-fx-border-radius: 50%; -fx-border-color: gray;" text="i" textFill="Gray" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="608.0">
+                <Label fx:id="sellPriceInfo" alignment="CENTER" layoutX="90.0" layoutY="550.0" prefHeight="30.0" prefWidth="30.0" style="-fx-border-radius: 50%; -fx-border-color: white;" text="i" textFill="WHITE" AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="608.0">
                     <font>
                         <Font size="20.0" />
                     </font>
@@ -237,7 +237,7 @@
         </Tab>
         <Tab fx:id="logTab" onSelectionChanged="#logTabOpened" text="Geçmiş">
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                <TableView fx:id="historyTable" focusTraversable="false" layoutX="185.0" layoutY="73.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                <TableView fx:id="historyTable" focusTraversable="false" layoutX="185.0" layoutY="73.0" prefHeight="200.0" prefWidth="200.0" stylesheets="@TableView.css" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                     <columns>
                         <TableColumn fx:id="historyTableDate" prefWidth="75.0" text="Tarih" />
                         <TableColumn fx:id="historyTableEmployee" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Çalışan" />
@@ -252,7 +252,7 @@
         </Tab>
         <Tab fx:id="stockControlTab" onSelectionChanged="#onStockControlOpened" text="Stok Kontrol Ekranı">
             <AnchorPane fx:id="stockControlPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                <TableView fx:id="stockTable" focusTraversable="false" layoutX="141.0" layoutY="66.0" onMouseClicked="#stockDisplayDoubleClick" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="55.0">
+                <TableView fx:id="stockTable" focusTraversable="false" layoutX="141.0" layoutY="66.0" onMouseClicked="#stockDisplayDoubleClick" prefHeight="200.0" prefWidth="200.0" stylesheets="@TableView.css" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="55.0">
                     <columns>
                         <TableColumn fx:id="stockCollumnBarcode" prefWidth="105.0" style="-fx-alignment: CENTER;" text="Barkod" />
                         <TableColumn fx:id="stockCollumnBrand" prefWidth="98.0" style="-fx-alignment: CENTER;" text="Marka" />
@@ -313,7 +313,7 @@
         </Tab>
         <Tab fx:id="userTab" onSelectionChanged="#onUserTabOpened" text="Kullanıcılar">
             <AnchorPane>
-                <TableView fx:id="userTable" focusTraversable="false" layoutX="261.0" layoutY="59.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="220.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                <TableView fx:id="userTable" focusTraversable="false" layoutX="261.0" layoutY="59.0" prefHeight="200.0" prefWidth="200.0" stylesheets="@TableView.css" AnchorPane.bottomAnchor="220.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                     <columns>
                         <TableColumn fx:id="userTableUserName" prefWidth="123.0" style="-fx-alignment: CENTER;" text="Kullanıcı Adı" />
                         <TableColumn fx:id="userTableSellScreenTabPerm" prefWidth="27.0" style="-fx-alignment: CENTER;" text="Satış Ekranı" />
@@ -327,9 +327,9 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                     </columnResizePolicy>
                 </TableView>
-                <Button focusTraversable="false" layoutX="715.0" layoutY="411.0" mnemonicParsing="false" onMouseReleased="#onRegister" prefWidth="650.0" stylesheets="@ButtonBig.css" text="Yeni Kayıt Oluştur" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" />
-                <Button focusTraversable="false" layoutX="720.0" layoutY="309.0" mnemonicParsing="false" onAction="#removeUserButtonEvent" prefWidth="650.0" stylesheets="@ButtonBig.css" text="Seçili Kullanıcıyı Sil" AnchorPane.bottomAnchor="150.0" AnchorPane.rightAnchor="10.0" />
-                <Button focusTraversable="false" layoutX="720.0" layoutY="354.0" mnemonicParsing="false" onAction="#changePasswordButtonAction" prefWidth="650.0" stylesheets="@ButtonBig.css" text="Seçili Kullanıcının Şifresini Değiştir" AnchorPane.bottomAnchor="80.0" AnchorPane.rightAnchor="10.0" />
+                <Button focusTraversable="false" layoutX="715.0" layoutY="411.0" mnemonicParsing="false" onMouseReleased="#onRegister" prefWidth="650.0" stylesheets="@Button.css" text="Yeni Kayıt Oluştur" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" />
+                <Button focusTraversable="false" layoutX="720.0" layoutY="309.0" mnemonicParsing="false" onAction="#removeUserButtonEvent" prefWidth="650.0" stylesheets="@Button.css" text="Seçili Kullanıcıyı Sil" AnchorPane.bottomAnchor="150.0" AnchorPane.rightAnchor="10.0" />
+                <Button focusTraversable="false" layoutX="720.0" layoutY="354.0" mnemonicParsing="false" onAction="#changePasswordButtonAction" prefWidth="650.0" stylesheets="@Button.css" text="Seçili Kullanıcının Şifresini Değiştir" AnchorPane.bottomAnchor="80.0" AnchorPane.rightAnchor="10.0" />
             </AnchorPane>
         </Tab>
     </TabPane>
