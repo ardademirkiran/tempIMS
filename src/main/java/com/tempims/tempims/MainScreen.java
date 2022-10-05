@@ -3,6 +3,9 @@ package com.tempims.tempims;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
@@ -128,6 +131,7 @@ public class MainScreen {
     public Label subTotalTextLabel;
     public Label sellPriceTextLabel;
     public Label taxTextLabel;
+    public CheckBox productEntryTabCheckBox;
 
     public MainScreen() throws FileNotFoundException {
     }
@@ -327,6 +331,24 @@ public class MainScreen {
         productEntryLabelBarcode.setContextMenu(new ContextMenu());
         barcodeField.setContextMenu(new ContextMenu());
 
+        productEntryLabelName.setOnKeyTyped(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (productEntryTabCheckBox.isSelected()){
+                    productEntryLabelBarcode.setText(productEntryLabelName.getText());
+                    productEntryLabelBrand.setText(productEntryLabelName.getText());
+                }
+            }
+        });
+
+        productEntryTabCheckBox.selectedProperty().addListener((a, b, c) -> {
+            productEntryLabelBrand.setDisable(c);
+            productEntryLabelBarcode.setDisable(c);
+            if (c){
+                productEntryLabelBarcode.setText(productEntryLabelName.getText());
+                productEntryLabelBrand.setText(productEntryLabelName.getText());
+            }
+        });
 
     }
 
@@ -429,6 +451,7 @@ public class MainScreen {
     }
 
     protected void setBarcodeContextMenu(ArrayList<String> matchedbarcodeslist) {
+        matchedbarcodeslist.removeIf(String::isEmpty);
         if (matchedbarcodeslist.size() < 6 && matchedbarcodeslist.size() > 0) {
             for (String barcode : matchedbarcodeslist) {
                 Label label = new Label(barcode);
@@ -824,9 +847,9 @@ public class MainScreen {
                     super.updateItem(item, empty);
                     if (item != null) {
                         switch (item.type) {
-                            case "SATIŞ" -> setStyle("-fx-background-color: #79cc79");
-                            case "İADE" -> setStyle("-fx-background-color: #e13359");
-                            case "STOK TANIMI" -> setStyle("-fx-background-color: #71b6e5");
+                            case "SATIŞ" -> setStyle("-fx-background-color: #b5d5b5");
+                            case "İADE" -> setStyle("-fx-background-color: #b9878d");
+                            case "STOK TANIMI" -> setStyle("-fx-background-color: #a2b2c0");
                             default -> setStyle("");
                         }
                     } else {
@@ -955,10 +978,15 @@ public class MainScreen {
                 }
             }
         }
+        gridPane.setStyle("-fx-background-color: 'src/main/resources/com/tempims/tempims/index.jpeg'");
         Scene productsWithoutBarcodeScene = new Scene(gridPane);
+        Stop[] stops = new Stop[]{new Stop(0, Color.web("#9e899b")), new Stop(1, Color.GRAY)};
+        LinearGradient lg1 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
+        productsWithoutBarcodeScene.setFill(lg1);
         productsWithoutBarcodeStage.setScene(productsWithoutBarcodeScene);
         productsWithoutBarcodeStage.setAlwaysOnTop(true);
         productsWithoutBarcodeStage.show();
 
     }
+
 }
