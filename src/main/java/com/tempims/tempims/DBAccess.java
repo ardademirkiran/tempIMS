@@ -581,17 +581,21 @@ public class DBAccess {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         ArrayList<SalesObject> salesObjects = new ArrayList<>();
         Connection conn = connect();
+        String day = String.valueOf(date.getDayOfMonth());
+        String month = String.valueOf(date.getMonthValue());
+        day = (day.length() == 1 ? ("0"+day): day);
+        month = (month.length() == 1 ? ("0"+month): month);
         try{
             ResultSet rs = null;
             if(queryFilter.equals("daily")){
                 String sql = String.format(Locale.ROOT,"SELECT DAY, MONTH, YEAR, PRODUCT_NAME, GROSS_PROFIT FROM PROFITS WHERE DAY = '%s' AND MONTH = '%s' AND YEAR = '%s'",
-                        String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()));
+                        day, month, String.valueOf(date.getYear()));
                 Statement stmt = conn.createStatement();
                 rs = stmt.executeQuery(sql);
             }
             else if(queryFilter.equals("monthly")){
                 String sql = String.format(Locale.ROOT,"SELECT DAY, MONTH, YEAR, PRODUCT_NAME, GROSS_PROFIT FROM PROFITS WHERE MONTH = '%s' AND YEAR = '%s'",
-                        String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()));
+                        month, String.valueOf(date.getYear()));
                 Statement stmt = conn.createStatement();
                 rs = stmt.executeQuery(sql);
             }
