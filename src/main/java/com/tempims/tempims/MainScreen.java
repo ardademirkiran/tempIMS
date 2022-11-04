@@ -30,6 +30,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Duration;
 
 import java.io.FileInputStream;
@@ -334,7 +335,7 @@ public class MainScreen {
         productEntryLabelName.setOnKeyTyped(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                if (productEntryTabCheckBox.isSelected()){
+                if (productEntryTabCheckBox.isSelected()) {
                     productEntryLabelBarcode.setText(productEntryLabelName.getText());
                     productEntryLabelBrand.setText(productEntryLabelName.getText());
                 }
@@ -344,7 +345,7 @@ public class MainScreen {
         productEntryTabCheckBox.selectedProperty().addListener((a, b, c) -> {
             productEntryLabelBrand.setDisable(c);
             productEntryLabelBarcode.setDisable(c);
-            if (c){
+            if (c) {
                 productEntryLabelBarcode.setText(productEntryLabelName.getText());
                 productEntryLabelBrand.setText(productEntryLabelName.getText());
             }
@@ -491,20 +492,49 @@ public class MainScreen {
         return barcodes;
     }
 
+
     @FXML
     protected void productEntryLabelButtonOnClicked() throws IOException {
+        HashMap<TextField, Boolean> textFields = new HashMap<>() {
+        };
+        textFields.put(productEntryLabelPiece, true);
+        textFields.put(productEntryLabelTax, true);
+        textFields.put(productEntryLabelBuyPrice, true);
+        textFields.put(productEntryLabelSellPrice, true);
+        textFields.put(productEntryLabelBrand, true);
+        textFields.put(productEntryLabelName, true);
+        textFields.put(productEntryLabelBarcode, true);
+        for (TextField textField : textFields.keySet()) {
+            if (!inputChecker(textField)) {
+                textFields.put(textField, false);
+            }
+        }
+        if (!textFields.containsValue(false)) {
+            ProcessLogs.recordStockEntryProcess(productEntryLabelBarcode.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText());
+            ProductInteractions.productEntry(productEntryLabelBarcode.getText(), productEntryLabelBrand.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText(), productEntryLabelTax.getText(), productEntryLabelBuyPrice.getText(), String.format(Locale.ROOT, "%.2f", Double.parseDouble(productEntryLabelBuyPrice.getText()) / Double.parseDouble(productEntryLabelPiece.getText())), productEntryLabelSellPrice.getText());
+            productEntryLabelBarcode.setText("");
+            productEntryLabelSellPrice.setText("");
+            productEntryLabelTax.setText("");
+            productEntryLabelName.setText("");
+            productEntryLabelBrand.setText("");
+            productEntryLabelBuyPrice.setText("");
+            productEntryLabelPiece.setText("");
+            productEntryLabelPrice.setText("");
+            productEntryTabCheckBox.setSelected(false);
+        } else {
+            if (!inputChecker(productEntryLabelPiece)) {
+                for (TextField txt : textFields.keySet()) {
+                    if (!textFields.get(txt)) {
+                        txt.setStyle("    -fx-background-color: RED, linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #9e899b 0.0%, gray 100.0%); " +
+                                "-fx-background-insets: 0, 0 0 1 0;" +
+                                "-fx-background-radius: 0;");
+                    } else {
+                        txt.setStyle(productEntryLabelPrice.getStyle());
+                    }
+                }
+            }
+        }
 
-        ProcessLogs.recordStockEntryProcess(productEntryLabelBarcode.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText());
-        ProductInteractions.productEntry(productEntryLabelBarcode.getText(), productEntryLabelBrand.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText(), productEntryLabelTax.getText(), productEntryLabelBuyPrice.getText(), String.format(Locale.ROOT, "%.2f", Double.parseDouble(productEntryLabelBuyPrice.getText()) / Double.parseDouble(productEntryLabelPiece.getText())), productEntryLabelSellPrice.getText());
-        productEntryLabelBarcode.setText("");
-        productEntryLabelSellPrice.setText("");
-        productEntryLabelTax.setText("");
-        productEntryLabelName.setText("");
-        productEntryLabelBrand.setText("");
-        productEntryLabelBuyPrice.setText("");
-        productEntryLabelPiece.setText("");
-        productEntryLabelPrice.setText("");
-        productEntryTabCheckBox.setSelected(false);
     }
 
     @FXML
@@ -990,14 +1020,7 @@ public class MainScreen {
 
     }
 
-    public boolean inputChecker(TextField txtField){
-        try {
-            double checkStringConvert = Double.parseDouble(txtField.getText());
-        } catch (NumberFormatException nfe) {
-            return false;
-        }
-        return true;
+    public boolean inputChecker(TextField txtField) {
+        return (!txtField.getText().equals("") && !txtField.getText().equals("."));
     }
-
-
 }
