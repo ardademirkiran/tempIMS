@@ -990,4 +990,14 @@ public class MainScreen {
 
     }
 
+    public boolean inputChecker(TextField txtField){
+        try {
+            double checkStringConvert = Double.parseDouble(txtField.getText());
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
+
+
 }
