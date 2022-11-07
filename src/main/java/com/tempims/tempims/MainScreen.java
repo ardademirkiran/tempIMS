@@ -521,10 +521,14 @@ public class MainScreen {
             productEntryLabelPiece.setText("");
             productEntryLabelPrice.setText("");
             productEntryTabCheckBox.setSelected(false);
+            for (TextField txt : textFields.keySet()) {
+                txt.setStyle(productEntryLabelPrice.getStyle());
+            }
+
         } else {
-            if (!inputChecker(productEntryLabelPiece)) {
                 for (TextField txt : textFields.keySet()) {
                     if (!textFields.get(txt)) {
+                        txt.styleProperty().unbind();
                         txt.setStyle("    -fx-background-color: RED, linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #9e899b 0.0%, gray 100.0%); " +
                                 "-fx-background-insets: 0, 0 0 1 0;" +
                                 "-fx-background-radius: 0;");
@@ -532,7 +536,10 @@ public class MainScreen {
                         txt.setStyle(productEntryLabelPrice.getStyle());
                     }
                 }
-            }
+            /*for (TextField txt : textFields.keySet()) {
+                txt.setStyle(productEntryLabelPrice.getStyle());
+                txt.styleProperty().bind(Bindings.when(txt.focusedProperty()).then("-fx-background-insets: 0, 0 0 1 0;-fx-background-color: -fx-primary-color, linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #9e899b 0.0%, gray 100.0%);").otherwise("-fx-accent: -fx-primary-color;-fx-background-color: -fx-grey-color, linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #9e899b 0.0%, gray 100.0%);-fx-background-insets: 0, 0 0 1 0;-fx-background-radius: 0;"));
+            }*/
         }
 
     }
