@@ -199,7 +199,7 @@ public class MainScreen {
                 LocalDate date = java.time.LocalDate.now();
                 System.out.println(date);
 
-                DBAccess.amendProfit(conn,String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, product.unitBuyPrice - product.unitSellPrice);
+                DBAccess.amendProfit(conn,String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, (product.unitBuyPrice - product.unitSellPrice)*product.amount);
                 midText += product.amount + "x" + product.name + "/-";
             }
             ProcessLogs.recordReturnProcess(midText, Double.parseDouble(totalpricelabeltext));
