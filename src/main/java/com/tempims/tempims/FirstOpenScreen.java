@@ -11,6 +11,8 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class FirstOpenScreen {
@@ -19,6 +21,11 @@ public class FirstOpenScreen {
     public PasswordField passwordFieldAgain;
     public PasswordField passwordField;
     public TextField usernameField;
+    private void saveCompanyName(String companyName) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter("company.txt"));
+        writer.write(companyName);
+        writer.close();
+    }
 
     static void openMainScreen() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("MainScreen.fxml"));
@@ -50,6 +57,7 @@ public class FirstOpenScreen {
             System.out.println("Şirket İsmi Boş Olamaz");
         } else {
             MainScreen.companyName = companyName.getText();
+            saveCompanyName(companyName.getText());
             DBAccess.removeUser("admin");
             UserInteractions.checkLogin(usernameField.getText(), passwordField.getText());
             System.out.println("Yeni kullanıcı oluşturuldu.");

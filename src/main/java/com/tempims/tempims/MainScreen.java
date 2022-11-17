@@ -35,9 +35,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Duration;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -163,7 +161,6 @@ public class MainScreen {
 
     @FXML
     protected void sellButtonClicked() throws IOException, SQLException {
-        Connection conn = DBAccess.connect();
         String totalpricelabeltext = totalPriceLabel.getText();
         if (sellScreenTable.getItems().size() > 0) {
             SellScreenProduct[] sellScreenProductList = sellScreenTable.getItems().toArray(new SellScreenProduct[0]);
@@ -172,23 +169,21 @@ public class MainScreen {
             String midText = "";
             for (SellScreenProduct product : sellScreenProductList) {
                 double profitToAdd = Stats.calculateProfit(product);
-                DBAccess.updateStock(conn, product.barcode, -product.amount);
+                DBAccess.updateStock(product.barcode, -product.amount);
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate date = java.time.LocalDate.now();
 
-                DBAccess.amendProfit(conn, String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, profitToAdd);
+                DBAccess.amendProfit(String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, profitToAdd);
                 midText += product.amount + "x" + product.name + "/-";
                 totalProfit += profitToAdd;
             }
             ProcessLogs.recordSalesProcess(midText, Double.parseDouble(totalpricelabeltext));
-            conn.close();
         }
     }
 
     @FXML
     protected void returnButtonClicked() throws IOException, SQLException {
-        Connection conn = DBAccess.connect();
         String totalpricelabeltext = totalPriceLabel.getText();
         if (sellScreenTable.getItems().size() > 0) {
             SellScreenProduct[] sellScreenProductList = sellScreenTable.getItems().toArray(new SellScreenProduct[0]);
@@ -196,17 +191,16 @@ public class MainScreen {
             String midText = "";
             for (SellScreenProduct product : sellScreenProductList) {
                 double profitToAdd = Stats.calculateProfit(product);
-                DBAccess.updateStock(conn, product.barcode, product.amount);
+                DBAccess.updateStock(product.barcode, product.amount);
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate date = LocalDate.parse(dateLabel.getText(), formatter);
 
-                DBAccess.amendProfit(conn, String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonth()), String.valueOf(date.getYear()), product.barcode, product.name, -profitToAdd);
+                DBAccess.amendProfit(String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonth()), String.valueOf(date.getYear()), product.barcode, product.name, -profitToAdd);
                 midText += product.amount + "x" + product.name + "/-";
             }
             ProcessLogs.recordReturnProcess(midText, Double.parseDouble(totalpricelabeltext));
         }
-        conn.close();
     }
 
     protected void editTabsForUsers() {
@@ -233,7 +227,11 @@ public class MainScreen {
     Font font = Font.loadFont(new FileInputStream("src/main/resources/com/tempims/tempims/DS-DIGIT.TTF"), 45);
 
     @FXML
-    public void initialize() throws SQLException {
+    public void initialize() throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader("company.txt"));
+        String companyName = reader.readLine();
+        companyNameLabel.setText(companyName);
+        reader.close();
         totalPriceLabel.setFont(font);
         subTotalLabel.setFont(font);
         totalDiscountLabel.setFont(font);
@@ -319,11 +317,7 @@ public class MainScreen {
                 stockCollumnAddList.setVisible(false);
             } else {
                 stockTable.getItems().removeAll(stockTable.getItems());
-                try {
-                    stockTable.getItems().addAll(ProductInteractions.createAllProducts());
-                } catch (SQLException e) {
-                    e.printStackTrace(System.out);
-                }
+                stockTable.getItems().addAll(ProductInteractions.createAllProducts());
                 stockCollumnAddList.setVisible(true);
             }
         });
@@ -398,13 +392,12 @@ public class MainScreen {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem decreaseItem = new MenuItem("Azalt");
         decreaseItem.setOnAction(actionEvent -> {
-            if (stockTable.getSelectionModel().getSelectedItem().number == 1) {
-                stockTable.getItems().remove(stockTable.getSelectionModel().getSelectedItem());
-                DBAccess.updateStock(stockTable.getSelectionModel().getSelectedItem().barcode, stockTable.getSelectionModel().getSelectedItem().number)
-            } else {
+            if (stockTable.getSelectionModel().getSelectedItem().number > 0) {
                 stockTable.getSelectionModel().getSelectedItem().number--;
-                DBAccess.updateStock(stockTable.getSelectionModel().getSelectedItem().barcode, stockTable.getSelectionModel().getSelectedItem().number-1)
+                DBAccess.updateStock(stockTable.getSelectionModel().getSelectedItem().barcode, -1);
+
             }
+
             refreshStockTableData();
             init();
             setLabelDisplay();
@@ -412,7 +405,8 @@ public class MainScreen {
         });
         MenuItem removeItem = new MenuItem("Sil");
         removeItem.setOnAction(actionEvent -> {
-            stockTable.getItems().remove(stockTable.getSelectionModel().getSelectedItem());
+            DBAccess.updateStock(stockTable.getSelectionModel().getSelectedItem().barcode, -stockTable.getSelectionModel().getSelectedItem().number);
+            stockTable.getSelectionModel().getSelectedItem().number = 0;
             refreshStockTableData();
             init();
             setLabelDisplay();
@@ -537,11 +531,7 @@ public class MainScreen {
                 menuItem.setOnAction(actionEvent -> {
                     productEntryLabelBarcode.setText(label.getText());
                     final StockViewProduct[] products = new StockViewProduct[1];
-                    try {
-                        ProductInteractions.createAllProducts().forEach(allProducts -> products[0] = (allProducts.getBarcode().getValue().equals(label.getText()) ? allProducts : products[0]));
-                    } catch (SQLException e) {
-                        e.printStackTrace(System.out);
-                    }
+                    ProductInteractions.createAllProducts().forEach(allProducts -> products[0] = (allProducts.getBarcode().getValue().equals(label.getText()) ? allProducts : products[0]));
                     productEntryLabelBarcode.setText(products[0].getBarcode().getValue());
                     productEntryLabelPrice.setText(String.valueOf(products[0].getUnitBuyPrice().getValue()));
                     productEntryLabelBrand.setText(products[0].getBrand().getValue());
@@ -803,8 +793,6 @@ public class MainScreen {
                 sellScreenTable.getItems().addAll(productdb);
             } catch (NullPointerException e) {
                 System.out.println("Bu barkod kayıtlı değil.");
-            } catch (SQLException e) {
-                e.printStackTrace(System.out);
             }
         }
         refreshSellScreenTableData();
@@ -862,36 +850,34 @@ public class MainScreen {
     }
 
     public void initPieData(Boolean isdaily) throws SQLException {
-        Connection conn = DBAccess.connect();
         pieChart.getData().removeAll(pieChart.getData());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate dateOfLabel = LocalDate.parse(dateLabel.getText(), formatter);
         ArrayList<SalesObject> salesObjects;
         if (isdaily) {
-            salesObjects = DBAccess.createSalesObjects(conn,"daily", dateOfLabel);
+            salesObjects = DBAccess.createSalesObjects("daily", dateOfLabel);
         } else {
-            salesObjects = DBAccess.createSalesObjects(conn, "monthly", dateOfLabel);
+            salesObjects = DBAccess.createSalesObjects( "monthly", dateOfLabel);
         }
         setPieChart(Stats.createPieChartData(salesObjects));
-        conn.close();
+
     }
 
     public void initLineData(Boolean isMonthly) throws SQLException {
-        Connection conn = DBAccess.connect();
         stackedBarChart.getData().removeAll(stackedBarChart.getData());
         //LinkedHashMap<String, Double> datesAndProfits = DBAccess.barChartValues();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate dateOfLabel = LocalDate.parse(dateLabel.getText(), formatter);
         if (isMonthly) {
-            ArrayList<SalesObject> salesObjects = DBAccess.createSalesObjects(conn,"monthly", dateOfLabel);
+            ArrayList<SalesObject> salesObjects = DBAccess.createSalesObjects("monthly", dateOfLabel);
             setBarChart(Stats.createLineChartData(salesObjects, isMonthly));
         } else {
             //sql part to get sales records with matching YEAR values and put them into an ArrayList<SalesObject> salesObjects
-            ArrayList<SalesObject> salesObjects = DBAccess.createSalesObjects(conn, "annual", dateOfLabel);
+            ArrayList<SalesObject> salesObjects = DBAccess.createSalesObjects( "annual", dateOfLabel);
             setBarChart(Stats.createLineChartData(salesObjects, isMonthly));
 
         }
-        conn.close();
+
 
     }
 
@@ -1094,11 +1080,11 @@ public class MainScreen {
 
     @FXML
     protected void productsWithoutBarcodeButton() throws SQLException {
-        Connection conn = DBAccess.connect();
+
         Stage productsWithoutBarcodeStage = new Stage();
         productsWithoutBarcodeStage.setTitle("Barkodsuz Ürün Seçimi");
         GridPane gridPane = new GridPane();
-        ArrayList<Product> allProductsArrayList = new ArrayList<>(DBAccess.fetchNonBarcodeProducts(conn));
+        ArrayList<Product> allProductsArrayList = new ArrayList<>(DBAccess.fetchNonBarcodeProducts());
         int sqrt = (int) Math.sqrt(allProductsArrayList.size()) + 1;
         for (int i = 0; i < sqrt; i++) {
             for (int j = 0; j < sqrt; j++) {
@@ -1123,7 +1109,6 @@ public class MainScreen {
         productsWithoutBarcodeStage.setScene(productsWithoutBarcodeScene);
         productsWithoutBarcodeStage.setAlwaysOnTop(true);
         productsWithoutBarcodeStage.show();
-        conn.close();
     }
 
     public boolean inputChecker(TextField txtField) {
