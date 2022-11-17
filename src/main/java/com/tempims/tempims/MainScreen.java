@@ -162,6 +162,7 @@ public class MainScreen {
 
     @FXML
     protected void sellButtonClicked() throws IOException, SQLException {
+        Connection conn = DBAccess.connect();
         String totalpricelabeltext = totalPriceLabel.getText();
         if (sellScreenTable.getItems().size() > 0) {
             SellScreenProduct[] sellScreenProductList = sellScreenTable.getItems().toArray(new SellScreenProduct[0]);
@@ -170,20 +171,22 @@ public class MainScreen {
             String midText = "";
             for (SellScreenProduct product : sellScreenProductList) {
                 double profitToAdd = Stats.calculateProfit(product);
-                DBAccess.updateStock(product.barcode, -product.amount);
+                DBAccess.updateStock(conn, product.barcode, -product.amount);
 
                 LocalDate date = java.time.LocalDate.now();
 
-                DBAccess.amendProfit(String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, profitToAdd);
+                DBAccess.amendProfit(conn,String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, profitToAdd);
                 midText += product.amount + "x" + product.name + "/-";
                 totalProfit += profitToAdd;
             }
             ProcessLogs.recordSalesProcess(midText, Double.parseDouble(totalpricelabeltext));
         }
+        conn.close();
     }
 
     @FXML
     protected void returnButtonClicked() throws IOException, SQLException {
+        Connection conn = DBAccess.connect();
         String totalpricelabeltext = totalPriceLabel.getText();
         if (sellScreenTable.getItems().size() > 0) {
             SellScreenProduct[] sellScreenProductList = sellScreenTable.getItems().toArray(new SellScreenProduct[0]);
@@ -191,16 +194,17 @@ public class MainScreen {
             String midText = "";
             for (SellScreenProduct product : sellScreenProductList) {
                 double profitToAdd = Stats.calculateProfit(product);
-                DBAccess.updateStock(product.barcode, product.amount);
+                DBAccess.updateStock(conn, product.barcode, product.amount);
 
                 LocalDate date = java.time.LocalDate.now();
                 System.out.println(date);
 
-                DBAccess.amendProfit(String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, product.unitBuyPrice - product.unitSellPrice);
+                DBAccess.amendProfit(conn,String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, product.unitBuyPrice - product.unitSellPrice);
                 midText += product.amount + "x" + product.name + "/-";
             }
             ProcessLogs.recordReturnProcess(midText, Double.parseDouble(totalpricelabeltext));
         }
+        conn.close();
     }
 
     protected void editTabsForUsers() {
@@ -278,29 +282,35 @@ public class MainScreen {
                 }
             });
         });
-        ContextMenu contextMenuStock = setStockControlContextMenu();
-        stockTable.setOnContextMenuRequested(contextMenuEvent -> {
-            final int[] i = {0};
-            Node source = contextMenuEvent.getPickResult().getIntersectedNode();
+        try{
+            ContextMenu contextMenuStock = setStockControlContextMenu();
+            stockTable.setOnContextMenuRequested(contextMenuEvent -> {
+                final int[] i = {0};
+                Node source = contextMenuEvent.getPickResult().getIntersectedNode();
 
-            while (source != null && !(source instanceof TableRow)) {
-                source = source.getParent();
-            }
-
-            if (source == null || ((TableRow<?>) source).isEmpty()) {
-                stockTable.getSelectionModel().clearSelection();
-
-            }
-            if (stockTable.getSelectionModel().getSelectedItem() != null & !(source == null || ((TableRow<?>) source).isEmpty())) {
-                contextMenuStock.show(stockTable, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
-            }
-            sellScreenTable.setOnMouseClicked(event -> {
-                if (i[0] > 0) contextMenuStock.hide();
-                else {
-                    i[0]++;
+                while (source != null && !(source instanceof TableRow)) {
+                    source = source.getParent();
                 }
+
+                if (source == null || ((TableRow<?>) source).isEmpty()) {
+                    stockTable.getSelectionModel().clearSelection();
+
+                }
+                if (stockTable.getSelectionModel().getSelectedItem() != null & !(source == null || ((TableRow<?>) source).isEmpty())) {
+                    contextMenuStock.show(stockTable, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
+                }
+                sellScreenTable.setOnMouseClicked(event -> {
+                    if (i[0] > 0) contextMenuStock.hide();
+                    else {
+                        i[0]++;
+                    }
+                });
             });
-        });
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+
 
         Main.globalStage.addEventHandler(KeyEvent.KEY_TYPED, this::sellScreenKeyTyped); //sell screen key event handler
         Main.globalStage.addEventHandler(KeyEvent.KEY_RELEASED, this::sellScreenKeyReleased);
@@ -388,13 +398,14 @@ public class MainScreen {
 
     }
 
-    private ContextMenu setStockControlContextMenu() {
+    private ContextMenu setStockControlContextMenu() throws SQLException {
+        Connection conn = DBAccess.connect();
         ContextMenu contextMenu = new ContextMenu();
         MenuItem decreaseItem = new MenuItem("Azalt");
         decreaseItem.setOnAction(actionEvent -> {
             if (stockTable.getSelectionModel().getSelectedItem().number > 0) {
                 stockTable.getSelectionModel().getSelectedItem().number--;
-                DBAccess.updateStock(stockTable.getSelectionModel().getSelectedItem().barcode, -1);
+                DBAccess.updateStock(conn, stockTable.getSelectionModel().getSelectedItem().barcode, -1);
 
             }
 
@@ -405,7 +416,7 @@ public class MainScreen {
         });
         MenuItem removeItem = new MenuItem("Sil");
         removeItem.setOnAction(actionEvent -> {
-            DBAccess.updateStock(stockTable.getSelectionModel().getSelectedItem().barcode, -stockTable.getSelectionModel().getSelectedItem().number);
+            DBAccess.updateStock(conn, stockTable.getSelectionModel().getSelectedItem().barcode, -stockTable.getSelectionModel().getSelectedItem().number);
             stockTable.getSelectionModel().getSelectedItem().number = 0;
             refreshStockTableData();
             init();
@@ -766,9 +777,6 @@ public class MainScreen {
             productEntryLabelName.setText(selectedproduct.getName().getValue());
             productEntryLabelTax.setText(String.valueOf(selectedproduct.getTax().getValue()));
             productEntryLabelSellPrice.setText(String.valueOf(selectedproduct.getUnitSellPrice().getValue()));
-        }
-        if (mouseEvent.getButton() == MouseButton.SECONDARY & stockTable.getSelectionModel().getSelectedItem() != null) {
-
         }
     }
 

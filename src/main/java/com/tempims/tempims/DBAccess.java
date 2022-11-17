@@ -6,7 +6,7 @@ import java.util.*;
 import java.time.format.DateTimeFormatter;
 
 public class DBAccess {
-    private static Connection connect() {
+    protected static Connection connect() {
         Connection conn = null;
         try {
             String url = "jdbc:sqlite:tempims.db";
@@ -95,12 +95,12 @@ public class DBAccess {
                 pstmt.executeUpdate();
             }
             else{ // Product is already on the database, change the stock and price columns if necessary
-                conn.close();
                 int currentStock = getStock(barcodeInput);
                 double currentAvgUnitBuyingPrice = fetchUnitBuyingPrice(barcodeInput);
                 double avgUnitBuyingPrice = Stats.calculateAverageEntryPrice(currentStock,currentAvgUnitBuyingPrice,Integer.parseInt(numberInput),Double.parseDouble(unitBuyPriceInput));
                 updatePriceInfo(avgUnitBuyingPrice,Double.parseDouble(sellPriceInput),Double.parseDouble(totalBuyPriceInput),barcodeInput);
-                updateStock(barcodeInput, Integer.parseInt(numberInput));
+                updateStock(conn, barcodeInput, Integer.parseInt(numberInput));
+                conn.close();
             }
 
         } catch (SQLException e) {
@@ -133,8 +133,7 @@ public class DBAccess {
         return 0;
     }
 
-    protected static void updateStock(String barcode, int stockChange) {
-        Connection conn = connect();
+    protected static void updateStock(Connection conn, String barcode, int stockChange) {
         try {
             int updatedStock = stockChange + getStock(barcode);
             String updateQuery = String.format(Locale.ROOT,"UPDATE PRODUCTS SET PRODUCT_NUMBER = '%d' WHERE BARCODE = '%s'", updatedStock, barcode);
@@ -142,14 +141,7 @@ public class DBAccess {
             updatedStockStatement.executeUpdate(updateQuery);
         } catch (SQLException e) {
             e.printStackTrace(System.out);
-        } finally {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace(System.out);
-            }
         }
-
     }
 
     protected static void insertUser(String userName, String password, String permissions) {
@@ -310,8 +302,7 @@ public class DBAccess {
         return 0;
     }
 
-    protected static void amendProfit(String day, String month, String year, String barcode, String name, double newProfit){
-        Connection conn = connect();
+    protected static void amendProfit(Connection conn, String day, String month, String year, String barcode, String name, double newProfit){
         try{
             //String sql = String.format(Locale.ROOT,"UPDATE PRODUCTS SET PROFIT_RETURN = PROFIT_RETURN + '%,.2f', DAILY_PROFIT_RETURN = DAILY_PROFIT_RETURN + '%,.2f' WHERE BARCODE = '%s'",newProfit,newProfit,barcode);
             String sql = "INSERT INTO PROFITS (DAY, MONTH, YEAR, PRODUCT_BARCODE, PRODUCT_NAME, GROSS_PROFIT) VALUES (?,?,?,?,?,?)";
@@ -325,14 +316,6 @@ public class DBAccess {
         }
         catch (SQLException e){
             e.printStackTrace(System.out);
-        }
-        finally{
-            try{
-                conn.close();
-            }
-            catch (SQLException e){
-                e.printStackTrace(System.out);
-            }
         }
     }
 
