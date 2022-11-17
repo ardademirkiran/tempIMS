@@ -42,6 +42,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MainScreen {
 
@@ -171,7 +172,6 @@ public class MainScreen {
                 double profitToAdd = Stats.calculateProfit(product);
                 DBAccess.updateStock(product.barcode, -product.amount);
 
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate date = java.time.LocalDate.now();
 
                 DBAccess.amendProfit(String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, profitToAdd);
@@ -193,10 +193,10 @@ public class MainScreen {
                 double profitToAdd = Stats.calculateProfit(product);
                 DBAccess.updateStock(product.barcode, product.amount);
 
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                LocalDate date = LocalDate.parse(dateLabel.getText(), formatter);
+                LocalDate date = java.time.LocalDate.now();
+                System.out.println(date);
 
-                DBAccess.amendProfit(String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonth()), String.valueOf(date.getYear()), product.barcode, product.name, -profitToAdd);
+                DBAccess.amendProfit(String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, product.unitBuyPrice - product.unitSellPrice);
                 midText += product.amount + "x" + product.name + "/-";
             }
             ProcessLogs.recordReturnProcess(midText, Double.parseDouble(totalpricelabeltext));
@@ -278,7 +278,7 @@ public class MainScreen {
                 }
             });
         });
-        ContextMenu contextMenuStock =setStockControlContextMenu();
+        ContextMenu contextMenuStock = setStockControlContextMenu();
         stockTable.setOnContextMenuRequested(contextMenuEvent -> {
             final int[] i = {0};
             Node source = contextMenuEvent.getPickResult().getIntersectedNode();
@@ -329,7 +329,7 @@ public class MainScreen {
                 } else {
                     initPieData(pieToggleSwitch.switchOnProperty().getValue());
                 }
-            } catch(SQLException e){
+            } catch (SQLException e) {
                 e.printStackTrace(System.out);
             }
         });
@@ -347,7 +347,7 @@ public class MainScreen {
                 } else {
                     initLineData(lineToggleSwitch.switchOnProperty().getValue());
                 }
-            } catch (SQLException e){
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         });
@@ -596,16 +596,16 @@ public class MainScreen {
             }
 
         } else {
-                for (TextField txt : textFields.keySet()) {
-                    if (!textFields.get(txt)) {
-                        txt.styleProperty().unbind();
-                        txt.setStyle("    -fx-background-color: RED, linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #9e899b 0.0%, gray 100.0%); " +
-                                "-fx-background-insets: 0, 0 0 1 0;" +
-                                "-fx-background-radius: 0;");
-                    } else {
-                        txt.setStyle(productEntryLabelPrice.getStyle());
-                    }
+            for (TextField txt : textFields.keySet()) {
+                if (!textFields.get(txt)) {
+                    txt.styleProperty().unbind();
+                    txt.setStyle("    -fx-background-color: RED, linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #9e899b 0.0%, gray 100.0%); " +
+                            "-fx-background-insets: 0, 0 0 1 0;" +
+                            "-fx-background-radius: 0;");
+                } else {
+                    txt.setStyle(productEntryLabelPrice.getStyle());
                 }
+            }
             /*for (TextField txt : textFields.keySet()) {
                 txt.setStyle(productEntryLabelPrice.getStyle());
                 txt.styleProperty().bind(Bindings.when(txt.focusedProperty()).then("-fx-background-insets: 0, 0 0 1 0;-fx-background-color: -fx-primary-color, linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #9e899b 0.0%, gray 100.0%);").otherwise("-fx-accent: -fx-primary-color;-fx-background-color: -fx-grey-color, linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #9e899b 0.0%, gray 100.0%);-fx-background-insets: 0, 0 0 1 0;-fx-background-radius: 0;"));
@@ -767,7 +767,7 @@ public class MainScreen {
             productEntryLabelTax.setText(String.valueOf(selectedproduct.getTax().getValue()));
             productEntryLabelSellPrice.setText(String.valueOf(selectedproduct.getUnitSellPrice().getValue()));
         }
-        if (mouseEvent.getButton() == MouseButton.SECONDARY & stockTable.getSelectionModel().getSelectedItem() != null){
+        if (mouseEvent.getButton() == MouseButton.SECONDARY & stockTable.getSelectionModel().getSelectedItem() != null) {
 
         }
     }
@@ -857,9 +857,35 @@ public class MainScreen {
         if (isdaily) {
             salesObjects = DBAccess.createSalesObjects("daily", dateOfLabel);
         } else {
-            salesObjects = DBAccess.createSalesObjects( "monthly", dateOfLabel);
+            salesObjects = DBAccess.createSalesObjects("monthly", dateOfLabel);
         }
-        setPieChart(Stats.createPieChartData(salesObjects));
+        if (salesObjects.size() > 15) {
+            HashMap<String, Double> stats = Stats.createPieChartData(salesObjects).entrySet().stream()
+                    .sorted((i2, i1)
+                            -> i1.getValue().compareTo(
+                            i2.getValue()))
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (e1, e2) -> e1, LinkedHashMap::new));
+            ArrayList<String> arrayListSales = new ArrayList<>(stats.keySet());
+            ArrayList<String> stringsTop15 = new ArrayList<>(arrayListSales.subList(0, 14));
+            double otherProfit = 0;
+            for (String object : arrayListSales.subList(14, arrayListSales.size())
+            ) {
+                otherProfit += stats.get(object);
+            }
+            HashMap<String,Double> returnHashMap = new HashMap<>();
+            for (String s:stringsTop15) {
+                returnHashMap.put(s,stats.get(s));
+            }
+            returnHashMap.put("Other",otherProfit);
+
+            setPieChart(returnHashMap);
+        } else {
+            setPieChart(Stats.createPieChartData(salesObjects));
+
+        }
 
     }
 
@@ -873,7 +899,7 @@ public class MainScreen {
             setBarChart(Stats.createLineChartData(salesObjects, isMonthly));
         } else {
             //sql part to get sales records with matching YEAR values and put them into an ArrayList<SalesObject> salesObjects
-            ArrayList<SalesObject> salesObjects = DBAccess.createSalesObjects( "annual", dateOfLabel);
+            ArrayList<SalesObject> salesObjects = DBAccess.createSalesObjects("annual", dateOfLabel);
             setBarChart(Stats.createLineChartData(salesObjects, isMonthly));
 
         }
