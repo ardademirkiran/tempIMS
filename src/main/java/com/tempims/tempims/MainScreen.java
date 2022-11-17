@@ -5,6 +5,7 @@ import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.css.Stylesheet;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -37,6 +39,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -158,7 +162,8 @@ public class MainScreen {
     }
 
     @FXML
-    protected void sellButtonClicked() throws IOException {
+    protected void sellButtonClicked() throws IOException, SQLException {
+        Connection conn = DBAccess.connect();
         String totalpricelabeltext = totalPriceLabel.getText();
         if (sellScreenTable.getItems().size() > 0) {
             SellScreenProduct[] sellScreenProductList = sellScreenTable.getItems().toArray(new SellScreenProduct[0]);
@@ -167,22 +172,23 @@ public class MainScreen {
             String midText = "";
             for (SellScreenProduct product : sellScreenProductList) {
                 double profitToAdd = Stats.calculateProfit(product);
-                DBAccess.updateStock(product.barcode, -product.amount);
+                DBAccess.updateStock(conn, product.barcode, -product.amount);
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate date = java.time.LocalDate.now();
 
-                DBAccess.amendProfit(String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, profitToAdd);
+                DBAccess.amendProfit(conn, String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, profitToAdd);
                 midText += product.amount + "x" + product.name + "/-";
                 totalProfit += profitToAdd;
             }
             ProcessLogs.recordSalesProcess(midText, Double.parseDouble(totalpricelabeltext));
-
+            conn.close();
         }
     }
 
     @FXML
-    protected void returnButtonClicked() throws IOException {
+    protected void returnButtonClicked() throws IOException, SQLException {
+        Connection conn = DBAccess.connect();
         String totalpricelabeltext = totalPriceLabel.getText();
         if (sellScreenTable.getItems().size() > 0) {
             SellScreenProduct[] sellScreenProductList = sellScreenTable.getItems().toArray(new SellScreenProduct[0]);
@@ -190,16 +196,17 @@ public class MainScreen {
             String midText = "";
             for (SellScreenProduct product : sellScreenProductList) {
                 double profitToAdd = Stats.calculateProfit(product);
-                DBAccess.updateStock(product.barcode, product.amount);
+                DBAccess.updateStock(conn, product.barcode, product.amount);
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate date = LocalDate.parse(dateLabel.getText(), formatter);
 
-                DBAccess.amendProfit(String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonth()), String.valueOf(date.getYear()), product.barcode, product.name, -profitToAdd);
+                DBAccess.amendProfit(conn, String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonth()), String.valueOf(date.getYear()), product.barcode, product.name, -profitToAdd);
                 midText += product.amount + "x" + product.name + "/-";
             }
             ProcessLogs.recordReturnProcess(midText, Double.parseDouble(totalpricelabeltext));
         }
+        conn.close();
     }
 
     protected void editTabsForUsers() {
@@ -226,7 +233,7 @@ public class MainScreen {
     Font font = Font.loadFont(new FileInputStream("src/main/resources/com/tempims/tempims/DS-DIGIT.TTF"), 45);
 
     @FXML
-    public void initialize() {
+    public void initialize() throws SQLException {
         totalPriceLabel.setFont(font);
         subTotalLabel.setFont(font);
         totalDiscountLabel.setFont(font);
@@ -250,8 +257,7 @@ public class MainScreen {
         changeActiveUser(username);
         init(); // an initialization for static variables
 
-        setContextMenu(); //sellscreentable contextmenu
-        ContextMenu contextMenu = setContextMenu();
+        ContextMenu contextMenuSell = setSellScreenContextMenu();
         sellScreenTable.setOnContextMenuRequested(contextMenuEvent -> {
             final int[] i = {0};
             Node source = contextMenuEvent.getPickResult().getIntersectedNode();
@@ -265,10 +271,33 @@ public class MainScreen {
 
             }
             if (sellScreenTable.getSelectionModel().getSelectedItem() != null & !(source == null || ((TableRow<?>) source).isEmpty())) {
-                contextMenu.show(sellScreenTable, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
+                contextMenuSell.show(sellScreenTable, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
             }
             sellScreenTable.setOnMouseClicked(event -> {
-                if (i[0] > 0) contextMenu.hide();
+                if (i[0] > 0) contextMenuSell.hide();
+                else {
+                    i[0]++;
+                }
+            });
+        });
+        ContextMenu contextMenuStock =setStockControlContextMenu();
+        stockTable.setOnContextMenuRequested(contextMenuEvent -> {
+            final int[] i = {0};
+            Node source = contextMenuEvent.getPickResult().getIntersectedNode();
+
+            while (source != null && !(source instanceof TableRow)) {
+                source = source.getParent();
+            }
+
+            if (source == null || ((TableRow<?>) source).isEmpty()) {
+                stockTable.getSelectionModel().clearSelection();
+
+            }
+            if (stockTable.getSelectionModel().getSelectedItem() != null & !(source == null || ((TableRow<?>) source).isEmpty())) {
+                contextMenuStock.show(stockTable, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
+            }
+            sellScreenTable.setOnMouseClicked(event -> {
+                if (i[0] > 0) contextMenuStock.hide();
                 else {
                     i[0]++;
                 }
@@ -290,18 +319,27 @@ public class MainScreen {
                 stockCollumnAddList.setVisible(false);
             } else {
                 stockTable.getItems().removeAll(stockTable.getItems());
-                stockTable.getItems().addAll(ProductInteractions.createAllProducts());
+                try {
+                    stockTable.getItems().addAll(ProductInteractions.createAllProducts());
+                } catch (SQLException e) {
+                    e.printStackTrace(System.out);
+                }
                 stockCollumnAddList.setVisible(true);
             }
         });
 
         pieToggleSwitch.switchOnProperty().addListener((a, b, c) -> { // pieChart initializations
-            if (c) {
-                initPieData(pieToggleSwitch.switchOnProperty().getValue());
-            } else {
-                initPieData(pieToggleSwitch.switchOnProperty().getValue());
+            try {
+                if (c) {
+                    initPieData(pieToggleSwitch.switchOnProperty().getValue());
+                } else {
+                    initPieData(pieToggleSwitch.switchOnProperty().getValue());
+                }
+            } catch(SQLException e){
+                e.printStackTrace(System.out);
             }
         });
+
         pieToggleSwitch.setMaxWidth(400);
         pieToggleSwitch.setMaxHeight(40);
         pieToggleSwitch.setAlignment(Pos.CENTER);
@@ -309,11 +347,14 @@ public class MainScreen {
         statisticsGridPane.add(pieToggleSwitch, 0, 1, 1, 1);
 
         lineToggleSwitch.switchOnProperty().addListener((a, b, c) -> { // lineChart initializations
-            if (c) {
-                System.out.println("aylık");
-                initLineData(lineToggleSwitch.switchOnProperty().getValue());
-            } else {
-                initLineData(lineToggleSwitch.switchOnProperty().getValue());
+            try {
+                if (c) {
+                    initLineData(lineToggleSwitch.switchOnProperty().getValue());
+                } else {
+                    initLineData(lineToggleSwitch.switchOnProperty().getValue());
+                }
+            } catch (SQLException e){
+                e.printStackTrace();
             }
         });
         lineToggleSwitch.setMaxWidth(400);
@@ -351,6 +392,41 @@ public class MainScreen {
             }
         });
 
+    }
+
+    private ContextMenu setStockControlContextMenu() {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem decreaseItem = new MenuItem("Azalt");
+        decreaseItem.setOnAction(actionEvent -> {
+            if (stockTable.getSelectionModel().getSelectedItem().number == 1) {
+                stockTable.getItems().remove(stockTable.getSelectionModel().getSelectedItem());
+                DBAccess.updateStock(stockTable.getSelectionModel().getSelectedItem().barcode, stockTable.getSelectionModel().getSelectedItem().number)
+            } else {
+                stockTable.getSelectionModel().getSelectedItem().number--;
+                DBAccess.updateStock(stockTable.getSelectionModel().getSelectedItem().barcode, stockTable.getSelectionModel().getSelectedItem().number-1)
+            }
+            refreshStockTableData();
+            init();
+            setLabelDisplay();
+
+        });
+        MenuItem removeItem = new MenuItem("Sil");
+        removeItem.setOnAction(actionEvent -> {
+            stockTable.getItems().remove(stockTable.getSelectionModel().getSelectedItem());
+            refreshStockTableData();
+            init();
+            setLabelDisplay();
+        });
+        contextMenu.getItems().add(decreaseItem);
+        contextMenu.getItems().add(removeItem);
+        return contextMenu;
+
+    }
+
+    private void refreshStockTableData() {
+        System.out.println("çalıştım");
+        stockCollumnAmont.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().getAmount()));
+        stockTable.refresh();
     }
 
     Map<String, String> test1 = Map.of("48", "0", "49", "1", "50", "2", "51", "3", "52", "4", "53", "5", "54", "6", "55", "7", "56", "8", "57", "9");
@@ -441,7 +517,7 @@ public class MainScreen {
     }
 
     @FXML
-    protected void productEntryLabelBarcodeKeyPressed(KeyEvent event) {
+    protected void productEntryLabelBarcodeKeyPressed(KeyEvent event) throws SQLException {
         byte[] enter = {13};
         if (!Arrays.toString(event.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(enter))) {
             productEntryBarcodeContextMenu.hide();
@@ -461,7 +537,11 @@ public class MainScreen {
                 menuItem.setOnAction(actionEvent -> {
                     productEntryLabelBarcode.setText(label.getText());
                     final StockViewProduct[] products = new StockViewProduct[1];
-                    ProductInteractions.createAllProducts().forEach(allProducts -> products[0] = (allProducts.getBarcode().getValue().equals(label.getText()) ? allProducts : products[0]));
+                    try {
+                        ProductInteractions.createAllProducts().forEach(allProducts -> products[0] = (allProducts.getBarcode().getValue().equals(label.getText()) ? allProducts : products[0]));
+                    } catch (SQLException e) {
+                        e.printStackTrace(System.out);
+                    }
                     productEntryLabelBarcode.setText(products[0].getBarcode().getValue());
                     productEntryLabelPrice.setText(String.valueOf(products[0].getUnitBuyPrice().getValue()));
                     productEntryLabelBrand.setText(products[0].getBrand().getValue());
@@ -476,7 +556,7 @@ public class MainScreen {
         }
     }
 
-    protected ArrayList<String> matchedbarcodes(String barcodeeverwritten) {
+    protected ArrayList<String> matchedbarcodes(String barcodeeverwritten) throws SQLException {
         ArrayList<String> barcodes = new ArrayList<>();
         int size = barcodeeverwritten.length();
 
@@ -494,7 +574,7 @@ public class MainScreen {
 
 
     @FXML
-    protected void productEntryLabelButtonOnClicked() throws IOException {
+    protected void productEntryLabelButtonOnClicked() throws IOException, SQLException {
         HashMap<TextField, Boolean> textFields = new HashMap<>() {
         };
         textFields.put(productEntryLabelPiece, true);
@@ -557,10 +637,8 @@ public class MainScreen {
         selectedTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.matches("^[0-9.]*$")) {
                 if (newValue.matches("^[0-9]+\\.([0-9]{0,2})")) {
-                    System.out.println("input doğru ve noktalı");
 
                 } else if (newValue.matches("^[0-9]*\\.([0-9]*)\\.*") && selectedTextField.getText().length() >= 2) {
-                    System.out.println("Harf silinecek");
                     StringBuilder sb = new StringBuilder(newValue);
                     sb.deleteCharAt(sb.length() - 1);
                     newValue = String.valueOf(sb);
@@ -625,11 +703,10 @@ public class MainScreen {
         subTotalLabelstatic = subTotalLabel;
     }
 
-    public void refreshTableData() {
+    public void refreshSellScreenTableData() {
         for (SellScreenProduct pro : sellScreenTable.getItems()) {
             pro.controlDiscountFields();
         }
-
         amountCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().getAmount()));
         discountCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().getObservableDiscount()));
         percentageDiscountCollumn.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().getObservableDiscountPercentage()));
@@ -640,7 +717,7 @@ public class MainScreen {
         sellScreenTable.refresh();
     }
 
-    public ContextMenu setContextMenu() {
+    public ContextMenu setSellScreenContextMenu() {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem decreaseItem = new MenuItem("Azalt");
         decreaseItem.setOnAction(actionEvent -> {
@@ -649,7 +726,7 @@ public class MainScreen {
             } else {
                 sellScreenTable.getSelectionModel().getSelectedItem().amount--;
             }
-            refreshTableData();
+            refreshSellScreenTableData();
             init();
             setLabelDisplay();
 
@@ -660,7 +737,7 @@ public class MainScreen {
             if (sellScreenTable.getSelectionModel().getSelectedItem() != null) {
                 sellScreenTable.getSelectionModel().getSelectedItem().controlDiscountFields();
             }
-            refreshTableData();
+            refreshSellScreenTableData();
             init();
             setLabelDisplay();
         });
@@ -670,7 +747,7 @@ public class MainScreen {
     }
 
     @FXML
-    public void onStockControlOpened() {
+    public void onStockControlOpened() throws SQLException {
         if (tabpane.getSelectionModel().getSelectedItem().equals(stockControlTab)) {
             toggleSwitchStock.switchOnProperty().set(false);
             stockTable.getItems().removeAll(stockTable.getItems());
@@ -700,6 +777,9 @@ public class MainScreen {
             productEntryLabelTax.setText(String.valueOf(selectedproduct.getTax().getValue()));
             productEntryLabelSellPrice.setText(String.valueOf(selectedproduct.getUnitSellPrice().getValue()));
         }
+        if (mouseEvent.getButton() == MouseButton.SECONDARY & stockTable.getSelectionModel().getSelectedItem() != null){
+
+        }
     }
 
     private void keyTypedAlgorithm(String Barcode) {
@@ -723,16 +803,18 @@ public class MainScreen {
                 sellScreenTable.getItems().addAll(productdb);
             } catch (NullPointerException e) {
                 System.out.println("Bu barkod kayıtlı değil.");
+            } catch (SQLException e) {
+                e.printStackTrace(System.out);
             }
         }
-        refreshTableData();
+        refreshSellScreenTableData();
         sellScreenTable.refresh();
         init();
         setLabelDisplay();
         barcodeField.setText("");
     }
 
-    public void statisticsTabOpened() {
+    public void statisticsTabOpened() throws SQLException {
         dateLabel.setText(LocalDate.now().toString());
         if (tabpane.getSelectionModel().getSelectedItem().equals(statisticsTab)) {
             initPieData(pieToggleSwitch.switchOnProperty().getValue());
@@ -748,7 +830,7 @@ public class MainScreen {
     }
 
     @FXML
-    public void decreaseMonthButtonAction() {
+    public void decreaseMonthButtonAction() throws SQLException {
         LocalDate localDate = LocalDate.parse(dateLabel.getText());
         dateLabel.setText(String.valueOf(localDate.minusMonths(1)));
         initLineData(lineToggleSwitch.switchOnProperty().getValue());
@@ -756,7 +838,7 @@ public class MainScreen {
     }
 
     @FXML
-    public void decreaseDayButtonAction() {
+    public void decreaseDayButtonAction() throws SQLException {
         LocalDate localDate = LocalDate.parse(dateLabel.getText());
         dateLabel.setText(String.valueOf(localDate.minusDays(1)));
         initLineData(lineToggleSwitch.switchOnProperty().getValue());
@@ -764,7 +846,7 @@ public class MainScreen {
     }
 
     @FXML
-    public void increaseDayButtonAction() {
+    public void increaseDayButtonAction() throws SQLException {
         LocalDate localDate = LocalDate.parse(dateLabel.getText());
         dateLabel.setText(String.valueOf(localDate.plusDays(1)));
         initLineData(lineToggleSwitch.switchOnProperty().getValue());
@@ -772,40 +854,44 @@ public class MainScreen {
     }
 
     @FXML
-    public void increaseMonthButtonAction() {
+    public void increaseMonthButtonAction() throws SQLException {
         LocalDate localDate = LocalDate.parse(dateLabel.getText());
         dateLabel.setText(String.valueOf(localDate.plusMonths(1)));
         initLineData(lineToggleSwitch.switchOnProperty().getValue());
         initPieData(pieToggleSwitch.switchOnProperty().getValue());
     }
 
-    public void initPieData(Boolean isdaily) {
+    public void initPieData(Boolean isdaily) throws SQLException {
+        Connection conn = DBAccess.connect();
         pieChart.getData().removeAll(pieChart.getData());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate dateOfLabel = LocalDate.parse(dateLabel.getText(), formatter);
         ArrayList<SalesObject> salesObjects;
         if (isdaily) {
-            salesObjects = DBAccess.createSalesObjects("daily", dateOfLabel);
+            salesObjects = DBAccess.createSalesObjects(conn,"daily", dateOfLabel);
         } else {
-            salesObjects = DBAccess.createSalesObjects("monthly", dateOfLabel);
+            salesObjects = DBAccess.createSalesObjects(conn, "monthly", dateOfLabel);
         }
         setPieChart(Stats.createPieChartData(salesObjects));
+        conn.close();
     }
 
-    public void initLineData(Boolean isMonthly) {
+    public void initLineData(Boolean isMonthly) throws SQLException {
+        Connection conn = DBAccess.connect();
         stackedBarChart.getData().removeAll(stackedBarChart.getData());
         //LinkedHashMap<String, Double> datesAndProfits = DBAccess.barChartValues();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate dateOfLabel = LocalDate.parse(dateLabel.getText(), formatter);
         if (isMonthly) {
-            ArrayList<SalesObject> salesObjects = DBAccess.createSalesObjects("monthly", dateOfLabel);
+            ArrayList<SalesObject> salesObjects = DBAccess.createSalesObjects(conn,"monthly", dateOfLabel);
             setBarChart(Stats.createLineChartData(salesObjects, isMonthly));
         } else {
             //sql part to get sales records with matching YEAR values and put them into an ArrayList<SalesObject> salesObjects
-            ArrayList<SalesObject> salesObjects = DBAccess.createSalesObjects("annual", dateOfLabel);
+            ArrayList<SalesObject> salesObjects = DBAccess.createSalesObjects(conn, "annual", dateOfLabel);
             setBarChart(Stats.createLineChartData(salesObjects, isMonthly));
 
         }
+        conn.close();
 
     }
 
@@ -937,7 +1023,7 @@ public class MainScreen {
     }
 
     @FXML
-    protected void onUserTabOpened() {
+    protected void onUserTabOpened() throws SQLException {
         if (tabpane.getSelectionModel().getSelectedItem().equals(userTab)) {
             userTable.getItems().removeAll(userTable.getItems());
             userTableUserName.setCellValueFactory(userCheckBoxCellDataFeatures -> userCheckBoxCellDataFeatures.getValue().getUserName());
@@ -969,11 +1055,17 @@ public class MainScreen {
         Scene scene = new Scene(fxmlLoader.load(), 480, 360);
         registerStage.setAlwaysOnTop(true);
         Main.setGradient(registerStage, scene);
-        registerStage.setOnCloseRequest(windowEvent -> onUserTabOpened());
+        registerStage.setOnCloseRequest(windowEvent -> {
+            try {
+                onUserTabOpened();
+            } catch (SQLException e) {
+                e.printStackTrace(System.out);
+            }
+        });
     }
 
     @FXML
-    protected void removeUserButtonEvent() {
+    protected void removeUserButtonEvent() throws SQLException {
         if (userTable.getSelectionModel().getSelectedItem() != null && !userTable.getSelectionModel().getSelectedItem().getUserName().getValue().equals(UserInteractions.user.getUserName().getValue())) {
             UserInteractions.deleteUser(userTable.getSelectionModel().getSelectedItem().username);
             onUserTabOpened();
@@ -990,16 +1082,23 @@ public class MainScreen {
             Scene scene = new Scene(fxmlLoader.load(), 480, 360);
             changePassStage.setAlwaysOnTop(true);
             Main.setGradient(changePassStage, scene);
-            changePassStage.setOnCloseRequest(windowEvent -> onUserTabOpened());
+            changePassStage.setOnCloseRequest(windowEvent -> {
+                try {
+                    onUserTabOpened();
+                } catch (SQLException e) {
+                    e.printStackTrace(System.out);
+                }
+            });
         }
     }
 
     @FXML
-    protected void productsWithoutBarcodeButton() {
+    protected void productsWithoutBarcodeButton() throws SQLException {
+        Connection conn = DBAccess.connect();
         Stage productsWithoutBarcodeStage = new Stage();
         productsWithoutBarcodeStage.setTitle("Barkodsuz Ürün Seçimi");
         GridPane gridPane = new GridPane();
-        ArrayList<Product> allProductsArrayList = new ArrayList<>(ProductInteractions.getNonBarcodeProducts());
+        ArrayList<Product> allProductsArrayList = new ArrayList<>(DBAccess.fetchNonBarcodeProducts(conn));
         int sqrt = (int) Math.sqrt(allProductsArrayList.size()) + 1;
         for (int i = 0; i < sqrt; i++) {
             for (int j = 0; j < sqrt; j++) {
@@ -1024,7 +1123,7 @@ public class MainScreen {
         productsWithoutBarcodeStage.setScene(productsWithoutBarcodeScene);
         productsWithoutBarcodeStage.setAlwaysOnTop(true);
         productsWithoutBarcodeStage.show();
-
+        conn.close();
     }
 
     public boolean inputChecker(TextField txtField) {
