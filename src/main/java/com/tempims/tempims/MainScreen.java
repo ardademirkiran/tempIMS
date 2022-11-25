@@ -6,7 +6,10 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.css.Stylesheet;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
@@ -14,9 +17,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -162,11 +167,11 @@ public class MainScreen {
 
     @FXML
     protected void sellButtonClicked() throws IOException, SQLException {
-        Connection conn = DBAccess.connect();
         String totalpricelabeltext = totalPriceLabel.getText();
         if (sellScreenTable.getItems().size() > 0) {
             SellScreenProduct[] sellScreenProductList = sellScreenTable.getItems().toArray(new SellScreenProduct[0]);
             cancelButtonClicked();
+            Connection conn = DBAccess.connect();
             double totalProfit = 0;
             String midText = "";
             for (SellScreenProduct product : sellScreenProductList) {
@@ -180,8 +185,8 @@ public class MainScreen {
                 totalProfit += profitToAdd;
             }
             ProcessLogs.recordSalesProcess(midText, Double.parseDouble(totalpricelabeltext));
+            conn.close();
         }
-        conn.close();
     }
 
     @FXML
@@ -429,7 +434,6 @@ public class MainScreen {
     }
 
     private void refreshStockTableData() {
-        System.out.println("çalıştım");
         stockCollumnAmont.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().getAmount()));
         stockTable.refresh();
     }
@@ -1073,6 +1077,19 @@ public class MainScreen {
         SignupScreen.username = "";
         FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("SignupScreen.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 480, 360);
+        ArrayList<Node> nodes = new ArrayList<>(scene.getRoot().getChildrenUnmodifiable());
+        Button registerButton = (Button) nodes.get(4);
+        registerButton.addEventHandler(new EventType<ActionEvent>(), new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                try {
+                    System.out.println("asdasd");
+                    onUserTabOpened();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
         registerStage.setAlwaysOnTop(true);
         Main.setGradient(registerStage, scene);
         registerStage.setOnCloseRequest(windowEvent -> {

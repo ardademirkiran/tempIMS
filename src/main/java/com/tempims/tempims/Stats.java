@@ -9,7 +9,6 @@ public class Stats {
     public static HashMap<String, Double> createPieChartData(ArrayList<SalesObject> salesObjects){
         HashMap<String, Double> pieChartDataMap = new HashMap<>();
         for (SalesObject salesObject : salesObjects){
-            System.out.println(salesObject.getName());
             if (pieChartDataMap.containsKey(salesObject.getName())){
                 Double currentProfitValue = pieChartDataMap.get(salesObject.getName());
                 pieChartDataMap.replace(salesObject.getName(), currentProfitValue + salesObject.getProfit());
@@ -17,7 +16,6 @@ public class Stats {
                 pieChartDataMap.put(salesObject.getName(), salesObject.getProfit());
             }
         }
-        System.out.println(pieChartDataMap.get("d d"));
 
 
         return pieChartDataMap;
