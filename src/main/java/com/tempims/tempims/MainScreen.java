@@ -421,9 +421,15 @@ public class MainScreen {
         });
         MenuItem removeItem = new MenuItem("Sil");
         removeItem.setOnAction(actionEvent -> {
-            DBAccess.updateStock(conn, stockTable.getSelectionModel().getSelectedItem().barcode, -stockTable.getSelectionModel().getSelectedItem().number);
+            //DBAccess.updateStock(conn, stockTable.getSelectionModel().getSelectedItem().barcode, -stockTable.getSelectionModel().getSelectedItem().number);
+            try {
+                DBAccess.deleteRecord(stockTable.getSelectionModel().getSelectedItem().barcode);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             stockTable.getSelectionModel().getSelectedItem().number = 0;
             refreshStockTableData();
+            //FIXME
             init();
             setLabelDisplay();
         });

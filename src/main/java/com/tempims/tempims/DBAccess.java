@@ -498,4 +498,28 @@ public class DBAccess {
         }
         return salesObjects;
     }
+
+    protected static void deleteRecord(String barcode) throws SQLException {
+        Connection conn = connect();
+
+        try {
+            // Set up the prepared statement
+            String sql = "DELETE FROM PRODUCTS WHERE BARCODE = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            // Bind the item ID to the prepared statement
+            pstmt.setString(1, barcode);
+            pstmt.executeUpdate();
+        }catch(SQLException e){
+                e.printStackTrace(System.out);
+            }
+        finally{
+                try{
+                    conn.close();
+                }
+                catch(SQLException e){
+                    e.printStackTrace(System.out);
+                }
+            }
 }
+    }
