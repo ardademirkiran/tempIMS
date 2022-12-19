@@ -21,6 +21,7 @@ public class FirstOpenScreen {
     public PasswordField passwordFieldAgain;
     public PasswordField passwordField;
     public TextField usernameField;
+    static FXMLLoader mainScreenLoader;
     private void saveCompanyName(String companyName) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter("company.txt"));
         writer.write(companyName);
@@ -33,6 +34,7 @@ public class FirstOpenScreen {
         Stop[] stops = new Stop[]{new Stop(0, Color.web("#9e899b")), new Stop(1, Color.GRAY)};
         LinearGradient lg1 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
         scene.setFill(lg1);
+        mainScreenLoader = fxmlLoader;
         Main.globalStage.setScene(scene);
         Main.globalStage.setFullScreen(true);
         Main.globalStage.setHeight(800);

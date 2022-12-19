@@ -145,6 +145,7 @@ public class MainScreen {
     public Label taxTextLabel;
     public CheckBox productEntryTabCheckBox;
     List<TextField> productEntryLabelTextFields;
+
     public MainScreen() throws FileNotFoundException {
     }
 
@@ -183,7 +184,7 @@ public class MainScreen {
 
                 LocalDate date = java.time.LocalDate.now();
 
-                DBAccess.amendProfit(conn,String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, profitToAdd);
+                DBAccess.amendProfit(conn, String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, profitToAdd);
                 midText += product.amount + "x" + product.name + "/-";
                 totalProfit += profitToAdd;
             }
@@ -207,7 +208,7 @@ public class MainScreen {
                 LocalDate date = java.time.LocalDate.now();
                 System.out.println(date);
 
-                DBAccess.amendProfit(conn,String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, (product.unitBuyPrice - product.unitSellPrice)*product.amount);
+                DBAccess.amendProfit(conn, String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, (product.unitBuyPrice - product.unitSellPrice) * product.amount);
                 midText += product.amount + "x" + product.name + "/-";
             }
             ProcessLogs.recordReturnProcess(midText, Double.parseDouble(totalpricelabeltext));
@@ -290,7 +291,7 @@ public class MainScreen {
                 }
             });
         });
-        try{
+        try {
             ContextMenu contextMenuStock = setStockControlContextMenu();
             stockTable.setOnContextMenuRequested(contextMenuEvent -> {
                 final int[] i = {0};
@@ -314,8 +315,7 @@ public class MainScreen {
                     }
                 });
             });
-        }
-        catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -403,9 +403,9 @@ public class MainScreen {
                 productEntryLabelBrand.setText(productEntryLabelName.getText());
             }
         });
-        List<TextField> productEntryLabelTextFields = Arrays.asList(productEntryLabelBrand,productEntryLabelName,productEntryLabelTax,productEntryLabelPiece,productEntryLabelBuyPrice,productEntryLabelSellPrice);
-        for (TextField t: productEntryLabelTextFields
-             ) {
+        List<TextField> productEntryLabelTextFields = Arrays.asList(productEntryLabelBrand, productEntryLabelName, productEntryLabelTax, productEntryLabelPiece, productEntryLabelBuyPrice, productEntryLabelSellPrice);
+        for (TextField t : productEntryLabelTextFields
+        ) {
             t.setOnKeyTyped(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent keyEvent) {
@@ -575,8 +575,8 @@ public class MainScreen {
                     productEntryLabelTax.setText(String.valueOf(products[0].getTax().getValue()));
                     productEntryLabelSellPrice.setText(String.valueOf(products[0].getUnitSellPrice().getValue()));
                     productEntryBarcodeContextMenu.hide();
-                    List<TextField> productEntryLabelTextFields = Arrays.asList(productEntryLabelBarcode,productEntryLabelBrand,productEntryLabelName,productEntryLabelTax,productEntryLabelPiece,productEntryLabelBuyPrice,productEntryLabelSellPrice);
-                    for (TextField t:productEntryLabelTextFields) {
+                    List<TextField> productEntryLabelTextFields = Arrays.asList(productEntryLabelBarcode, productEntryLabelBrand, productEntryLabelName, productEntryLabelTax, productEntryLabelPiece, productEntryLabelBuyPrice, productEntryLabelSellPrice);
+                    for (TextField t : productEntryLabelTextFields) {
                         t.getStyleClass().remove("error");
                     }
                 });
@@ -648,6 +648,7 @@ public class MainScreen {
         }
 
     }
+
     @FXML
     protected void barcodeFieldKeyTyped(KeyEvent keyEvent) {
         byte[] enter = {13};
@@ -906,11 +907,11 @@ public class MainScreen {
             ) {
                 otherProfit += stats.get(object);
             }
-            HashMap<String,Double> returnHashMap = new HashMap<>();
-            for (String s:stringsTop15) {
-                returnHashMap.put(s,stats.get(s));
+            HashMap<String, Double> returnHashMap = new HashMap<>();
+            for (String s : stringsTop15) {
+                returnHashMap.put(s, stats.get(s));
             }
-            returnHashMap.put("Other",otherProfit);
+            returnHashMap.put("Other", otherProfit);
 
             setPieChart(returnHashMap);
         } else {
@@ -1098,11 +1099,12 @@ public class MainScreen {
         Scene scene = new Scene(fxmlLoader.load(), 480, 360);
         ArrayList<Node> nodes = new ArrayList<>(scene.getRoot().getChildrenUnmodifiable());
         Button registerButton = (Button) nodes.get(4);
+        SignupScreen signupScreenController = fxmlLoader.getController();
+        signupScreenController.setFirstController(FirstOpenScreen.mainScreenLoader.getController());
         registerButton.addEventHandler(new EventType<ActionEvent>(), new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 try {
-                    System.out.println("asdasd");
                     onUserTabOpened();
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
@@ -1111,13 +1113,6 @@ public class MainScreen {
         });
         registerStage.setAlwaysOnTop(true);
         Main.setGradient(registerStage, scene);
-        registerStage.setOnCloseRequest(windowEvent -> {
-            try {
-                onUserTabOpened();
-            } catch (SQLException e) {
-                e.printStackTrace(System.out);
-            }
-        });
     }
 
     @FXML
