@@ -16,7 +16,7 @@
     ![appss1](https://i.ibb.co/k8v4RFw/apss1.png)
 
 - ### 3) TempIms keeps a history of previous operations of your business.
-    - ### TempIms helps you to monitorize previous operations of your employee's by categorizing & colorizing them as date, employee name and type.
+    - ### TempIms helps you monitor previous operations of your employees by categorizing & colorizing them as date, employee name and type.
     - ### With this feature, you can easily assess efficiency and effectiveness of your employees, and make informed decisions about workforce management."
 
     ![appss2](https://i.ibb.co/VCbYvB5/appss2.png)
