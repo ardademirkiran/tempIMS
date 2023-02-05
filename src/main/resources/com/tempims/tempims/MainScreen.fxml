@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
+<?import java.net.URL?>
 <VBox fx:id="appVbox" prefHeight="853.0" prefWidth="1224.0" style="-fx-background-color: url('index.jpeg')" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tempims.tempims.MainScreen">
     <HBox alignment="TOP_CENTER">
         <VBox.margin>
@@ -101,8 +102,8 @@
                 </padding>
             </AnchorPane>
         </Tab>
-        <Tab fx:id="buyScreenTab" text="Ürün Giriş Ekranı">
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="672.0" prefWidth="978.0">
+        <Tab fx:id="buyScreenTab" text="Ürün Giriş Ekranı" >
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="672.0" prefWidth="978.0" stylesheets="@TextField.css" styleClass="my-container">
                 <TextField fx:id="productEntryLabelBarcode" layoutX="100.0" layoutY="47.0" onKeyTyped="#productEntryLabelBarcodeKeyPressed" stylesheets="@TextField.css" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="40.0">
                     <font>
                         <Font size="24.0" />

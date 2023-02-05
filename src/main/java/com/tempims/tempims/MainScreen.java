@@ -36,12 +36,14 @@ import javafx.scene.paint.Stop;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Duration;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -64,6 +66,7 @@ public class MainScreen {
     public Tab statisticsTab;
     public PieChart pieChart;
     public Label username;
+
     public TableView<SellScreenProduct> sellScreenTable;
     public TableColumn<SellScreenProduct, String> barcodeCollumn;
     public TableColumn<SellScreenProduct, String> nameCollumn;
@@ -141,6 +144,7 @@ public class MainScreen {
     public Label sellPriceTextLabel;
     public Label taxTextLabel;
     public CheckBox productEntryTabCheckBox;
+    List<TextField> productEntryLabelTextFields;
 
     public MainScreen() throws FileNotFoundException {
     }
@@ -180,7 +184,7 @@ public class MainScreen {
 
                 LocalDate date = java.time.LocalDate.now();
 
-                DBAccess.amendProfit(conn,String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, profitToAdd);
+                DBAccess.amendProfit(conn, String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, profitToAdd);
                 midText += product.amount + "x" + product.name + "/-";
                 totalProfit += profitToAdd;
             }
@@ -204,7 +208,7 @@ public class MainScreen {
                 LocalDate date = java.time.LocalDate.now();
                 System.out.println(date);
 
-                DBAccess.amendProfit(conn,String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, (product.unitBuyPrice - product.unitSellPrice)*product.amount);
+                DBAccess.amendProfit(conn, String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, (product.unitBuyPrice - product.unitSellPrice) * product.amount);
                 midText += product.amount + "x" + product.name + "/-";
             }
             ProcessLogs.recordReturnProcess(midText, Double.parseDouble(totalpricelabeltext));
@@ -287,7 +291,7 @@ public class MainScreen {
                 }
             });
         });
-        try{
+        try {
             ContextMenu contextMenuStock = setStockControlContextMenu();
             stockTable.setOnContextMenuRequested(contextMenuEvent -> {
                 final int[] i = {0};
@@ -311,8 +315,7 @@ public class MainScreen {
                     }
                 });
             });
-        }
-        catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -400,6 +403,17 @@ public class MainScreen {
                 productEntryLabelBrand.setText(productEntryLabelName.getText());
             }
         });
+        List<TextField> productEntryLabelTextFields = Arrays.asList(productEntryLabelBrand, productEntryLabelName, productEntryLabelTax, productEntryLabelPiece, productEntryLabelBuyPrice, productEntryLabelSellPrice);
+        for (TextField t : productEntryLabelTextFields
+        ) {
+            t.setOnKeyTyped(new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(KeyEvent keyEvent) {
+                    t.getStyleClass().remove("error");
+                }
+            });
+        }
+        buyScreenTab.getStyleClass().add("my-container");
 
     }
 
@@ -534,6 +548,7 @@ public class MainScreen {
     @FXML
     protected void productEntryLabelBarcodeKeyPressed(KeyEvent event) throws SQLException {
         byte[] enter = {13};
+
         if (!Arrays.toString(event.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(enter))) {
             productEntryBarcodeContextMenu.hide();
             productEntryBarcodeContextMenu.getItems().clear();
@@ -560,6 +575,10 @@ public class MainScreen {
                     productEntryLabelTax.setText(String.valueOf(products[0].getTax().getValue()));
                     productEntryLabelSellPrice.setText(String.valueOf(products[0].getUnitSellPrice().getValue()));
                     productEntryBarcodeContextMenu.hide();
+                    List<TextField> productEntryLabelTextFields = Arrays.asList(productEntryLabelBarcode, productEntryLabelBrand, productEntryLabelName, productEntryLabelTax, productEntryLabelPiece, productEntryLabelBuyPrice, productEntryLabelSellPrice);
+                    for (TextField t : productEntryLabelTextFields) {
+                        t.getStyleClass().remove("error");
+                    }
                 });
                 productEntryBarcodeContextMenu.getItems().add(menuItem);
             }
@@ -598,6 +617,7 @@ public class MainScreen {
         for (TextField textField : textFields.keySet()) {
             if (!inputChecker(textField)) {
                 textFields.put(textField, false);
+                textField.getStyleClass().remove("error");
             }
         }
         if (!textFields.containsValue(false)) {
@@ -620,17 +640,11 @@ public class MainScreen {
             for (TextField txt : textFields.keySet()) {
                 if (!textFields.get(txt)) {
                     txt.styleProperty().unbind();
-                    txt.setStyle("    -fx-background-color: RED, linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #9e899b 0.0%, gray 100.0%); " +
-                            "-fx-background-insets: 0, 0 0 1 0;" +
-                            "-fx-background-radius: 0;");
+                    txt.getStyleClass().add("error");
                 } else {
-                    txt.setStyle(productEntryLabelPrice.getStyle());
+                    txt.getStyleClass().remove("error");
                 }
             }
-            /*for (TextField txt : textFields.keySet()) {
-                txt.setStyle(productEntryLabelPrice.getStyle());
-                txt.styleProperty().bind(Bindings.when(txt.focusedProperty()).then("-fx-background-insets: 0, 0 0 1 0;-fx-background-color: -fx-primary-color, linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #9e899b 0.0%, gray 100.0%);").otherwise("-fx-accent: -fx-primary-color;-fx-background-color: -fx-grey-color, linear-gradient(from 0.0% 0.0% to 100.0% 0.0%, #9e899b 0.0%, gray 100.0%);-fx-background-insets: 0, 0 0 1 0;-fx-background-radius: 0;"));
-            }*/
         }
 
     }
@@ -893,11 +907,11 @@ public class MainScreen {
             ) {
                 otherProfit += stats.get(object);
             }
-            HashMap<String,Double> returnHashMap = new HashMap<>();
-            for (String s:stringsTop15) {
-                returnHashMap.put(s,stats.get(s));
+            HashMap<String, Double> returnHashMap = new HashMap<>();
+            for (String s : stringsTop15) {
+                returnHashMap.put(s, stats.get(s));
             }
-            returnHashMap.put("Other",otherProfit);
+            returnHashMap.put("Other", otherProfit);
 
             setPieChart(returnHashMap);
         } else {
@@ -1085,11 +1099,12 @@ public class MainScreen {
         Scene scene = new Scene(fxmlLoader.load(), 480, 360);
         ArrayList<Node> nodes = new ArrayList<>(scene.getRoot().getChildrenUnmodifiable());
         Button registerButton = (Button) nodes.get(4);
+        SignupScreen signupScreenController = fxmlLoader.getController();
+        signupScreenController.setFirstController(FirstOpenScreen.mainScreenLoader.getController());
         registerButton.addEventHandler(new EventType<ActionEvent>(), new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 try {
-                    System.out.println("asdasd");
                     onUserTabOpened();
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
@@ -1098,13 +1113,6 @@ public class MainScreen {
         });
         registerStage.setAlwaysOnTop(true);
         Main.setGradient(registerStage, scene);
-        registerStage.setOnCloseRequest(windowEvent -> {
-            try {
-                onUserTabOpened();
-            } catch (SQLException e) {
-                e.printStackTrace(System.out);
-            }
-        });
     }
 
     @FXML
@@ -1171,4 +1179,5 @@ public class MainScreen {
     public boolean inputChecker(TextField txtField) {
         return (!txtField.getText().equals("") && !txtField.getText().equals("."));
     }
+
 }

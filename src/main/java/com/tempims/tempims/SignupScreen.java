@@ -7,8 +7,10 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class SignupScreen {
+    private MainScreen mainScreenController;
 
     public static String username;
     public TextField usernameField;
@@ -35,7 +37,7 @@ public class SignupScreen {
     }
 
     @FXML
-    public void signupButtonAction() throws IOException {
+    public void signupButtonAction() throws IOException, SQLException {
         if (username.isEmpty()) {
             int flag = UserInteractions.checkSignUp(usernameField.getText(), passwordField.getText(), passwordField1.getText(), "1111110");
             if (flag == -2) {
@@ -46,6 +48,7 @@ public class SignupScreen {
                 System.out.println("Şifre ve şifre onayı birbiriyle eşleşmiyor.");
             } else {
                 System.out.println("Yeni kullanıcı oluşturuldu.");
+                mainScreenController.onUserTabOpened();
             }
         } else {
             if (passwordField.getText().equals("") || passwordField1.getText().equals("") || usernameField.getText().equals("")) {
@@ -56,5 +59,8 @@ public class SignupScreen {
                 UserInteractions.changePassword(username, passwordField.getText());
             }
         }
+    }
+    public void setFirstController(MainScreen mainScreenController) {
+        this.mainScreenController = mainScreenController;
     }
 }
