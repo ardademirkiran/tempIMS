@@ -5,9 +5,9 @@
  ## What does TempIms do?
 
 - ### 1) TempIms operates sales & return processes.
-    - ### TempIms works with a barcode scanner device.
-    - ### TempIms helps to monitoring sub total, tax, discount and final sell price values.
-    - ### TempIms also helps you to buy & sell products that can not have a barcode: fruits, vegetables etc.
+    - ### The system integrates with a barcode scanner device, allowing you to easily track your inventory and sales, while streamlining your operations and reducing the risk of human error.
+    - ### With its real-time monitoring capabilities, TempIms provides valuable insights into your financial data, including sub-totals, taxes, discounts, and final sell prices.
+    - ### TempIms is a versatile and flexible solution, with support for buying and selling products that cannot be scanned with a barcode, such as fruits and vegetables.
 
     ![appss0](https://i.ibb.co/N64qDL8/appss0.png)
 
