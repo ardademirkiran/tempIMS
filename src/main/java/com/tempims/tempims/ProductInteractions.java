@@ -1,6 +1,7 @@
 package com.tempims.tempims;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ProductInteractions {
     public static void productEntry(String barcodeInput, String brandInput, String nameInput, String numberInput, String taxInput, String totalBuyPriceInput, String unitBuyPriceInput, String sellPriceInput) {
@@ -12,6 +13,10 @@ public class ProductInteractions {
 
     public static SellScreenProduct getProduct(String barcode) {
         String[] productInfo = (DBAccess.newProductInfo(barcode)).split(":");
+        if (Objects.equals(productInfo[0], "null")){
+            System.out.println("Ürün dbde yok");
+            return null;
+        }
         String brand = productInfo[1];
         String name = productInfo[2]; //sql part to get name
         int productNumber = Integer.parseInt(productInfo[3]);

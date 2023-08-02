@@ -3,11 +3,7 @@ package com.tempims.tempims;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.css.Stylesheet;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
@@ -17,13 +13,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -34,16 +27,11 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.util.Duration;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.sql.Array;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -61,12 +49,12 @@ public class MainScreen {
     public static Label totalPriceLabelstatic;
     public static Label totalTaxLabelstatic;
     public static Label subTotalLabelstatic;
+    public static double totalRevenue = 0;
     static String companyName;
     public AnchorPane statisticAnchorPane;
     public Tab statisticsTab;
     public PieChart pieChart;
     public Label username;
-
     public TableView<SellScreenProduct> sellScreenTable;
     public TableColumn<SellScreenProduct, String> barcodeCollumn;
     public TableColumn<SellScreenProduct, String> nameCollumn;
@@ -92,6 +80,7 @@ public class MainScreen {
     public Label totalPriceLabel;
     public Label totalTaxLabel;
     public TabPane tabpane;
+    public Label ciro_label;
     public Label subTotalLabel;
     public TableView<StockViewProduct> stockTable;
     public TableColumn<StockViewProduct, String> stockCollumnBarcode;
@@ -145,7 +134,14 @@ public class MainScreen {
     public Label taxTextLabel;
     public CheckBox productEntryTabCheckBox;
     List<TextField> productEntryLabelTextFields;
-    public static double totalRevenue = 0;
+    Font font = Font.loadFont(new FileInputStream("src/main/resources/com/tempims/tempims/DS-DIGIT.TTF"), 45);
+    @FXML
+    Label ciro_text_label;
+    Map<String, String> test1 = Map.of("48", "0", "49", "1", "50", "2", "51", "3", "52", "4", "53", "5", "54", "6", "55", "7", "56", "8", "57", "9");
+    ArrayList<byte[]> bytes = new ArrayList<>();
+    boolean isHolding = false;
+    String amountByte = "";
+    Integer amountInteger = 1;
 
     public MainScreen() throws FileNotFoundException {
     }
@@ -170,6 +166,23 @@ public class MainScreen {
         totalTaxLabelstatic.setText(String.format(Locale.ROOT, "%.2f", totalprice - subtotal));
     }
 
+    static void inputController(TextField selectedTextField) {
+        selectedTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.matches("^[0-9.]*$")) {
+                if (newValue.matches("^[0-9]+\\.([0-9]{0,2})")) {
+
+                } else if (newValue.matches("^[0-9]*\\.([0-9]*)\\.*") && selectedTextField.getText().length() >= 2) {
+                    StringBuilder sb = new StringBuilder(newValue);
+                    sb.deleteCharAt(sb.length() - 1);
+                    newValue = String.valueOf(sb);
+                    selectedTextField.setText(newValue);
+                }
+            } else {
+                selectedTextField.setText(newValue.replaceAll("[^\\d.]", ""));
+            }
+        });
+    }
+
     @FXML
     protected void sellButtonClicked() throws IOException, SQLException {
         String totalpricelabeltext = totalPriceLabel.getText();
@@ -192,6 +205,7 @@ public class MainScreen {
             }
             ProcessLogs.recordSalesProcess(midText, Double.parseDouble(totalpricelabeltext));
             conn.close();
+            ciro_label.setText(String.format(Locale.ROOT, "%.2f", totalRevenue));
         }
     }
 
@@ -214,6 +228,7 @@ public class MainScreen {
                 DBAccess.amendProfit(conn, String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, (product.unitBuyPrice - product.unitSellPrice) * product.amount);
                 midText += product.amount + "x" + product.name + "/-";
             }
+            ciro_label.setText(String.format(Locale.ROOT, "%.2f", totalRevenue));
             ProcessLogs.recordReturnProcess(midText, Double.parseDouble(totalpricelabeltext));
         }
         conn.close();
@@ -240,8 +255,6 @@ public class MainScreen {
         }
     }
 
-    Font font = Font.loadFont(new FileInputStream("src/main/resources/com/tempims/tempims/DS-DIGIT.TTF"), 45);
-
     @FXML
     public void initialize() throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader("company.txt"));
@@ -255,6 +268,8 @@ public class MainScreen {
         discountTextLabel.setFont(font);
         subTotalTextLabel.setFont(font);
         sellPriceTextLabel.setFont(font);
+        ciro_label.setFont(font);
+        ciro_text_label.setFont(font);
         taxTextLabel.setFont(font);
         barcodeInfo.setTooltip(createToolTip("Tanımlanan ürünün barkodu bu alana yazılır."));
         brandInfo.setTooltip(createToolTip("Ürünün ait olduğu marka bu alana yazılır."));
@@ -407,8 +422,7 @@ public class MainScreen {
             }
         });
         List<TextField> productEntryLabelTextFields = Arrays.asList(productEntryLabelBrand, productEntryLabelName, productEntryLabelTax, productEntryLabelPiece, productEntryLabelBuyPrice, productEntryLabelSellPrice);
-        for (TextField t : productEntryLabelTextFields
-        ) {
+        for (TextField t : productEntryLabelTextFields) {
             t.setOnKeyTyped(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent keyEvent) {
@@ -460,12 +474,6 @@ public class MainScreen {
         stockCollumnAmont.setCellValueFactory(productsTextFieldCellDataFeatures -> (productsTextFieldCellDataFeatures.getValue().getAmount()));
         stockTable.refresh();
     }
-
-    Map<String, String> test1 = Map.of("48", "0", "49", "1", "50", "2", "51", "3", "52", "4", "53", "5", "54", "6", "55", "7", "56", "8", "57", "9");
-    ArrayList<byte[]> bytes = new ArrayList<>();
-    boolean isHolding = false;
-    String amountByte = "";
-    Integer amountInteger = 1;
 
     private void sellScreenKeyReleased(KeyEvent keyEvent) {
         byte[] tab = {9};
@@ -605,7 +613,6 @@ public class MainScreen {
         return barcodes;
     }
 
-
     @FXML
     protected void productEntryLabelButtonOnClicked() throws IOException, SQLException {
         HashMap<TextField, Boolean> textFields = new HashMap<>() {
@@ -658,24 +665,6 @@ public class MainScreen {
         if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(enter))) {
             keyTypedAlgorithm(barcodeField.getText());
         }
-    }
-
-
-    static void inputController(TextField selectedTextField) {
-        selectedTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.matches("^[0-9.]*$")) {
-                if (newValue.matches("^[0-9]+\\.([0-9]{0,2})")) {
-
-                } else if (newValue.matches("^[0-9]*\\.([0-9]*)\\.*") && selectedTextField.getText().length() >= 2) {
-                    StringBuilder sb = new StringBuilder(newValue);
-                    sb.deleteCharAt(sb.length() - 1);
-                    newValue = String.valueOf(sb);
-                    selectedTextField.setText(newValue);
-                }
-            } else {
-                selectedTextField.setText(newValue.replaceAll("[^\\d.]", ""));
-            }
-        });
     }
 
     @FXML
@@ -895,19 +884,11 @@ public class MainScreen {
             salesObjects = DBAccess.createSalesObjects("monthly", dateOfLabel);
         }
         if (salesObjects.size() > 15) {
-            HashMap<String, Double> stats = Stats.createPieChartData(salesObjects).entrySet().stream()
-                    .sorted((i2, i1)
-                            -> i1.getValue().compareTo(
-                            i2.getValue()))
-                    .collect(Collectors.toMap(
-                            Map.Entry::getKey,
-                            Map.Entry::getValue,
-                            (e1, e2) -> e1, LinkedHashMap::new));
+            HashMap<String, Double> stats = Stats.createPieChartData(salesObjects).entrySet().stream().sorted((i2, i1) -> i1.getValue().compareTo(i2.getValue())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
             ArrayList<String> arrayListSales = new ArrayList<>(stats.keySet());
             ArrayList<String> stringsTop15 = new ArrayList<>(arrayListSales.subList(0, 14));
             double otherProfit = 0;
-            for (String object : arrayListSales.subList(14, arrayListSales.size())
-            ) {
+            for (String object : arrayListSales.subList(14, arrayListSales.size())) {
                 otherProfit += stats.get(object);
             }
             HashMap<String, Double> returnHashMap = new HashMap<>();
@@ -1184,4 +1165,12 @@ public class MainScreen {
         return (!txtField.getText().equals("") && !txtField.getText().equals("."));
     }
 
+    public void product_entry_name_action(KeyEvent actionEvent) {
+        System.out.println("oldu");
+        if (productEntryTabCheckBox.isSelected()){
+            String name =productEntryLabelName.getText();
+            productEntryLabelBarcode.setText(name);
+            productEntryLabelBrand.setText(name);
+        }
+    }
 }
