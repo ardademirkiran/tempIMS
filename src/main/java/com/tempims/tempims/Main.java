@@ -49,6 +49,14 @@ public class Main extends Application {
                 stage.setFullScreen(!stage.isFullScreen());
             }
         });
+
+        stage.setOnCloseRequest(event -> {
+            try {
+                ProcessLogs.recordTotalSalesOnExit(MainScreen.totalRevenue);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     static void setGradient(Stage stage, Scene scene) {

@@ -145,6 +145,7 @@ public class MainScreen {
     public Label taxTextLabel;
     public CheckBox productEntryTabCheckBox;
     List<TextField> productEntryLabelTextFields;
+    public static double totalRevenue = 0;
 
     public MainScreen() throws FileNotFoundException {
     }
@@ -179,6 +180,7 @@ public class MainScreen {
             double totalProfit = 0;
             String midText = "";
             for (SellScreenProduct product : sellScreenProductList) {
+                totalRevenue += product.sellPriceDB * product.amount;
                 double profitToAdd = Stats.calculateProfit(product);
                 DBAccess.updateStock(conn, product.barcode, -product.amount);
 
@@ -202,6 +204,7 @@ public class MainScreen {
             cancelButtonClicked();
             String midText = "";
             for (SellScreenProduct product : sellScreenProductList) {
+                totalRevenue -= product.sellPriceDB * product.amount;
                 double profitToAdd = Stats.calculateProfit(product);
                 DBAccess.updateStock(conn, product.barcode, product.amount);
 
@@ -1018,6 +1021,7 @@ public class MainScreen {
                             case "SATIŞ" -> setStyle("-fx-background-color: #b5d5b5");
                             case "İADE" -> setStyle("-fx-background-color: #b9878d");
                             case "STOK TANIMI" -> setStyle("-fx-background-color: #a2b2c0");
+                            case "ÇIKIŞ" -> setStyle("-fx-background-color: #05f6ee");
                             default -> setStyle("");
                         }
                     } else {

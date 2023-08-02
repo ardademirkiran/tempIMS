@@ -14,6 +14,13 @@ public class ProcessLogs {
       return logFile.createNewFile();
    }
 
+   public static void recordTotalSalesOnExit(double totalSells) throws IOException{
+      FileWriter logsFile = new FileWriter("logs.txt", true);
+      BufferedWriter writer = new BufferedWriter(logsFile);
+      writer.write("ÇIKIŞ//" + java.time.LocalDate.now() + "||" +  java.time.LocalTime.now() + "//" + totalSells + "//" + UserInteractions.user.username + "\n");
+      writer.close();
+   }
+
    public static void recordSalesProcess(String midText, double totalSellPrice) throws IOException {
       FileWriter logsFile = new FileWriter("logs.txt", true);
       BufferedWriter writer = new BufferedWriter(logsFile);
@@ -80,6 +87,8 @@ public class ProcessLogs {
             logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Kullanıcı adı:\t" + splittedLine[2], "", splittedLine[2]));
          } else if(splittedLine[0].equals("YENİ KAYIT")){
             logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Kullanıcı adı:\t" + splittedLine[2], "", splittedLine[2]));
+         } else if(splittedLine[0].equals("ÇIKIŞ")){
+            logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Toplam Satış:\t" + splittedLine[2], "", splittedLine[3]));
          }
       }
       return logObjects;
