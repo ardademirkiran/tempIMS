@@ -3,6 +3,10 @@ package com.tempims.tempims;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -16,6 +20,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
+import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -35,6 +40,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -133,6 +139,8 @@ public class MainScreen {
     public Label sellPriceTextLabel;
     public Label taxTextLabel;
     public CheckBox productEntryTabCheckBox;
+    @FXML
+    GridPane log_screen_grid_pane;
     List<TextField> productEntryLabelTextFields;
     Font font = Font.loadFont(new FileInputStream("src/main/resources/com/tempims/tempims/DS-DIGIT.TTF"), 45);
     @FXML
@@ -142,7 +150,10 @@ public class MainScreen {
     boolean isHolding = false;
     String amountByte = "";
     Integer amountInteger = 1;
-    DateTimePicker dateTimePicker;
+    DateTimePicker min_dateTimePicker;
+    DateTimePicker max_dateTimePicker;
+    @FXML
+    ChoiceBox<String> log_screen_choice_box;
 
     public MainScreen() throws FileNotFoundException {
     }
@@ -432,9 +443,56 @@ public class MainScreen {
             });
         }
         buyScreenTab.getStyleClass().add("my-container");
+        ObservableList<String> items = FXCollections.observableArrayList(
+                "SATIŞ",
+                "İADE",
+                "STOK TANIMI",
+                "GİRİŞ",
+                "YENİ KAYIT",
+                "ÇIKIŞ"
+        );
 
-        dateTimePicker = new DateTimePicker(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        logTab.setContent(dateTimePicker);
+
+        // Set the items in the ChoiceBox
+        log_screen_choice_box.setItems(items);
+        log_screen_choice_box.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                try {
+                    logTabOpened();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        min_dateTimePicker = new DateTimePicker(DateTimeFormatter.ofPattern("yyyy-MM-dd HH"), LocalDateTime.of(0,01,01,00,00));
+        min_dateTimePicker.getEditor().textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                try {
+                    System.out.println(t1);
+                    min_dateTimePicker.dateTimeValueProperty().set(LocalDateTime.of(Integer.parseInt(t1.substring(0,4)), Integer.parseInt(t1.substring(5,7)), Integer.parseInt(t1.substring(8,10)), Integer.parseInt(t1.substring(11,13)),0));
+                    logTabOpened();
+                } catch (Exception e) {
+                    System.out.println("Error");
+                }
+            }
+        });
+        log_screen_grid_pane.add(min_dateTimePicker, 1, 0);
+        max_dateTimePicker = new DateTimePicker(DateTimeFormatter.ofPattern("yyyy-MM-dd HH"), LocalDateTime.of(9999,01,01,00,00));
+        max_dateTimePicker.getEditor().textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                try {
+                    max_dateTimePicker.dateTimeValueProperty().set(LocalDateTime.of(Integer.parseInt(t1.substring(0,4)), Integer.parseInt(t1.substring(5,7)), Integer.parseInt(t1.substring(8,10)), Integer.parseInt(t1.substring(11,13)),0));
+                    logTabOpened();
+                } catch (Exception e) {
+                    System.out.println("Error");
+                }
+            }
+        });
+        log_screen_grid_pane.add(max_dateTimePicker, 3, 0);
+
 
     }
 
@@ -982,7 +1040,11 @@ public class MainScreen {
             historyTableEmployee.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getEmployee());
             historyTableType.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getType());
             historyTableExplanation.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getExplanation());
-            historyTable.getItems().addAll(ProcessLogs.getLogObjects("0", "9", "SATIŞ"));
+            String min_date = min_dateTimePicker.dateTimeValueProperty().getValue().toString();
+            String max_date = max_dateTimePicker.dateTimeValueProperty().getValue().toString();
+            min_date = min_date.replace("T" , "||");
+            max_date = max_date.replace("T" , "||");
+            historyTable.getItems().addAll(ProcessLogs.getLogObjects(min_date, max_date, log_screen_choice_box.getValue()));
             Collections.reverse(historyTable.getItems());
 
             historyTable.setRowFactory(tv -> new TableRow<>() {
@@ -1181,4 +1243,6 @@ public class MainScreen {
 
     public void save_button_action(ActionEvent actionEvent) {
     }
+
+
 }

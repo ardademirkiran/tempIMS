@@ -28,7 +28,7 @@
                         <Font size="15.0" />
                     </font>
                 </Button>
-                <TableView fx:id="sellScreenTable" editable="true" fixedCellSize="70" focusTraversable="false" layoutX="20.0" layoutY="64.0" stylesheets="@TableView.css" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0">
+                <TableView fx:id="sellScreenTable" editable="true" fixedCellSize="70" focusTraversable="false" layoutX="20.0" layoutY="64.0" stylesheets="@TableView.css" AnchorPane.bottomAnchor="220.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0">
                     <columns>
                         <TableColumn fx:id="barcodeCollumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Barkod" />
                         <TableColumn fx:id="nameCollumn" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Ad" />
@@ -42,9 +42,14 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                     </columnResizePolicy>
                 </TableView>
-                <Button alignment="CENTER" focusTraversable="false" mnemonicParsing="false" onMouseClicked="#sellButtonClicked" prefHeight="80.0" prefWidth="295.0" stylesheets="@Button.css" text="İşlemi Onayla" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="30.0">
+                <Button alignment="CENTER" focusTraversable="false" mnemonicParsing="false" onMouseClicked="#sellButtonClicked" prefHeight="50.0" prefWidth="295.0" stylesheets="@Button.css" text="İşlemi Onayla" AnchorPane.bottomAnchor="80.0" AnchorPane.rightAnchor="30.0">
                     <font>
                         <Font size="36.0" />
+                    </font>
+                </Button>
+                <Button alignment="CENTER" focusTraversable="false" layoutX="572.0" layoutY="497.0" mnemonicParsing="false" onAction="#save_button_action" prefHeight="50.0" prefWidth="295.0" stylesheets="@Button.css" text="Oturumu Kaydet" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="30.0">
+                    <font>
+                        <Font size="65.0" />
                     </font>
                 </Button>
             <AnchorPane layoutX="20.0" layoutY="617.0" prefHeight="170.0" prefWidth="500.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
@@ -91,11 +96,12 @@
                       </Label>
                </children>
             </AnchorPane>
-                <Button alignment="CENTER" focusTraversable="false" layoutX="572.0" layoutY="497.0" mnemonicParsing="false" onAction="#returnButtonClicked" onMouseClicked="#sellButtonClicked" prefHeight="80.0" prefWidth="295.0" stylesheets="@Button.css" text="İade Al" AnchorPane.bottomAnchor="110.0" AnchorPane.rightAnchor="30.0">
+                <Button alignment="CENTER" focusTraversable="false" layoutX="572.0" layoutY="497.0" mnemonicParsing="false" onAction="#returnButtonClicked" onMouseClicked="#sellButtonClicked" prefHeight="50.0" prefWidth="295.0" stylesheets="@Button.css" text="İade Al" AnchorPane.bottomAnchor="150.0" AnchorPane.rightAnchor="30.0">
                     <font>
                         <Font size="65.0" />
                     </font>
                 </Button>
+
             <AnchorPane layoutX="700.0" layoutY="727.0" prefHeight="172.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="500.0" AnchorPane.rightAnchor="330.0">
                <children>
                   <Label fx:id="ciro_text_label" focusTraversable="false" layoutY="120.0" text="Ciro :" AnchorPane.leftAnchor="100.0">
@@ -108,7 +114,6 @@
                         <Font size="36.0" />
                      </font>
                   </Label>
-                  <Button layoutX="306.0" layoutY="1.0" mnemonicParsing="false" onAction="#save_button_action" text="Kaydet" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
                </children>
             </AnchorPane>
                 <padding>
@@ -253,17 +258,35 @@
         </Tab>
         <Tab fx:id="logTab" onSelectionChanged="#logTabOpened" text="Geçmiş">
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                <TableView fx:id="historyTable" focusTraversable="false" layoutX="185.0" layoutY="73.0" prefHeight="200.0" prefWidth="200.0" stylesheets="@TableView.css" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0">
-                    <columns>
-                        <TableColumn fx:id="historyTableDate" prefWidth="75.0" text="Tarih" />
-                        <TableColumn fx:id="historyTableEmployee" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Çalışan" />
-                        <TableColumn fx:id="historyTableType" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Tür" />
-                        <TableColumn fx:id="historyTableExplanation" prefWidth="75.0" text="Açıklama" />
-                    </columns>
-                    <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                    </columnResizePolicy>
-                </TableView>
+            <GridPane fx:id="log_screen_grid_pane" layoutX="10.0" layoutY="50.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" percentHeight="5.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" percentHeight="95.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                      <TableView fx:id="historyTable" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" stylesheets="@TableView.css" GridPane.columnSpan="5" GridPane.rowIndex="1">
+                          <columns>
+                              <TableColumn fx:id="historyTableDate" prefWidth="75.0" text="Tarih" />
+                              <TableColumn fx:id="historyTableEmployee" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Çalışan" />
+                              <TableColumn fx:id="historyTableType" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Tür" />
+                              <TableColumn fx:id="historyTableExplanation" prefWidth="75.0" text="Açıklama" />
+                          </columns>
+                          <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                          </columnResizePolicy>
+                      </TableView>
+                  <ChoiceBox fx:id="log_screen_choice_box" prefWidth="150.0" GridPane.columnIndex="4" />
+                  <Label text="Minimum Tarih" />
+                  <Label text="Maximum Tarih" GridPane.columnIndex="2" />
+               </children>
+            </GridPane>
             </AnchorPane>
         </Tab>
         <Tab fx:id="stockControlTab" onSelectionChanged="#onStockControlOpened" text="Stok Kontrol Ekranı">
