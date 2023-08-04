@@ -977,7 +977,7 @@ public class MainScreen {
             historyTableEmployee.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getEmployee());
             historyTableType.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getType());
             historyTableExplanation.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getExplanation());
-            historyTable.getItems().addAll(ProcessLogs.getLogObjects("2023-03-28||0", "2023-03-28||9"));
+            historyTable.getItems().addAll(ProcessLogs.getLogObjects("0", "9", "SATIŞ"));
             Collections.reverse(historyTable.getItems());
             historyTable.setRowFactory(tv -> new TableRow<>() {
                 Node detailsPane;

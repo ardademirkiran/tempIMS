@@ -56,7 +56,7 @@ public class ProcessLogs {
 
    }
 
-   public static ArrayList<LogObject> getLogObjects(String minLimitOfDate, String maxLimitOfDate) throws IOException {
+   public static ArrayList<LogObject> getLogObjects(String minLimitOfDate, String maxLimitOfDate, String type) throws IOException {
       ArrayList<LogObject> logObjects = new ArrayList<>();
       BufferedReader reader = new BufferedReader(new FileReader("logs.txt"));
       String line;
@@ -69,7 +69,11 @@ public class ProcessLogs {
                String[] productSplitted = productAndPrice.split("x");
                detailsString += productSplitted[0] + " adet " + productSplitted[1] + "\n";
             }if(splittedLine[1].compareTo(minLimitOfDate) > 0 && splittedLine[1].compareTo(maxLimitOfDate) < 0) {
-               logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Satış Fiyatı:\t" + splittedLine[3], detailsString, splittedLine[4]));
+               if(type != null && type.equals(splittedLine[0])) {
+                  logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Satış Fiyatı:\t" + splittedLine[3], detailsString, splittedLine[4]));
+               } else if(type == null){
+                  logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Satış Fiyatı:\t" + splittedLine[3], detailsString, splittedLine[4]));
+               }
             }
          }else if (splittedLine[0].equals("İADE")){
                String detailsString = "İade Detayı:\n\n";
@@ -79,25 +83,45 @@ public class ProcessLogs {
                   detailsString += productSplitted[0] + " adet " + productSplitted[1] +  "\n";
                }
             if(splittedLine[1].compareTo(minLimitOfDate) > 0 && splittedLine[1].compareTo(maxLimitOfDate) < 0) {
-               logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "İade Fiyatı:\t" + splittedLine[3], detailsString, splittedLine[4]));
+               if(type != null && type.equals(splittedLine[0])) {
+                  logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "İade Fiyatı:\t" + splittedLine[3], detailsString, splittedLine[4]));
+               } else if(type == null){
+                  logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "İade Fiyatı:\t" + splittedLine[3], detailsString, splittedLine[4]));
+               }
             }
 
          } else if(splittedLine[0].equals("STOK TANIMI")){
             String explanationString = splittedLine[4] + " adet " + splittedLine[3];
             if(splittedLine[1].compareTo(minLimitOfDate) > 0 && splittedLine[1].compareTo(maxLimitOfDate) < 0) {
-               logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Ürün İsmi:\t" + explanationString, "Barkod: \n" + splittedLine[2], splittedLine[5]));
+               if(type != null && type.equals(splittedLine[0])) {
+                  logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Ürün İsmi:\t" + explanationString, "Barkod: \n" + splittedLine[2], splittedLine[5]));
+               } else if(type == null){
+                  logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Ürün İsmi:\t" + explanationString, "Barkod: \n" + splittedLine[2], splittedLine[5]));
+               }
             }
          } else if (splittedLine[0].equals("GİRİŞ")){
             if(splittedLine[1].compareTo(minLimitOfDate) > 0 && splittedLine[1].compareTo(maxLimitOfDate) < 0) {
-               logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Kullanıcı adı:\t" + splittedLine[2], "", splittedLine[2]));
+               if(type != null && type.equals(splittedLine[0])) {
+                  logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Kullanıcı adı:\t" + splittedLine[2], "", splittedLine[2]));
+               } else if(type == null){
+                  logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Kullanıcı adı:\t" + splittedLine[2], "", splittedLine[2]));
+               }
             }
          } else if(splittedLine[0].equals("YENİ KAYIT")){
             if(splittedLine[1].compareTo(minLimitOfDate) > 0 && splittedLine[1].compareTo(maxLimitOfDate) < 0) {
-               logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Kullanıcı adı:\t" + splittedLine[2], "", splittedLine[2]));
+               if(type != null && type.equals(splittedLine[0])) {
+                  logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Kullanıcı adı:\t" + splittedLine[2], "", splittedLine[2]));
+               } else if(type == null){
+                  logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Kullanıcı adı:\t" + splittedLine[2], "", splittedLine[2]));
+               }
             }
          } else if(splittedLine[0].equals("ÇIKIŞ")){
             if(splittedLine[1].compareTo(minLimitOfDate) > 0 && splittedLine[1].compareTo(maxLimitOfDate) < 0) {
-               logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Toplam Satış:\t" + splittedLine[2], "", splittedLine[3]));
+               if(type != null && type.equals(splittedLine[0])) {
+                  logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Toplam Satış:\t" + splittedLine[2], "", splittedLine[3]));
+               } else if(type == null){
+                  logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Toplam Satış:\t" + splittedLine[2], "", splittedLine[3]));
+               }
             }
          }
       }
