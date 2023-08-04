@@ -142,6 +142,7 @@ public class MainScreen {
     boolean isHolding = false;
     String amountByte = "";
     Integer amountInteger = 1;
+    DateTimePicker dateTimePicker;
 
     public MainScreen() throws FileNotFoundException {
     }
@@ -431,6 +432,9 @@ public class MainScreen {
             });
         }
         buyScreenTab.getStyleClass().add("my-container");
+
+        dateTimePicker = new DateTimePicker(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        logTab.setContent(dateTimePicker);
 
     }
 
@@ -970,6 +974,7 @@ public class MainScreen {
         statisticAnchorPane.getChildren().add(barinfo);
     }
 
+    @FXML
     public void logTabOpened() throws IOException {
         if (tabpane.getSelectionModel().getSelectedItem().equals(logTab)) {
             historyTable.getItems().removeAll(historyTable.getItems());
@@ -979,6 +984,7 @@ public class MainScreen {
             historyTableExplanation.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getExplanation());
             historyTable.getItems().addAll(ProcessLogs.getLogObjects("0", "9", "SATIŞ"));
             Collections.reverse(historyTable.getItems());
+
             historyTable.setRowFactory(tv -> new TableRow<>() {
                 Node detailsPane;
 
@@ -1166,11 +1172,13 @@ public class MainScreen {
     }
 
     public void product_entry_name_action(KeyEvent actionEvent) {
-        System.out.println("oldu");
-        if (productEntryTabCheckBox.isSelected()){
-            String name =productEntryLabelName.getText();
+        if (productEntryTabCheckBox.isSelected()) {
+            String name = productEntryLabelName.getText();
             productEntryLabelBarcode.setText(name);
             productEntryLabelBrand.setText(name);
         }
+    }
+
+    public void save_button_action(ActionEvent actionEvent) {
     }
 }

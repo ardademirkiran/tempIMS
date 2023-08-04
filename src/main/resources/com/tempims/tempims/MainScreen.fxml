@@ -108,6 +108,7 @@
                         <Font size="36.0" />
                      </font>
                   </Label>
+                  <Button layoutX="306.0" layoutY="1.0" mnemonicParsing="false" onAction="#save_button_action" text="Kaydet" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
                </children>
             </AnchorPane>
                 <padding>
@@ -252,7 +253,7 @@
         </Tab>
         <Tab fx:id="logTab" onSelectionChanged="#logTabOpened" text="Geçmiş">
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                <TableView fx:id="historyTable" focusTraversable="false" layoutX="185.0" layoutY="73.0" prefHeight="200.0" prefWidth="200.0" stylesheets="@TableView.css" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                <TableView fx:id="historyTable" focusTraversable="false" layoutX="185.0" layoutY="73.0" prefHeight="200.0" prefWidth="200.0" stylesheets="@TableView.css" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0">
                     <columns>
                         <TableColumn fx:id="historyTableDate" prefWidth="75.0" text="Tarih" />
                         <TableColumn fx:id="historyTableEmployee" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Çalışan" />
