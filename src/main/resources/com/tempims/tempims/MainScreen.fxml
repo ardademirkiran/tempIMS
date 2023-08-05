@@ -42,7 +42,7 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                     </columnResizePolicy>
                 </TableView>
-                <Button alignment="CENTER" focusTraversable="false" mnemonicParsing="false" onMouseClicked="#sellButtonClicked" prefHeight="50.0" prefWidth="295.0" stylesheets="@Button.css" text="İşlemi Onayla" AnchorPane.bottomAnchor="80.0" AnchorPane.rightAnchor="30.0">
+                <Button alignment="CENTER" focusTraversable="false" mnemonicParsing="false" onMouseClicked="#sellButtonClicked" prefHeight="50.0" prefWidth="295.0" stylesheets="@Button.css" text="Satış" AnchorPane.bottomAnchor="80.0" AnchorPane.rightAnchor="30.0">
                     <font>
                         <Font size="36.0" />
                     </font>
@@ -283,8 +283,8 @@
                           </columnResizePolicy>
                       </TableView>
                   <ChoiceBox fx:id="log_screen_choice_box" prefWidth="150.0" GridPane.columnIndex="4" />
-                  <Label text="Minimum Tarih" />
-                  <Label text="Maximum Tarih" GridPane.columnIndex="2" />
+                  <Label text="Tarih Alt Sınırı:" />
+                  <Label text="Tarih Üst Sınırı:" GridPane.columnIndex="2" />
                </children>
             </GridPane>
             </AnchorPane>

@@ -14,11 +14,26 @@ public class ProcessLogs {
       return logFile.createNewFile();
    }
 
-   public static void recordTotalSalesOnExit(double totalSells) throws IOException{
-      FileWriter logsFile = new FileWriter("logs.txt", true);
-      BufferedWriter writer = new BufferedWriter(logsFile);
-      writer.write("ÇIKIŞ//" + java.time.LocalDate.now() + "||" +  java.time.LocalTime.now() + "//" + totalSells + "//" + UserInteractions.user.username + "\n");
+   public static void recordRevenueToBuffer(double totalSells) throws IOException {
+      FileWriter revenueFile = new FileWriter("lastRevenue.txt", false);
+      BufferedWriter writer = new BufferedWriter(revenueFile);
+      writer.write("CİRO//" + java.time.LocalDate.now() + "||" +  java.time.LocalTime.now() + "//" + totalSells + "//" + UserInteractions.user.username + "\n");
       writer.close();
+   }
+
+   public static void recordTotalSalesOnExit() throws IOException{
+      BufferedReader reader = new BufferedReader(new FileReader("lastRevenue.txt"));
+      String lastRevenueLogText = reader.readLine();
+      if(lastRevenueLogText == null || !lastRevenueLogText.equals("")) {
+         FileWriter logsFile = new FileWriter("logs.txt", true);
+         BufferedWriter writer = new BufferedWriter(logsFile);
+         FileWriter revenueFileWriter = new FileWriter("lastRevenue.txt", false);
+         BufferedWriter writer2 = new BufferedWriter(revenueFileWriter);
+         writer2.write("");
+         writer.write(lastRevenueLogText + "\n");
+         writer.close();
+         writer2.close();
+      }
    }
 
    public static void recordSalesProcess(String midText, double totalSellPrice) throws IOException {
@@ -71,7 +86,7 @@ public class ProcessLogs {
             }if(splittedLine[1].compareTo(minLimitOfDate) > 0 && splittedLine[1].compareTo(maxLimitOfDate) < 0) {
                if(type != null && type.equals(splittedLine[0])) {
                   logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Satış Fiyatı:\t" + splittedLine[3], detailsString, splittedLine[4]));
-               } else if(type == null){
+               } else if(type == null || type.equals("TÜMÜ")){
                   logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Satış Fiyatı:\t" + splittedLine[3], detailsString, splittedLine[4]));
                }
             }
@@ -85,7 +100,7 @@ public class ProcessLogs {
             if(splittedLine[1].compareTo(minLimitOfDate) > 0 && splittedLine[1].compareTo(maxLimitOfDate) < 0) {
                if(type != null && type.equals(splittedLine[0])) {
                   logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "İade Fiyatı:\t" + splittedLine[3], detailsString, splittedLine[4]));
-               } else if(type == null){
+               } else if(type == null || type.equals("TÜMÜ")){
                   logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "İade Fiyatı:\t" + splittedLine[3], detailsString, splittedLine[4]));
                }
             }
@@ -95,7 +110,7 @@ public class ProcessLogs {
             if(splittedLine[1].compareTo(minLimitOfDate) > 0 && splittedLine[1].compareTo(maxLimitOfDate) < 0) {
                if(type != null && type.equals(splittedLine[0])) {
                   logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Ürün İsmi:\t" + explanationString, "Barkod: \n" + splittedLine[2], splittedLine[5]));
-               } else if(type == null){
+               } else if(type == null || type.equals("TÜMÜ")){
                   logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Ürün İsmi:\t" + explanationString, "Barkod: \n" + splittedLine[2], splittedLine[5]));
                }
             }
@@ -103,7 +118,7 @@ public class ProcessLogs {
             if(splittedLine[1].compareTo(minLimitOfDate) > 0 && splittedLine[1].compareTo(maxLimitOfDate) < 0) {
                if(type != null && type.equals(splittedLine[0])) {
                   logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Kullanıcı adı:\t" + splittedLine[2], "", splittedLine[2]));
-               } else if(type == null){
+               } else if(type == null || type.equals("TÜMÜ")){
                   logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Kullanıcı adı:\t" + splittedLine[2], "", splittedLine[2]));
                }
             }
@@ -111,15 +126,15 @@ public class ProcessLogs {
             if(splittedLine[1].compareTo(minLimitOfDate) > 0 && splittedLine[1].compareTo(maxLimitOfDate) < 0) {
                if(type != null && type.equals(splittedLine[0])) {
                   logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Kullanıcı adı:\t" + splittedLine[2], "", splittedLine[2]));
-               } else if(type == null){
+               } else if(type == null || type.equals("TÜMÜ")){
                   logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Kullanıcı adı:\t" + splittedLine[2], "", splittedLine[2]));
                }
             }
-         } else if(splittedLine[0].equals("ÇIKIŞ")){
+         } else if(splittedLine[0].equals("CİRO")){
             if(splittedLine[1].compareTo(minLimitOfDate) > 0 && splittedLine[1].compareTo(maxLimitOfDate) < 0) {
                if(type != null && type.equals(splittedLine[0])) {
                   logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Toplam Satış:\t" + splittedLine[2], "", splittedLine[3]));
-               } else if(type == null){
+               } else if(type == null || type.equals("TÜMÜ")){
                   logObjects.add(new LogObject(splittedLine[1], splittedLine[0], "Toplam Satış:\t" + splittedLine[2], "", splittedLine[3]));
                }
             }

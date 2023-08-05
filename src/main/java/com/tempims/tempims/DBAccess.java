@@ -102,7 +102,7 @@ public class DBAccess {
                     updateSellPrice(conn, barcodeInput, Double.parseDouble(sellPriceInput));
                     double currentAvgUnitBuyingPrice = fetchUnitBuyingPrice(barcodeInput);
                     double avgUnitBuyingPrice = Stats.calculateAverageEntryPrice(currentStock, currentAvgUnitBuyingPrice, Integer.parseInt(numberInput), Double.parseDouble(unitBuyPriceInput));
-                    updatePriceInfo(avgUnitBuyingPrice, Double.parseDouble(sellPriceInput), Double.parseDouble(totalBuyPriceInput), barcodeInput);
+                    updatePriceInfo(conn, avgUnitBuyingPrice, Double.parseDouble(sellPriceInput), Double.parseDouble(totalBuyPriceInput), barcodeInput);
                     updateStock(conn, barcodeInput, Integer.parseInt(numberInput));
                     conn.close();
                 }
@@ -334,8 +334,7 @@ public class DBAccess {
         }
     }
 
-    protected static void updatePriceInfo(double newUnitPrice, double newSellingPrice, double newBuyingPrice, String barcode){
-        Connection conn = connect();
+    protected static void updatePriceInfo(Connection conn, double newUnitPrice, double newSellingPrice, double newBuyingPrice, String barcode){
         try{
             String sql = String.format(Locale.ROOT,"UPDATE PRODUCTS SET UNIT_BUYING_PRICE = '%,.2f', UNIT_SELLING_PRICE = '%,.2f', TOTAL_BUYING_PRICE = TOTAL_BUYING_PRICE + '%,.2f' WHERE BARCODE = '%s'",
                     newUnitPrice, newSellingPrice, newBuyingPrice, barcode);

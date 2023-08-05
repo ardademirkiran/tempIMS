@@ -13,6 +13,7 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 
 public class Main extends Application {
@@ -28,8 +29,11 @@ public class Main extends Application {
         isFirstExec = ProcessLogs.checkLogsFile();
         if (isFirstExec){
             DBAccess.insertUser("admin", UserInteractions.hashPassword("admin"), "1111111");
+            File revenueFile = new File("lastRevenue.txt");
+            revenueFile.createNewFile();
         } else {
             System.out.println("Bu programın ilk açılışı değil");
+            ProcessLogs.recordTotalSalesOnExit();
         }FXMLLoader fxmlLoader = new FXMLLoader(LoginScreen.class.getResource("LoginScreen.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 480, 360);
         stage.setTitle("tempIMS");
@@ -52,7 +56,9 @@ public class Main extends Application {
 
         stage.setOnCloseRequest(event -> {
             try {
-                ProcessLogs.recordTotalSalesOnExit(MainScreen.totalRevenue);
+                if(UserInteractions.user != null) {
+                    ProcessLogs.recordTotalSalesOnExit();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -206,6 +206,7 @@ public class MainScreen {
             String midText = "";
             for (SellScreenProduct product : sellScreenProductList) {
                 totalRevenue += product.sellPriceDB * product.amount;
+                ProcessLogs.recordRevenueToBuffer(totalRevenue);
                 double profitToAdd = Stats.calculateProfit(product);
                 DBAccess.updateStock(conn, product.barcode, -product.amount);
 
@@ -231,6 +232,7 @@ public class MainScreen {
             String midText = "";
             for (SellScreenProduct product : sellScreenProductList) {
                 totalRevenue -= product.sellPriceDB * product.amount;
+                ProcessLogs.recordRevenueToBuffer(totalRevenue);
                 double profitToAdd = Stats.calculateProfit(product);
                 DBAccess.updateStock(conn, product.barcode, product.amount);
 
@@ -449,7 +451,8 @@ public class MainScreen {
                 "STOK TANIMI",
                 "GİRİŞ",
                 "YENİ KAYIT",
-                "ÇIKIŞ"
+                "CİRO",
+                "TÜMÜ"
         );
 
 
@@ -1070,7 +1073,7 @@ public class MainScreen {
                             case "SATIŞ" -> setStyle("-fx-background-color: #b5d5b5");
                             case "İADE" -> setStyle("-fx-background-color: #b9878d");
                             case "STOK TANIMI" -> setStyle("-fx-background-color: #a2b2c0");
-                            case "ÇIKIŞ" -> setStyle("-fx-background-color: #05f6ee");
+                            case "CİRO" -> setStyle("-fx-background-color: #05f6ee");
                             default -> setStyle("");
                         }
                     } else {
@@ -1241,7 +1244,8 @@ public class MainScreen {
         }
     }
 
-    public void save_button_action(ActionEvent actionEvent) {
+    public void save_button_action(ActionEvent actionEvent) throws IOException {
+        ProcessLogs.recordTotalSalesOnExit();
     }
 
 
