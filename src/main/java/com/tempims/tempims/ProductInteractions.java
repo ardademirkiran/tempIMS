@@ -21,9 +21,9 @@ public class ProductInteractions {
         String name = productInfo[2]; //sql part to get name
         int productNumber = Integer.parseInt(productInfo[3]);
         int tax = Integer.parseInt(productInfo[4]); //sql part to get tax
-        double unitBuyPrice = Double.parseDouble(productInfo[5]);
-        double totalBuyPrice = Double.parseDouble(productInfo[6]);
-        double unitSellPrice =  Double.parseDouble(productInfo[7]);
+        double unitBuyPrice = Double.parseDouble(productInfo[5].toString().replace(",", ""));
+        double totalBuyPrice = Double.parseDouble(productInfo[6].toString().replace(",", ""));
+        double unitSellPrice =  Double.parseDouble(productInfo[7].toString().replace(",", ""));
 
         return new SellScreenProduct(barcode, brand, name, productNumber, tax, unitBuyPrice, totalBuyPrice, unitSellPrice);
     }

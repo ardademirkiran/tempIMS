@@ -506,7 +506,11 @@ public class MainScreen {
         decreaseItem.setOnAction(actionEvent -> {
             if (stockTable.getSelectionModel().getSelectedItem().number > 0) {
                 stockTable.getSelectionModel().getSelectedItem().number--;
-                DBAccess.updateStock(conn, stockTable.getSelectionModel().getSelectedItem().barcode, -1);
+                try {
+                    DBAccess.updateStock(conn, stockTable.getSelectionModel().getSelectedItem().barcode, -1);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
 
             }
 
@@ -948,12 +952,12 @@ public class MainScreen {
         } else {
             salesObjects = DBAccess.createSalesObjects("monthly", dateOfLabel);
         }
-        if (salesObjects.size() > 15) {
-            HashMap<String, Double> stats = Stats.createPieChartData(salesObjects).entrySet().stream().sorted((i2, i1) -> i1.getValue().compareTo(i2.getValue())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-            ArrayList<String> arrayListSales = new ArrayList<>(stats.keySet());
+        HashMap<String, Double> stats = Stats.createPieChartData(salesObjects).entrySet().stream().sorted((i2, i1) -> i1.getValue().compareTo(i2.getValue())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        ArrayList<String> arrayListSales = new ArrayList<>(stats.keySet());
+        if (arrayListSales.size() > 15) {
             ArrayList<String> stringsTop15 = new ArrayList<>(arrayListSales.subList(0, 14));
             double otherProfit = 0;
-            for (String object : arrayListSales.subList(14, arrayListSales.size())) {
+            for (String object : arrayListSales.subList(14, arrayListSales.size() - 1)) {
                 otherProfit += stats.get(object);
             }
             HashMap<String, Double> returnHashMap = new HashMap<>();

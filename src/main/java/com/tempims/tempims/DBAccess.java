@@ -96,15 +96,14 @@ public class DBAccess {
             }
             else{ // Product is already on the database, change the stock and price columns if necessary
                 if(Integer.parseInt(numberInput) == 0){
-                    updateSellPrice(conn, barcodeInput, Double.parseDouble(sellPriceInput));
+                    updateSellPrice(conn, barcodeInput, Double.parseDouble(sellPriceInput), Integer.parseInt(taxInput));
                 } else {
                     int currentStock = getStock(barcodeInput);
-                    updateSellPrice(conn, barcodeInput, Double.parseDouble(sellPriceInput));
+                    updateSellPrice(conn, barcodeInput, Double.parseDouble(sellPriceInput), Integer.parseInt(taxInput));
                     double currentAvgUnitBuyingPrice = fetchUnitBuyingPrice(barcodeInput);
                     double avgUnitBuyingPrice = Stats.calculateAverageEntryPrice(currentStock, currentAvgUnitBuyingPrice, Integer.parseInt(numberInput), Double.parseDouble(unitBuyPriceInput));
                     updatePriceInfo(conn, avgUnitBuyingPrice, Double.parseDouble(sellPriceInput), Double.parseDouble(totalBuyPriceInput), barcodeInput);
                     updateStock(conn, barcodeInput, Integer.parseInt(numberInput));
-                    conn.close();
                 }
             }
 
@@ -138,9 +137,9 @@ public class DBAccess {
         return 0;
     }
 
-    protected static void updateSellPrice(Connection conn, String barcode, double newPrice){
+    protected static void updateSellPrice(Connection conn, String barcode, double newPrice, double tax) throws SQLException {
         try {
-            String updateQuery = String.format(Locale.ROOT,"UPDATE PRODUCTS SET UNIT_SELLING_PRICE= '%f' WHERE BARCODE = '%s'", newPrice, barcode);
+            String updateQuery = String.format(Locale.ROOT,"UPDATE PRODUCTS SET UNIT_SELLING_PRICE= '%f', TAX= '%f' WHERE BARCODE = '%s'", newPrice, tax, barcode);
             Statement updatedStockStatement = conn.createStatement();
             updatedStockStatement.executeUpdate(updateQuery);
         } catch (SQLException e) {
@@ -148,7 +147,7 @@ public class DBAccess {
         }
     }
 
-    protected static void updateStock(Connection conn, String barcode, int stockChange) {
+    protected static void updateStock(Connection conn, String barcode, int stockChange) throws SQLException {
         try {
             int updatedStock = stockChange + getStock(barcode);
             String updateQuery = String.format(Locale.ROOT,"UPDATE PRODUCTS SET PRODUCT_NUMBER = '%d' WHERE BARCODE = '%s'", updatedStock, barcode);
@@ -241,6 +240,18 @@ public class DBAccess {
             }
         }
         return null;
+    }
+
+    protected static StockViewProduct fetchProduct(String barcode) throws SQLException {
+        Connection conn = connect();
+        String sql = String.format(Locale.ROOT,"SELECT * FROM PRODUCTS WHERE BARCODE = '%s'", barcode);
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        if(rs.next()){
+            return new StockViewProduct(barcode, rs.getString("BRAND"), rs.getString("NAME"), rs.getInt("PRODUCT_NUMBER"), rs.getInt("TAX"), rs.getDouble("UNIT_BUYING_PRICE"), rs.getDouble("TOTAL_BUYING_PRICE"), rs.getDouble("UNIT_SELLING_PRICE"));
+        } else {
+            return null;
+        }
     }
 
     protected static ArrayList<StockViewProduct> fetchProducts(){
@@ -343,14 +354,6 @@ public class DBAccess {
         }
         catch(SQLException e){
             e.printStackTrace(System.out);
-        }
-        finally{
-            try{
-                conn.close();
-            }
-            catch(SQLException e){
-                e.printStackTrace(System.out);
-            }
         }
     }
 
