@@ -200,25 +200,29 @@ public class MainScreen {
         String totalpricelabeltext = totalPriceLabel.getText();
         if (sellScreenTable.getItems().size() > 0) {
             SellScreenProduct[] sellScreenProductList = sellScreenTable.getItems().toArray(new SellScreenProduct[0]);
-            cancelButtonClicked();
             Connection conn = DBAccess.connect();
-            double totalProfit = 0;
-            String midText = "";
+            StringBuilder midText = new StringBuilder();
             for (SellScreenProduct product : sellScreenProductList) {
-                totalRevenue += product.sellPriceDB * product.amount;
-                ProcessLogs.recordRevenueToBuffer(totalRevenue);
-                double profitToAdd = Stats.calculateProfit(product);
-                DBAccess.updateStock(conn, product.barcode, -product.amount);
-
-                LocalDate date = java.time.LocalDate.now();
-
-                DBAccess.amendProfit(conn, String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, profitToAdd);
-                midText += product.amount + "x" + product.name + "/-";
-                totalProfit += profitToAdd;
+                try {
+                    totalRevenue += product.sellPriceDB * product.amount;
+                    ProcessLogs.recordRevenueToBuffer(totalRevenue);
+                    double profitToAdd = Stats.calculateProfit(product);
+                    DBAccess.updateStock(conn, product.barcode, -product.amount);
+                    LocalDate date = java.time.LocalDate.now();
+                    DBAccess.amendProfit(conn, String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, profitToAdd);
+                    midText.append(product.amount).append("x").append(product.displayName).append("/-");
+                } catch (Exception e){
+                    FileWriter fileWriter = new FileWriter("errorLogs.txt", true);
+                    BufferedWriter writer = new BufferedWriter(fileWriter);
+                    writer.write(product.barcode + "-" + product.displayName + "-" + product.number + "\n");
+                    writer.write(e.getMessage());
+                    writer.close();
+                }
             }
-            ProcessLogs.recordSalesProcess(midText, Double.parseDouble(totalpricelabeltext));
+            ProcessLogs.recordSalesProcess(midText.toString(), Double.parseDouble(totalpricelabeltext));
             conn.close();
             ciro_label.setText(String.format(Locale.ROOT, "%.2f", totalRevenue));
+            cancelButtonClicked();
         }
     }
 
@@ -229,7 +233,7 @@ public class MainScreen {
         if (sellScreenTable.getItems().size() > 0) {
             SellScreenProduct[] sellScreenProductList = sellScreenTable.getItems().toArray(new SellScreenProduct[0]);
             cancelButtonClicked();
-            String midText = "";
+            StringBuilder midText = new StringBuilder();
             for (SellScreenProduct product : sellScreenProductList) {
                 totalRevenue -= product.sellPriceDB * product.amount;
                 ProcessLogs.recordRevenueToBuffer(totalRevenue);
@@ -240,10 +244,10 @@ public class MainScreen {
                 System.out.println(date);
 
                 DBAccess.amendProfit(conn, String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, (product.unitBuyPrice - product.unitSellPrice) * product.amount);
-                midText += product.amount + "x" + product.name + "/-";
+                midText.append(product.amount).append("x").append(product.displayName).append("/-");
             }
             ciro_label.setText(String.format(Locale.ROOT, "%.2f", totalRevenue));
-            ProcessLogs.recordReturnProcess(midText, Double.parseDouble(totalpricelabeltext));
+            ProcessLogs.recordReturnProcess(midText.toString(), Double.parseDouble(totalpricelabeltext));
         }
         conn.close();
     }
@@ -700,7 +704,7 @@ public class MainScreen {
             }
         }
         if (!textFields.containsValue(false)) {
-            ProcessLogs.recordStockEntryProcess(productEntryLabelBarcode.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText());
+            ProcessLogs.recordStockEntryProcess(productEntryLabelBarcode.getText(), productEntryLabelBrand.getText() + " " + productEntryLabelName.getText(), productEntryLabelPiece.getText());
             ProductInteractions.productEntry(productEntryLabelBarcode.getText(), productEntryLabelBrand.getText(), productEntryLabelName.getText(), productEntryLabelPiece.getText(), productEntryLabelTax.getText(), productEntryLabelBuyPrice.getText(), String.format(Locale.ROOT, "%.2f", Double.parseDouble(productEntryLabelBuyPrice.getText()) / Double.parseDouble(productEntryLabelPiece.getText())), productEntryLabelSellPrice.getText());
             productEntryLabelBarcode.setText("");
             productEntryLabelSellPrice.setText("");
@@ -1249,6 +1253,8 @@ public class MainScreen {
     }
 
     public void save_button_action(ActionEvent actionEvent) throws IOException {
+        totalRevenue = 0;
+        ciro_label.setText(String.format(Locale.ROOT, "%.2f", totalRevenue));
         ProcessLogs.recordTotalSalesOnExit();
     }
 

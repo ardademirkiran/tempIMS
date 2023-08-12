@@ -24,7 +24,7 @@ public class ProcessLogs {
    public static void recordTotalSalesOnExit() throws IOException{
       BufferedReader reader = new BufferedReader(new FileReader("lastRevenue.txt"));
       String lastRevenueLogText = reader.readLine();
-      if(lastRevenueLogText == null || !lastRevenueLogText.equals("")) {
+      if(lastRevenueLogText != null) {
          FileWriter logsFile = new FileWriter("logs.txt", true);
          BufferedWriter writer = new BufferedWriter(logsFile);
          FileWriter revenueFileWriter = new FileWriter("lastRevenue.txt", false);

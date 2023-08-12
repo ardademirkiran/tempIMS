@@ -28,6 +28,8 @@ public class Main extends Application {
     public void start(Stage stage) throws IOException {
         globalStage = stage;
         isFirstExec = ProcessLogs.checkLogsFile();
+        File errorLogsFile = new File("errorLogs.txt");
+        errorLogsFile.createNewFile();
         if (isFirstExec){
             DBAccess.insertUser("admin", UserInteractions.hashPassword("admin"), "1111111");
             File revenueFile = new File("lastRevenue.txt");
