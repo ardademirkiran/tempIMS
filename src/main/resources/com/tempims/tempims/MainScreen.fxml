@@ -42,7 +42,7 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                     </columnResizePolicy>
                 </TableView>
-                <Button alignment="CENTER" focusTraversable="false" mnemonicParsing="false" onMouseClicked="#sellButtonClicked" prefHeight="50.0" prefWidth="295.0" stylesheets="@Button.css" text="Satış" AnchorPane.bottomAnchor="80.0" AnchorPane.rightAnchor="30.0">
+                <Button alignment="CENTER" defaultButton="true" focusTraversable="false" mnemonicParsing="false" onMouseClicked="#sellButtonClicked" prefHeight="50.0" prefWidth="295.0" stylesheets="@Button.css" text="Satış" AnchorPane.bottomAnchor="80.0" AnchorPane.rightAnchor="30.0">
                     <font>
                         <Font size="36.0" />
                     </font>
@@ -167,7 +167,7 @@
                     </font>
                 </TextField>
                 <VBox alignment="TOP_CENTER" layoutX="500.0" layoutY="700.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="700.0">
-                    <Button fx:id="productEntryLabelButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" mnemonicParsing="false" onMouseClicked="#productEntryLabelButtonOnClicked" stylesheets="@Button.css" text="Ürün Girişini Tamamla">
+                    <Button fx:id="productEntryLabelButton" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" focusTraversable="false" mnemonicParsing="false" onMouseClicked="#productEntryLabelButtonOnClicked" stylesheets="@Button.css" text="Ürün Girişini Tamamla">
                         <font>
                             <Font size="24.0" />
                         </font>
@@ -291,7 +291,7 @@
         </Tab>
         <Tab fx:id="stockControlTab" onSelectionChanged="#onStockControlOpened" text="Stok Kontrol Ekranı">
             <AnchorPane fx:id="stockControlPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                <TableView fx:id="stockTable" focusTraversable="false" layoutX="141.0" layoutY="66.0" onMouseClicked="#stockDisplayDoubleClick" prefHeight="200.0" prefWidth="200.0" stylesheets="@TableView.css" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="55.0">
+                <TableView fx:id="stockTable" focusTraversable="false" layoutX="141.0" layoutY="66.0" onMouseClicked="#stockDisplayDoubleClick" prefHeight="200.0" prefWidth="200.0" stylesheets="@TableView.css" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="75.0">
                     <columns>
                         <TableColumn fx:id="stockCollumnBarcode" prefWidth="105.0" style="-fx-alignment: CENTER;" text="Barkod" />
                         <TableColumn fx:id="stockCollumnBrand" prefWidth="98.0" style="-fx-alignment: CENTER;" text="Marka" />
@@ -307,6 +307,8 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                     </columnResizePolicy>
                 </TableView>
+            <Button focusTraversable="false" layoutX="1150.0" layoutY="49.0" mnemonicParsing="false" onAction="#stock_control_cancel" prefWidth="100.0" text="İptal" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="40.0" />
+            <TextField fx:id="stock_control_barcode_field" layoutX="21.0" layoutY="43.0" onKeyTyped="#stock_control_key_typed" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="120.0" AnchorPane.topAnchor="40.0" />
             </AnchorPane>
         </Tab>
         <Tab fx:id="statisticsTab" onSelectionChanged="#statisticsTabOpened" text="İstatistik Ekranı">

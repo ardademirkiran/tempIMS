@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: url('index.jpeg')" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tempims.tempims.FirstOpenScreen">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: url('index.jpeg')" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tempims.tempims.FirstOpenScreen">
     <opaqueInsets>
         <Insets />
     </opaqueInsets>
@@ -36,5 +36,5 @@
          <Insets bottom="30.0" />
       </VBox.margin>
    </TextField>
-     <Button fx:id="signupButton" mnemonicParsing="false" onAction="#signupButtonAction" style="-fx-background-radius: 8;" text="Kullanıcı Adı ve Şifreyi Değiştir" />
+     <Button fx:id="signupButton" defaultButton="true" mnemonicParsing="false" onAction="#signupButtonAction" style="-fx-background-radius: 8;" text="Kullanıcı Adı ve Şifreyi Değiştir" />
 </VBox>

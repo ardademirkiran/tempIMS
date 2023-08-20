@@ -20,7 +20,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
-import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -139,6 +138,7 @@ public class MainScreen {
     public Label sellPriceTextLabel;
     public Label taxTextLabel;
     public CheckBox productEntryTabCheckBox;
+    public TextField stock_control_barcode_field;
     @FXML
     GridPane log_screen_grid_pane;
     List<TextField> productEntryLabelTextFields;
@@ -211,7 +211,7 @@ public class MainScreen {
                     LocalDate date = java.time.LocalDate.now();
                     DBAccess.amendProfit(conn, String.valueOf(date.getDayOfMonth()), String.valueOf(date.getMonthValue()), String.valueOf(date.getYear()), product.barcode, product.displayName, profitToAdd);
                     midText.append(product.amount).append("x").append(product.displayName).append("/-");
-                } catch (Exception e){
+                } catch (Exception e) {
                     FileWriter fileWriter = new FileWriter("errorLogs.txt", true);
                     BufferedWriter writer = new BufferedWriter(fileWriter);
                     writer.write(product.barcode + "-" + product.displayName + "-" + product.number + "\n");
@@ -472,13 +472,13 @@ public class MainScreen {
                 }
             }
         });
-        min_dateTimePicker = new DateTimePicker(DateTimeFormatter.ofPattern("yyyy-MM-dd HH"), LocalDateTime.of(0,01,01,00,00));
+        min_dateTimePicker = new DateTimePicker(DateTimeFormatter.ofPattern("yyyy-MM-dd HH"), LocalDateTime.of(0, 01, 01, 00, 00));
         min_dateTimePicker.getEditor().textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 try {
                     System.out.println(t1);
-                    min_dateTimePicker.dateTimeValueProperty().set(LocalDateTime.of(Integer.parseInt(t1.substring(0,4)), Integer.parseInt(t1.substring(5,7)), Integer.parseInt(t1.substring(8,10)), Integer.parseInt(t1.substring(11,13)),0));
+                    min_dateTimePicker.dateTimeValueProperty().set(LocalDateTime.of(Integer.parseInt(t1.substring(0, 4)), Integer.parseInt(t1.substring(5, 7)), Integer.parseInt(t1.substring(8, 10)), Integer.parseInt(t1.substring(11, 13)), 0));
                     logTabOpened();
                 } catch (Exception e) {
                     System.out.println("Error");
@@ -486,12 +486,12 @@ public class MainScreen {
             }
         });
         log_screen_grid_pane.add(min_dateTimePicker, 1, 0);
-        max_dateTimePicker = new DateTimePicker(DateTimeFormatter.ofPattern("yyyy-MM-dd HH"), LocalDateTime.of(9999,01,01,00,00));
+        max_dateTimePicker = new DateTimePicker(DateTimeFormatter.ofPattern("yyyy-MM-dd HH"), LocalDateTime.of(9999, 01, 01, 00, 00));
         max_dateTimePicker.getEditor().textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 try {
-                    max_dateTimePicker.dateTimeValueProperty().set(LocalDateTime.of(Integer.parseInt(t1.substring(0,4)), Integer.parseInt(t1.substring(5,7)), Integer.parseInt(t1.substring(8,10)), Integer.parseInt(t1.substring(11,13)),0));
+                    max_dateTimePicker.dateTimeValueProperty().set(LocalDateTime.of(Integer.parseInt(t1.substring(0, 4)), Integer.parseInt(t1.substring(5, 7)), Integer.parseInt(t1.substring(8, 10)), Integer.parseInt(t1.substring(11, 13)), 0));
                     logTabOpened();
                 } catch (Exception e) {
                     System.out.println("Error");
@@ -603,7 +603,61 @@ public class MainScreen {
                     barcodeField.setText(prebarcode + keyEvent.getCharacter());
                 }
             }
+        } else if (tabpane.getSelectionModel().getSelectedItem().getId().equals(stockControlTab.getId())) {
+            byte[] enter = {13};
+            byte[] back = {8};
+            byte[] tab = {9};
+            if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(enter))) {
+                try {
+                    StockViewProduct product = DBAccess.fetchProduct(stock_control_barcode_field.getText());
+                    if (product != null){
+                        stockTable.getItems().removeAll(stockTable.getItems());
+                        stockTable.getItems().add(product);
+                    }
+                    else{
+                        stockTable.getItems().removeAll(stockTable.getItems());
+                        stockTable.getItems().addAll(DBAccess.fetchProducts());
+                    }
+                    stock_control_barcode_field.setText("");
+                } catch (Exception ignored) {
+                }
+            } else if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(back))) {
+                String prebarcode = stock_control_barcode_field.getText();
+                if(prebarcode.length() > 0){
+                    prebarcode = prebarcode.substring(0, prebarcode.length() - 1);
+                    stock_control_barcode_field.setText(prebarcode);
+                }
+
+            } else if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(tab))) {
+                if (!isHolding) {
+                    isHolding = true;
+                    bytes.add((keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)));
+                }
+            } else {
+                System.out.println(Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)));
+                if (isHolding) {
+                    bytes.add(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8));
+                    amountByte += Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8));
+                } else {
+                    if (!amountByte.isEmpty()) {
+                        String realamount = "";
+                        String[] amountSplitted = amountByte.split("]\\[");
+                        for (String s : amountSplitted) {
+                            s = s.replaceAll("]", "").replaceAll("\\[", "");
+                            realamount += test1.get(s);
+                        }
+                        amountByte = "";
+                        try {
+                            amountInteger = Integer.parseInt(realamount);
+                        } catch (Exception ignored) {
+                        }
+                    }
+                    String prebarcode = stock_control_barcode_field.getText();
+                    stock_control_barcode_field.setText(prebarcode + keyEvent.getCharacter());
+                }
+            }
         }
+
     }
 
     public Tooltip createToolTip(String HintText) {
@@ -737,6 +791,16 @@ public class MainScreen {
         byte[] enter = {13};
         if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(enter))) {
             keyTypedAlgorithm(barcodeField.getText());
+        }
+    }
+    @FXML
+    protected void stock_control_key_typed(KeyEvent keyEvent) throws UnsupportedEncodingException {
+        byte[] enter = {13};
+        byte[] esc = {27};
+        if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(enter))) {
+            sellScreenKeyTyped(keyEvent);
+        }else if (Arrays.toString(keyEvent.getCharacter().getBytes(StandardCharsets.UTF_8)).equals(Arrays.toString(esc))){
+            stock_control_cancel(new ActionEvent());
         }
     }
 
@@ -1053,8 +1117,8 @@ public class MainScreen {
             historyTableExplanation.setCellValueFactory(logObjectLocalDateCellDataFeatures -> logObjectLocalDateCellDataFeatures.getValue().getExplanation());
             String min_date = min_dateTimePicker.dateTimeValueProperty().getValue().toString();
             String max_date = max_dateTimePicker.dateTimeValueProperty().getValue().toString();
-            min_date = min_date.replace("T" , "||");
-            max_date = max_date.replace("T" , "||");
+            min_date = min_date.replace("T", "||");
+            max_date = max_date.replace("T", "||");
             historyTable.getItems().addAll(ProcessLogs.getLogObjects(min_date, max_date, log_screen_choice_box.getValue()));
             Collections.reverse(historyTable.getItems());
 
@@ -1259,4 +1323,8 @@ public class MainScreen {
     }
 
 
+    public void stock_control_cancel(ActionEvent actionEvent) {
+        stockTable.getItems().removeAll(stockTable.getItems());
+        stockTable.getItems().addAll(DBAccess.fetchProducts());
+    }
 }
