@@ -242,16 +242,18 @@ public class DBAccess {
         return null;
     }
 
-    protected static StockViewProduct fetchProduct(String barcode) throws SQLException {
-        Connection conn = connect();
-        String sql = String.format(Locale.ROOT,"SELECT * FROM PRODUCTS WHERE BARCODE = '%s'", barcode);
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(sql);
-        if(rs.next()){
-            return new StockViewProduct(barcode, rs.getString("BRAND"), rs.getString("NAME"), rs.getInt("PRODUCT_NUMBER"), rs.getInt("TAX"), rs.getDouble("UNIT_BUYING_PRICE"), rs.getDouble("TOTAL_BUYING_PRICE"), rs.getDouble("UNIT_SELLING_PRICE"));
-        } else {
-            return null;
+    protected static StockViewProduct fetchProduct(String barcode) {
+        try (Connection conn = connect()) {
+            String sql = String.format(Locale.ROOT, "SELECT * FROM PRODUCTS WHERE BARCODE = '%s'", barcode);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            if (rs.next()) {
+                return new StockViewProduct(barcode, rs.getString("BRAND"), rs.getString("NAME"), rs.getInt("PRODUCT_NUMBER"), rs.getInt("TAX"), rs.getDouble("UNIT_BUYING_PRICE"), rs.getDouble("TOTAL_BUYING_PRICE"), rs.getDouble("UNIT_SELLING_PRICE"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
     protected static ArrayList<StockViewProduct> fetchProducts(){
